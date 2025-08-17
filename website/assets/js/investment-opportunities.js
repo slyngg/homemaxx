@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
         `).join('');
         
         // Format gallery navigation
-        const galleryNav = property.gallery.map((_, index) => `
+        const galleryNavHtml = property.gallery.map((_, index) => `
             <button class="gallery-nav-item ${index === 0 ? 'active' : ''}" data-index="${index}">
                 <img src="${property.gallery[index]}" alt="Thumbnail ${index + 1}">
             </button>
@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                             ${property.gallery.length > 1 ? `
                             <div class="gallery-nav">
-                                ${galleryNav}
+                                ${galleryNavHtml}
                             </div>
                             ` : ''}
                         </div>

@@ -113,7 +113,7 @@ textarea.form-control {
   -moz-appearance: none;
   appearance: none;
   -webkit-print-color-adjust: exact;
-  color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .form-check-input[type="checkbox"] {
@@ -206,6 +206,8 @@ textarea.form-control {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 /* Dark mode adjustments */
