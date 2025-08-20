@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Get Your Cash Offer | HomeMAXX</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
-  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="../assets/css/opendoor-style.css" />
+  <link rel="stylesheet" href="../assets/css/smooth-funnel.css" />
+  <script src="../assets/js/smooth-funnel.js" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -38,25 +40,21 @@
     </div>
   </header>
 
-  <main id="main" class="section bg-light">
+  <main id="main" class="section">
     <div class="container">
       <div class="section-header text-center">
-        <h1>Get Your Cash Offer</h1>
-        <p class="lead">Answer a few questions. No obligation. It only takes a minute.</p>
-        <div class="ribbon" role="status" aria-live="polite">
-          <span class="badge">New</span>
-          <span><strong>$7,500 Instant Cash Offer</strong> — only <strong><span id="slotsRemainingFunnel">5</span> slots</strong> available this month. Get funds in as little as 48 hours after qualification.</span>
-        </div>
+        <h1>Let's start your offer</h1>
+        <p class="lead">Enter your address to get started. This helps us find sales data for your home and other homes nearby.</p>
       </div>
 
       <!-- Stepper -->
       <div class="card" role="region" aria-label="Get Offer Steps">
-        <div class="progress" style="height: 8px; margin: 0">
-          <div id="go-progress" class="progress-bar" style="width: 25%" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25"></div>
+        <div class="progress" style="height: 4px; margin: 0; background: var(--border-light);">
+          <div id="go-progress" class="progress-bar" style="width: 12.5%; background: var(--primary); transition: width 0.3s ease;" aria-valuemin="0" aria-valuemax="100" aria-valuenow="12"></div>
         </div>
-        <div id="go-progress-status" class="assistive" aria-live="polite" style="padding:.5rem .75rem">Step 1 of 4</div>
+        <div id="go-progress-status" class="assistive" aria-live="polite" style="padding:.75rem 1rem; font-size: 0.875rem; color: var(--text-muted);">Step 1 of 8</div>
 
-        <div class="card-content">
+        <div class="card-content go-form" style="padding: 2rem; min-height: 500px;">
           <form id="contact-form" class="go-form" method="POST" data-webform="true" novalidate>
             <!-- Hidden context fields -->
             <input type="hidden" name="source" value="Get Offer Funnel" />

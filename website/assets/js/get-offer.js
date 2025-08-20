@@ -223,174 +223,555 @@
     } catch(_) {}
   })();
 
-  // --- Micro-steps within Step 1 (Address & Basics) ---
-  (function microStepsStep1(){
-    try {
-      const stepIndex = 0; // Step 1 (0-based)
-      const stepEl = steps[stepIndex];
-      if (!stepEl) return;
-
-      // Collect question groups within Step 1
-      const groups = Array.from(stepEl.querySelectorAll('.form-group, [role="group"]'))
-        .filter(g => g.offsetParent !== null || true); // keep order as in DOM
-      if (!groups.length) return;
-      let sub = 0;
-
-      const backBtn = stepEl.querySelector('[data-action="back"]');
-      const nextBtn = stepEl.querySelector('[data-action="next"]');
-
-      function hideAll(){ groups.forEach(g => g.style.display = 'none'); }
-      function updateProgress(){
-        if (!progressEl) return;
-        const total = groups.length;
-        const sectionStart = (stepIndex / steps.length) * 100;
-        const sectionEnd = ((stepIndex + 1) / steps.length) * 100;
-        const pct = sectionStart + (sectionEnd - sectionStart) * Math.max(0, Math.min(1, (sub + 1) / total));
-        progressEl.style.width = pct + '%';
-        progressEl.setAttribute('aria-valuenow', String(Math.round(pct)));
+  // --- Opendoor-Style Funnel Implementation ---
+  let propertyData = {}; // Store property data from API
+  let userPath = 'owner'; // 'owner' or 'agent'
+  
+  // Create dynamic steps based on Opendoor flow
+  function createOpendoorFlow() {
+    // After address selection, show property details confirmation
+    document.addEventListener('address:confirmed', function(e) {
+      propertyData = e.detail || {};
+      showPropertyDetailsConfirmation();
+    });
+    
+    // Property details confirmation screen
+    function showPropertyDetailsConfirmation() {
+      const step2 = steps[1];
+      if (!step2) return;
+      
+      // Hide original content and show confirmation screen
+      step2.innerHTML = `
+        <legend class="h3">Confirm your home details</legend>
+        <p class="text-muted">This info is available to the public. You can edit these details if you've made any updates to your home.</p>
+        
+        <div class="property-details-grid">
+          <div class="detail-item">
+            <span class="detail-label">Bedrooms</span>
+            <span class="detail-value" id="confirm-beds">${propertyData.beds || '4'}</span>
+            <button type="button" class="edit-btn" onclick="editDetail('beds')">Edit</button>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Full bathrooms</span>
+            <span class="detail-value" id="confirm-baths">${propertyData.baths || '2'}</span>
+            <button type="button" class="edit-btn" onclick="editDetail('baths')">Edit</button>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Square footage (above ground)</span>
+            <span class="detail-value" id="confirm-sqft">${propertyData.sqft || '2,093'} ft²</span>
+            <button type="button" class="edit-btn" onclick="editDetail('sqft')">Edit</button>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Year built</span>
+            <span class="detail-value" id="confirm-year">${propertyData.year || '2005'}</span>
+            <button type="button" class="edit-btn" onclick="editDetail('year')">Edit</button>
+          </div>
+        </div>
+        
+        <div class="form-actions space-between">
+          <button type="button" class="btn btn-outline" data-action="back">‹ Back</button>
+          <button type="button" class="btn btn-primary" onclick="startPropertyQuestions()">Confirm</button>
+        </div>
+      `;
+      
+      updateProgress(1, 4);
+    }
+    
+    // Start property condition questions
+    window.startPropertyQuestions = function() {
+      showPropertyTypeQuestion();
+    };
+    
+    // Property type question (first micro-step)
+    function showPropertyTypeQuestion() {
+      const step2 = steps[1];
+      step2.innerHTML = `
+        <legend class="h3">What best describes your home?</legend>
+        <p class="text-muted">This question helps us select comps when preparing your offer.</p>
+        
+        <div class="option-tiles">
+          <button type="button" class="option-tile" onclick="selectPropertyType('single-family')">
+            <span>Single-family home</span>
+          </button>
+          <button type="button" class="option-tile" onclick="selectPropertyType('townhouse')">
+            <span>Townhouse or attached single-family home</span>
+          </button>
+          <button type="button" class="option-tile" onclick="selectPropertyType('condo')">
+            <span>Apartment or condo</span>
+          </button>
+          <button type="button" class="option-tile" onclick="selectPropertyType('mobile')">
+            <span>Mobile or manufactured home</span>
+          </button>
+          <button type="button" class="option-tile" onclick="selectPropertyType('multifamily')">
+            <span>Multi-family<br><small>3+ units in a single structure</small></span>
+          </button>
+        </div>
+        
+        <div class="form-actions space-between">
+          <button type="button" class="btn btn-outline" onclick="showPropertyDetailsConfirmation()">‹ Back</button>
+          <button type="button" class="btn btn-primary" id="next-btn" style="visibility: hidden;">Next ›</button>
+        </div>
+      `;
+    }
+    
+    // Property type selection
+    window.selectPropertyType = function(type) {
+      propertyData.propertyType = type;
+      // Auto-advance to owner question
+      setTimeout(() => showOwnerQuestion(), 300);
+    };
+    
+    // Owner vs Agent question
+    function showOwnerQuestion() {
+      const step2 = steps[1];
+      step2.innerHTML = `
+        <legend class="h3">Are you the owner of this home?</legend>
+        <p class="text-muted">We have additional questions if you're an agent.</p>
+        
+        <div class="option-tiles">
+          <button type="button" class="option-tile" onclick="selectUserType('owner')">
+            <span>Yes, I own this home</span>
+          </button>
+          <button type="button" class="option-tile" onclick="selectUserType('agent')">
+            <span>No, I'm an agent</span>
+          </button>
+          <button type="button" class="option-tile" onclick="selectUserType('agent-owner')">
+            <span>I'm an agent, and I own this home</span>
+          </button>
+          <button type="button" class="option-tile" onclick="selectUserType('other')">
+            <span>Other</span>
+          </button>
+        </div>
+        
+        <div class="form-actions space-between">
+          <button type="button" class="btn btn-outline" onclick="showPropertyTypeQuestion()">‹ Back</button>
+          <button type="button" class="btn btn-primary" id="next-btn" style="visibility: hidden;">Next ›</button>
+        </div>
+      `;
+    }
+    
+    // User type selection with branching
+    window.selectUserType = function(type) {
+      userPath = type;
+      propertyData.userType = type;
+      
+      if (type === 'agent') {
+        // Show agent-specific flow
+        setTimeout(() => showAgentFlow(), 300);
+      } else {
+        // Continue with owner flow
+        setTimeout(() => showTimelineQuestion(), 300);
       }
-      function showSub(i){
-        sub = Math.max(0, Math.min(groups.length - 1, i));
-        hideAll();
-        const g = groups[sub];
-        if (g) g.style.display = '';
-        if (nextBtn) nextBtn.style.visibility = 'hidden';
-        updateProgress();
+    };
+    
+    // Agent-specific flow
+    function showAgentFlow() {
+      const step2 = steps[1];
+      step2.innerHTML = `
+        <legend class="h3">Great! There are two ways agents can work with us.</legend>
+        <p class="text-muted">You can decide what makes the most sense for you and the homeowner after you receive a estimated offer from Opendoor.</p>
+        
+        <div class="agent-options">
+          <div class="agent-option">
+            <h4>Refer to Opendoor</h4>
+            <p class="text-muted">Eligible for 1% referral commission</p>
+            <ul>
+              <li>Ideal for when you can't (or don't want to) represent a client</li>
+              <li>Share the homeowner's contact information with Opendoor</li>
+              <li>That's all there is to it — we work with the homeowner to complete the sale</li>
+            </ul>
+          </div>
+          
+          <div class="agent-option">
+            <h4>Represent your client</h4>
+            <p class="text-muted">Eligible for 1% commission + seller commission</p>
+            <ul>
+              <li>Ideal for clients that need more guidance and support</li>
+              <li>You'll represent your client throughout the entire process</li>
+              <li>You'll work directly with Opendoor and expect to have a representation agreement with your client</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="form-actions space-between">
+          <button type="button" class="btn btn-outline" onclick="showOwnerQuestion()">‹ Back</button>
+          <button type="button" class="btn btn-primary" onclick="showTimelineQuestion()">Next ›</button>
+        </div>
+      `;
+    }
+    
+    // Timeline question
+    function showTimelineQuestion() {
+      const step2 = steps[1];
+      step2.innerHTML = `
+        <legend class="h3">When do you need to sell your home?</legend>
+        <p class="text-muted">This won't affect your offer. We're here to help with any timeline.</p>
+        
+        <div class="option-tiles">
+          <button type="button" class="option-tile" onclick="selectTimeline('asap')">
+            <span>ASAP</span>
+          </button>
+          <button type="button" class="option-tile" onclick="selectTimeline('2-4-weeks')">
+            <span>2–4 weeks</span>
+          </button>
+          <button type="button" class="option-tile" onclick="selectTimeline('4-6-weeks')">
+            <span>4–6 weeks</span>
+          </button>
+          <button type="button" class="option-tile" onclick="selectTimeline('6-weeks')">
+            <span>6+ weeks</span>
+          </button>
+          <button type="button" class="option-tile" onclick="selectTimeline('browsing')">
+            <span>Just browsing</span>
+          </button>
+        </div>
+        
+        <div class="form-actions space-between">
+          <button type="button" class="btn btn-outline" onclick="${userPath === 'agent' ? 'showAgentFlow()' : 'showOwnerQuestion()'}">‹ Back</button>
+          <button type="button" class="btn btn-primary" id="next-btn" style="visibility: hidden;">Next ›</button>
+        </div>
+      `;
+    }
+    
+    // Timeline selection
+    window.selectTimeline = function(timeline) {
+      propertyData.timeline = timeline;
+      setTimeout(() => showConditionQuestions(), 300);
+    };
+    
+    // Start condition questions with image cards
+    function showConditionQuestions() {
+      showKitchenQuestion();
+    }
+    
+    // Kitchen condition question
+    function showKitchenQuestion() {
+      const step2 = steps[1];
+      step2.innerHTML = `
+        <legend class="h3">How would you describe your kitchen?</legend>
+        <p class="text-muted">For these questions, just select the closest match.</p>
+        
+        <div class="condition-cards">
+          <button type="button" class="condition-card" onclick="selectCondition('kitchen', 'fixer')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1505691723518-36a5ac3b2b8f?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>Fixer Upper</h4>
+              <p>Kitchen needs significant repairs</p>
+            </div>
+          </button>
+          <button type="button" class="condition-card" onclick="selectCondition('kitchen', 'dated')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1584622781564-1f94a2b52b8e?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>Dated</h4>
+              <p>Kitchen hasn't been updated recently</p>
+            </div>
+          </button>
+          <button type="button" class="condition-card" onclick="selectCondition('kitchen', 'standard')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>Standard</h4>
+              <p>Kitchen is in good condition</p>
+            </div>
+          </button>
+          <button type="button" class="condition-card" onclick="selectCondition('kitchen', 'high-end')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>High end</h4>
+              <p>Recently updated with premium finishes</p>
+            </div>
+          </button>
+        </div>
+        
+        <div class="form-actions space-between">
+          <button type="button" class="btn btn-outline" onclick="showTimelineQuestion()">‹ Back</button>
+          <button type="button" class="btn btn-primary" id="next-btn" style="visibility: hidden;">Next ›</button>
+        </div>
+      `;
+    }
+    
+    // Condition selection handler
+    window.selectCondition = function(room, condition) {
+      propertyData[room + 'Condition'] = condition;
+      
+      // Auto-advance based on room
+      if (room === 'kitchen') {
+        setTimeout(() => showBathroomQuestion(), 300);
+      } else if (room === 'bathroom') {
+        setTimeout(() => showLivingRoomQuestion(), 300);
+      } else if (room === 'living') {
+        setTimeout(() => showExteriorQuestion(), 300);
+      } else if (room === 'exterior') {
+        setTimeout(() => showHOAQuestion(), 300);
       }
-      function advance(){
-        if (sub >= groups.length - 1) { next(); return; }
-        showSub(sub + 1);
+    };
+    
+    // Similar functions for bathroom, living room, exterior...
+    function showBathroomQuestion() {
+      const step2 = steps[1];
+      step2.innerHTML = `
+        <legend class="h3">How would you describe your main bathroom?</legend>
+        
+        <div class="condition-cards">
+          <button type="button" class="condition-card" onclick="selectCondition('bathroom', 'fixer')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1584622781564-1f94a2b52b8e?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>Fixer Upper</h4>
+              <p>Bathroom needs significant repairs</p>
+            </div>
+          </button>
+          <button type="button" class="condition-card" onclick="selectCondition('bathroom', 'dated')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1505691723518-36a5ac3b2b8f?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>Dated</h4>
+              <p>Bathroom hasn't been updated recently</p>
+            </div>
+          </button>
+          <button type="button" class="condition-card" onclick="selectCondition('bathroom', 'standard')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>Standard</h4>
+              <p>Bathroom is in good condition</p>
+            </div>
+          </button>
+          <button type="button" class="condition-card" onclick="selectCondition('bathroom', 'high-end')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>High end</h4>
+              <p>Recently updated with premium finishes</p>
+            </div>
+          </button>
+        </div>
+        
+        <div class="form-actions space-between">
+          <button type="button" class="btn btn-outline" onclick="showKitchenQuestion()">‹ Back</button>
+          <button type="button" class="btn btn-primary" id="next-btn" style="visibility: hidden;">Next ›</button>
+        </div>
+      `;
+    }
+    
+    function showLivingRoomQuestion() {
+      const step2 = steps[1];
+      step2.innerHTML = `
+        <legend class="h3">How would you describe your living room?</legend>
+        
+        <div class="condition-cards">
+          <button type="button" class="condition-card" onclick="selectCondition('living', 'fixer')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>Fixer Upper</h4>
+              <p>Living room needs significant repairs</p>
+            </div>
+          </button>
+          <button type="button" class="condition-card" onclick="selectCondition('living', 'dated')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>Dated</h4>
+              <p>Living room hasn't been updated recently</p>
+            </div>
+          </button>
+          <button type="button" class="condition-card" onclick="selectCondition('living', 'standard')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1505691723518-36a5ac3b2b8f?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>Standard</h4>
+              <p>Living room is in good condition</p>
+            </div>
+          </button>
+          <button type="button" class="condition-card" onclick="selectCondition('living', 'high-end')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1584622781564-1f94a2b52b8e?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>High end</h4>
+              <p>Recently updated with premium finishes</p>
+            </div>
+          </button>
+        </div>
+        
+        <div class="form-actions space-between">
+          <button type="button" class="btn btn-outline" onclick="showBathroomQuestion()">‹ Back</button>
+          <button type="button" class="btn btn-primary" id="next-btn" style="visibility: hidden;">Next ›</button>
+        </div>
+      `;
+    }
+    
+    function showExteriorQuestion() {
+      const step2 = steps[1];
+      step2.innerHTML = `
+        <legend class="h3">How would you describe your home exterior?</legend>
+        
+        <div class="condition-cards">
+          <button type="button" class="condition-card" onclick="selectCondition('exterior', 'fixer')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>Fixer Upper</h4>
+              <p>Exterior needs significant repairs</p>
+            </div>
+          </button>
+          <button type="button" class="condition-card" onclick="selectCondition('exterior', 'dated')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>Dated</h4>
+              <p>Exterior hasn't been updated recently</p>
+            </div>
+          </button>
+          <button type="button" class="condition-card" onclick="selectCondition('exterior', 'standard')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1505691723518-36a5ac3b2b8f?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>Standard</h4>
+              <p>Exterior is in good condition</p>
+            </div>
+          </button>
+          <button type="button" class="condition-card" onclick="selectCondition('exterior', 'high-end')">
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1584622781564-1f94a2b52b8e?q=80&w=400')"></div>
+            <div class="card-content">
+              <h4>High end</h4>
+              <p>Recently updated with premium finishes</p>
+            </div>
+          </button>
+        </div>
+        
+        <div class="form-actions space-between">
+          <button type="button" class="btn btn-outline" onclick="showLivingRoomQuestion()">‹ Back</button>
+          <button type="button" class="btn btn-primary" id="next-btn" style="visibility: hidden;">Next ›</button>
+        </div>
+      `;
+    }
+    
+    // HOA Question with branching
+    function showHOAQuestion() {
+      const step2 = steps[1];
+      step2.innerHTML = `
+        <legend class="h3">Is your home part of a homeowners association?</legend>
+        <p class="text-muted">This is often called an HOA. It's a group that helps maintain your community for a fee.</p>
+        
+        <div class="option-tiles">
+          <button type="button" class="option-tile" onclick="selectHOA('yes')">
+            <span>Yes</span>
+          </button>
+          <button type="button" class="option-tile" onclick="selectHOA('no')">
+            <span>No</span>
+          </button>
+        </div>
+        
+        <div class="form-actions space-between">
+          <button type="button" class="btn btn-outline" onclick="showExteriorQuestion()">‹ Back</button>
+          <button type="button" class="btn btn-primary" id="next-btn" style="visibility: hidden;">Next ›</button>
+        </div>
+      `;
+    }
+    
+    // HOA selection with branching
+    window.selectHOA = function(hasHOA) {
+      propertyData.hoa = hasHOA;
+      
+      if (hasHOA === 'yes') {
+        // Show HOA details questions
+        setTimeout(() => showHOADetailsQuestion(), 300);
+      } else {
+        // Skip HOA details and go to contact info
+        setTimeout(() => showContactInfo(), 300);
       }
-      function back(){
-        if (sub === 0) { prev(); return; }
-        showSub(sub - 1);
-      }
-
-      if (backBtn) backBtn.addEventListener('click', function(e){ if (current === stepIndex) { e.preventDefault(); back(); } });
-      if (nextBtn) nextBtn.addEventListener('click', function(e){ if (current === stepIndex) { e.preventDefault(); advance(); } });
-
-      // Auto-advance behaviors for inputs
-      groups.forEach(g => {
-        const inputs = Array.from(g.querySelectorAll('input, select, textarea'));
-        const isRadio = inputs.some(el => el.type === 'radio');
-        const isSelect = inputs.some(el => el.tagName === 'SELECT');
-        const isTextLike = inputs.some(el => el.type === 'text' || el.type === 'number' || el.tagName === 'TEXTAREA' || el.type === 'email' || el.type === 'tel');
-
-        if (isRadio) {
-          inputs.forEach(el => el.addEventListener('change', function(){
-            const any = g.querySelector('input[type="radio"]:checked');
-            if (any) advance();
+    };
+    
+    function showHOADetailsQuestion() {
+      const step2 = steps[1];
+      step2.innerHTML = `
+        <legend class="h3">Does your home belong to any of these types of communities?</legend>
+        
+        <div class="option-tiles">
+          <button type="button" class="option-tile checkbox-tile" onclick="toggleHOAType('age-restricted')">
+            <span>Age restricted community</span>
+            <div class="checkbox"></div>
+          </button>
+          <button type="button" class="option-tile checkbox-tile" onclick="toggleHOAType('gated')">
+            <span>Gated community</span>
+            <div class="checkbox"></div>
+          </button>
+          <button type="button" class="option-tile" onclick="selectHOAType('none')">
+            <span>None of the above</span>
+          </button>
+        </div>
+        
+        <div class="form-actions space-between">
+          <button type="button" class="btn btn-outline" onclick="showHOAQuestion()">‹ Back</button>
+          <button type="button" class="btn btn-primary" onclick="showContactInfo()">Next ›</button>
+        </div>
+      `;
+    }
+    
+    // Contact info screen
+    function showContactInfo() {
+      // Move to Step 3
+      next();
+      
+      const step3 = steps[2];
+      step3.innerHTML = `
+        <legend class="h3">We're getting the details together for our team</legend>
+        <p class="text-muted">Sign in or enter your email address to take the next step.</p>
+        
+        <div class="contact-form">
+          <button type="button" class="btn btn-outline btn-google">
+            <span>Continue with Google</span>
+          </button>
+          
+          <div class="divider">or</div>
+          
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" class="form-control" required />
+          </div>
+          
+          <button type="button" class="btn btn-primary btn-full" onclick="completeFlow()">
+            Continue with email
+          </button>
+          
+          <p class="terms-text">
+            By clicking "Continue," you agree to Opendoor's <a href="#">terms of service</a> and <a href="#">Privacy Policy</a>
+          </p>
+        </div>
+        
+        <div class="form-actions space-between">
+          <button type="button" class="btn btn-outline" onclick="showPreviousQuestion()">‹ Back</button>
+        </div>
+      `;
+    }
+    
+    window.completeFlow = function() {
+      // Submit the form or show final step
+      console.log('Property data collected:', propertyData);
+      alert('Funnel complete! Property data: ' + JSON.stringify(propertyData, null, 2));
+    };
+  }
+  
+  // Initialize the Opendoor flow
+  createOpendoorFlow();
+  
+  // Hook into address selection to trigger property details confirmation
+  const addressInput = document.getElementById('propertyAddress');
+  if (addressInput) {
+    // Trigger confirmation screen after address is filled
+    addressInput.addEventListener('blur', function() {
+      if (this.value && this.value.length > 10) {
+        // Simulate property data from API
+        const mockPropertyData = {
+          beds: '4',
+          baths: '2', 
+          sqft: '2,093',
+          year: '2005',
+          lotSize: '0',
+          floors: '2',
+          basement: 'No',
+          pool: 'No pool',
+          parking: 'Garage',
+          garageSpaces: '2'
+        };
+        
+        // Dispatch event to trigger property details confirmation
+        setTimeout(() => {
+          document.dispatchEvent(new CustomEvent('address:confirmed', {
+            detail: mockPropertyData
           }));
-        }
-        if (isSelect) {
-          inputs.forEach(el => el.addEventListener('change', function(){ if (el.value) advance(); }));
-        }
-        if (isTextLike) {
-          inputs.forEach(el => {
-            el.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); if (el.checkValidity()) advance(); }});
-            el.addEventListener('blur', function(){ if (el.checkValidity()) advance(); });
-          });
-        }
-      });
-
-      // Special handling: property address with Google Places -> advance on place selection
-      const addr = stepEl.querySelector('#propertyAddress, input[name="propertyAddress"], input[name="address"], #address');
-      if (addr) {
-        // When Places fills or value is present on blur, advance
-        addr.addEventListener('blur', function(){ if (addr.value && addr.value.trim().length > 5) advance(); });
-        // If autocomplete is attached elsewhere, hook a custom event
-        document.addEventListener('address:place_selected', function(){ if (current === stepIndex) advance(); });
+        }, 500);
       }
-
-      // Hook into step transitions
-      const origShow = showStep;
-      showStep = function(index){
-        origShow(index);
-        if (index === stepIndex) { hideAll(); showSub(sub); }
-      };
-
-      if (current === stepIndex) { hideAll(); showSub(sub); }
-    } catch(_) { /* no-op */ }
-  })();
-
-  // --- Micro-steps within Step 3 (Your Info) ---
-  (function microStepsStep3(){
-    try {
-      const stepIndex = 2; // Step 3 (0-based)
-      const stepEl = steps[stepIndex];
-      if (!stepEl) return;
-
-      const groups = Array.from(stepEl.querySelectorAll('.form-group, [role="group"]'));
-      if (!groups.length) return;
-      let sub = 0;
-
-      const backBtn = stepEl.querySelector('[data-action="back"]');
-      const nextBtn = stepEl.querySelector('[data-action="next"]');
-
-      function hideAll(){ groups.forEach(g => g.style.display = 'none'); }
-      function updateProgress(){
-        if (!progressEl) return;
-        const total = groups.length;
-        const sectionStart = (stepIndex / steps.length) * 100;
-        const sectionEnd = ((stepIndex + 1) / steps.length) * 100;
-        const pct = sectionStart + (sectionEnd - sectionStart) * Math.max(0, Math.min(1, (sub + 1) / total));
-        progressEl.style.width = pct + '%';
-        progressEl.setAttribute('aria-valuenow', String(Math.round(pct)));
-      }
-      function showSub(i){
-        sub = Math.max(0, Math.min(groups.length - 1, i));
-        hideAll();
-        const g = groups[sub];
-        if (g) g.style.display = '';
-        if (nextBtn) nextBtn.style.visibility = 'hidden';
-        updateProgress();
-      }
-      function advance(){
-        if (sub >= groups.length - 1) { next(); return; }
-        showSub(sub + 1);
-      }
-      function back(){
-        if (sub === 0) { prev(); return; }
-        showSub(sub - 1);
-      }
-
-      if (backBtn) backBtn.addEventListener('click', function(e){ if (current === stepIndex) { e.preventDefault(); back(); } });
-      if (nextBtn) nextBtn.addEventListener('click', function(e){ if (current === stepIndex) { e.preventDefault(); advance(); } });
-
-      // Auto-advance behaviors for inputs
-      groups.forEach(g => {
-        const inputs = Array.from(g.querySelectorAll('input, select, textarea'));
-        const isTextLike = inputs.some(el => el.type === 'text' || el.type === 'email' || el.type === 'tel' || el.type === 'number' || el.tagName === 'TEXTAREA');
-        const isSelect = inputs.some(el => el.tagName === 'SELECT');
-        const isRadio = inputs.some(el => el.type === 'radio');
-
-        if (isRadio) {
-          inputs.forEach(el => el.addEventListener('change', function(){
-            const any = g.querySelector('input[type="radio"]:checked');
-            if (any) advance();
-          }));
-        }
-        if (isSelect) {
-          inputs.forEach(el => el.addEventListener('change', function(){ if (el.value) advance(); }));
-        }
-        if (isTextLike) {
-          inputs.forEach(el => {
-            el.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); if (el.checkValidity()) advance(); }});
-            el.addEventListener('blur', function(){ if (el.checkValidity()) advance(); });
-          });
-        }
-      });
-
-      // Hook into step transitions
-      const origShow = showStep;
-      showStep = function(index){
-        origShow(index);
-        if (index === stepIndex) { hideAll(); showSub(sub); }
-      };
-
-      if (current === stepIndex) { hideAll(); showSub(sub); }
-    } catch(_) { /* no-op */ }
-  })();
+    });
+  }
 
   // Prevent submit if last step invalid (redundant guard; ghl-integration handles submission)
   form.addEventListener('submit', function (e) {
@@ -700,31 +1081,6 @@
         toggleGarageSpaces();
       } catch (_) { /* no-op */ }
     });
-  })();
-
-  // --- Opendoor-style micro-steps within Step 2 (question-per-screen) ---
-  (function microSteps() {
-    try {
-      const stepIndex = 1; // Step 2 (0-based)
-      const stepEl = steps[stepIndex];
-      if (!stepEl) return;
-
-      // Collect question blocks in the order they appear
-      // Include .form-group and [role="group"], exclude conditional detail wrappers
-      const all = Array.from(stepEl.querySelectorAll('.form-group, [role="group"]'));
-      const questions = all.filter(el => !(
-        el.classList.contains('garagespaces-wrap') ||
-        el.classList.contains('hoadues-wrap') ||
-        el.classList.contains('repairs-list') ||
-        el.classList.contains('poolspadetails') ||
-        el.classList.contains('solardetails')
-      ));
-      if (!questions.length) return;
-
-      let sub = 0; // current question index
-
-      // Controls inside step 2
-      const backBtn = stepEl.querySelector('[data-action="back"]');
       const nextBtn = stepEl.querySelector('[data-action="next"]');
 
       function hideAllQs() { questions.forEach(q => q.style.display = 'none'); }

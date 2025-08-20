@@ -8,7 +8,7 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
     <!-- CSS -->
-    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/opendoor-style.css">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,18 +32,26 @@
                         <span class="logo-text">Home<span class="text-primary">MAXX</span></span>
                     </a>
                 </div>
-                <nav class="main-nav" id="main-navigation" aria-label="Main navigation">
-                    <ul role="menubar">
-                        <li role="none">
-                            <a href="/" class="active" role="menuitem" aria-current="page">Home</a>
-                        </li>
-                        <li role="none">
-                            <a href="pages/get-offer.html" role="menuitem">Contact</a>
-                        </li>
-                    </ul>
-                </nav>
+                <div class="header-nav">
+                    <nav class="main-nav" id="main-navigation" aria-label="Main navigation">
+                        <ul role="menubar">
+                            <li role="none">
+                                <a href="pages/address-entry.html" role="menuitem">Sell</a>
+                            </li>
+                            <li role="none">
+                                <a href="#buy" role="menuitem">Buy</a>
+                            </li>
+                            <li role="none">
+                                <a href="#browse-homes" role="menuitem">Browse homes</a>
+                            </li>
+                            <li role="none">
+                                <a href="#agents" role="menuitem">Agents</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
                 <div class="header-cta">
-                    <a href="pages/get-offer.html" class="btn btn-primary">Get Instant Offer</a>
+                    <a href="pages/address-entry.html" class="btn btn-primary">Get offer</a>
                 </div>
                 <button class="mobile-menu-toggle" 
                         aria-label="Toggle mobile menu" 
@@ -62,48 +70,87 @@
     </header>
 
     <main id="main-content">
-        <!-- Hero Section -->
+        <!-- Hero Section - Opendoor Style -->
         <section class="hero" aria-labelledby="hero-heading">
             <div class="container">
                 <div class="hero-content">
-                    <h1 id="hero-heading">Get an Instant Cash Offer for Your Home</h1>
-                    <p class="lead">Qualifying sellers can receive <strong>$7,500 in as little as 48 hours</strong> after qualification — before your home is sold. No repairs. No showings.</p>
-                    <!-- Offer banner: prominent and accessible -->
-                    <div class="offer-banner" role="status" aria-live="polite">
-                        <span class="badge">New</span>
-                        <span class="offer-text">$7,500 Instant Cash Offer — only <strong><span id="slotsRemainingHome">5</span> slots</strong> available this month. See if you qualify.</span>
-                    </div>
+                    <h1 id="hero-heading">Make the easy move</h1>
+                    <p class="lead">Request a cash offer today. See the ways we can help you sell your home.</p>
                     
                     <!-- Address capture: primary CTA -->
                     <form class="hero-address" onsubmit="return false" aria-label="Start with your property address">
-                        <label for="heroAddress" class="sr-only">Enter property address</label>
-                        <input id="heroAddress" name="heroAddress" type="text" inputmode="text" autocomplete="street-address" placeholder="Enter property address" aria-describedby="hero-help" required>
-                        <button id="heroStart" class="btn btn-primary" type="button">Get My Instant Cash Offer</button>
-                        <div id="hero-help" class="assistive-text">Use your street address to get started. Google Places helps autocomplete.</div>
+                        <label for="heroAddress" class="sr-only">Enter your home address</label>
+                        <input id="heroAddress" name="heroAddress" type="text" inputmode="text" autocomplete="street-address" placeholder="Enter your home address" aria-describedby="hero-help" required>
+                        <button id="heroStart" class="btn btn-primary" type="button">Get started</button>
+                        <div id="hero-help" class="assistive-text">This helps us find sales data for your home and other homes nearby.</div>
                     </form>
-                    <!-- Trust strip -->
-                    <div class="trust-strip" aria-label="Trusted benefits and coverage">
-                        <div class="trust-row">
-                            <span class="trust-kicker">Trusted in</span>
-                            <span class="trust-geo">NV</span>
-                            <span class="trust-geo">CA</span>
-                            <span class="trust-geo">OR</span>
-                            <span class="trust-geo">WA</span>
-                            <span class="trust-geo">AZ</span>
-                            <span class="trust-geo">TX</span>
-                            <span class="trust-geo">UT</span>
-                            <span class="trust-geo">NM</span>
+                    
+                    <!-- Offer banner -->
+                    <div class="offer-banner" role="status" aria-live="polite">
+                        <span class="badge">Finish your offer today</span>
+                        <span class="offer-text"><strong><span id="slotsRemainingHome">5329</span> Jackson Valley Ct</strong></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Property Showcase Section -->
+        <section class="section">
+            <div class="container">
+                <div class="property-showcase">
+                    <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Beautiful home exterior" class="property-image">
+                    <div class="offer-overlays">
+                        <div class="offer-bubble">
+                            <div class="offer-avatar">JM</div>
+                            <div class="offer-details">
+                                <h4>Highest offer</h4>
+                                <p class="offer-amount">$452K</p>
+                            </div>
                         </div>
-                        <div class="trust-badges" role="list">
-                            <span role="listitem" class="trust-badge"><i class="fa-solid fa-bolt"></i> 48-hr Qualification</span>
-                            <span role="listitem" class="trust-badge"><i class="fa-solid fa-screwdriver-wrench"></i> No Repairs</span>
-                            <span role="listitem" class="trust-badge"><i class="fa-solid fa-shield-halved"></i> CPRA Opt‑Out</span>
-                            <span role="listitem" class="trust-badge"><i class="fa-solid fa-headset"></i> Support 8am–8pm PST</span>
+                        <div class="offer-bubble">
+                            <div class="offer-avatar" style="background: var(--primary); color: white;">💰</div>
+                            <div class="offer-details">
+                                <h4>Save up to <span class="value-highlight savings-percentage">6</span>% in fees</h4>
+                                <p class="offer-amount">No realtor commissions</p>
+                            </div>
+                        </div>
+                        <div class="offer-bubble">
+                            <div class="offer-avatar">SM</div>
+                            <div class="offer-details">
+                                <h4>New offer</h4>
+                                <p class="offer-amount">$446K</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="hero-secondary">
-                        <a href="#contact" class="btn btn-outline">Why HomeMAXX</a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Start Your Sale Section -->
+        <section class="section bg-light">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2>Start your sale with an offer in hand</h2>
+                    <p class="lead">Skip the work with a cash offer from HomeMAXX. Or list for more and use our offer as a backup plan.</p>
+                </div>
+                
+                <!-- Mobile App Preview -->
+                <div style="text-align: center; margin: 3rem 0;">
+                    <div style="display: inline-block; background: #000; border-radius: 25px; padding: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+                        <div style="background: white; border-radius: 20px; padding: 2rem 1.5rem; width: 300px; min-height: 400px; position: relative;">
+                            <div style="text-align: center; margin-bottom: 1rem; font-size: 0.875rem; color: #666;">9:41</div>
+                            <div style="background: #f3f4f6; height: 4px; border-radius: 2px; margin-bottom: 2rem;"></div>
+                            <div style="text-align: left;">
+                                <div style="font-size: 0.875rem; color: #1a56ff; margin-bottom: 0.5rem;">1983 Juanita Ave</div>
+                                <div style="color: #1a56ff; font-size: 0.75rem; float: right; margin-top: -1.5rem;">Save</div>
+                                <h3 style="font-size: 1.5rem; font-weight: 600; margin: 1rem 0; color: #111;">How would you describe your kitchen?</h3>
+                            </div>
+                        </div>
                     </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">Cash offer</h3>
                 </div>
             </div>
         </section>
@@ -111,37 +158,167 @@
 
 
 
-        <!-- Value Highlights (replaces contact form) -->
-        <section id="contact" class="section bg-light">
+        <!-- Selling Options Section -->
+        <section class="section">
             <div class="container">
                 <div class="section-header text-center">
-                    <h2>Why HomeMAXX</h2>
-                    <p class="lead">A faster, simpler way to sell — designed around you.</p>
+                    <h2>Selling options</h2>
                 </div>
-                <div class="grid two" style="gap:1rem;">
-                    <div class="step">
-                        <div class="step-number"><i class="fa-solid fa-bolt"></i></div>
-                        <h3>48‑Hour Qualification</h3>
-                        <p>Get qualified fast and keep your timeline. No listings or showings.</p>
-                    </div>
-                    <div class="step">
-                        <div class="step-number"><i class="fa-solid fa-sack-dollar"></i></div>
-                        <h3>$7,500 Instant Cash</h3>
-                        <p>Qualifying sellers can receive funds in as little as 48 hours after qualification.</p>
-                    </div>
-                    <div class="step">
-                        <div class="step-number"><i class="fa-solid fa-screwdriver-wrench"></i></div>
-                        <h3>No Repairs Needed</h3>
-                        <p>Sell as‑is. Skip renovations, staging, and contractor delays.</p>
-                    </div>
-                    <div class="step">
-                        <div class="step-number"><i class="fa-solid fa-shield-halved"></i></div>
-                        <h3>Transparent & Secure</h3>
-                        <p>Clear terms, CPRA opt‑out, and responsive support 8am–8pm PST.</p>
+                
+                <div style="text-align: center; margin: 3rem 0;">
+                    <div style="display: inline-flex; align-items: center; gap: 1rem; background: var(--primary-50); padding: 1rem 2rem; border-radius: 12px; border: 1px solid var(--primary-200);">
+                        <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">🏠</div>
+                        <div style="text-align: left;">
+                            <div style="font-size: 0.875rem; color: var(--text-muted);">Cash offer</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--text);">HomeMAXX</div>
+                        </div>
+                        <div style="font-size: 2rem; font-weight: 800; color: var(--text); margin-left: 2rem;">$438,350</div>
                     </div>
                 </div>
-                <div class="text-center" style="margin-top:1.25rem;">
-                    <a href="pages/get-offer.html" class="btn btn-primary btn-lg">Start My Instant Offer</a>
+                
+                <div class="section-header text-center">
+                    <h2>Choose our offer or list with an all-cash backup plan</h2>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Comparison Section - Storydoor Style -->
+        <section class="comparison-section">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2>You're in control of <span style="color: var(--primary);">selling your home</span></h2>
+                </div>
+                
+                <!-- Benefits Grid -->
+                <div class="grid three" style="margin-bottom: 4rem;">
+                    <div class="step">
+                        <div class="step-number"><i class="fa-solid fa-handshake"></i></div>
+                        <h3>Save up to <span class="value-highlight savings-percentage">6</span>% in fees</h3>
+                        <p>No realtor commissions or hidden costs when you sell directly to us.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number"><i class="fa-solid fa-calendar-check"></i></div>
+                        <h3>Close in as few as <span class="value-highlight days-to-close">7</span> days</h3>
+                        <p>Pick your preferred move-out date. We'll close on your timeline, not ours.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number"><i class="fa-solid fa-trophy"></i></div>
+                        <h3><span class="value-highlight cash-offers">500</span>+ guaranteed cash offers</h3>
+                        <p>We make you a competitive cash offer based on your home's value and market conditions.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number"><i class="fa-solid fa-tools"></i></div>
+                        <h3>No upgrades or repairs</h3>
+                        <p>We buy homes as-is. No need to spend time or money on repairs or upgrades.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number"><i class="fa-solid fa-eye-slash"></i></div>
+                        <h3>Skip the showings</h3>
+                        <p>No need to prep your home for showings. We make an offer based on public records and photos.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number"><i class="fa-solid fa-shield-alt"></i></div>
+                        <h3>No closing uncertainty</h3>
+                        <p>Our cash offers don't fall through. We close on time, every time.</p>
+                    </div>
+                </div>
+                
+                <!-- How HomeMAXX compares to listing -->
+                <div class="section-header text-center">
+                    <h2>How HomeMAXX <span style="color: var(--primary);">compares to listing</span></h2>
+                </div>
+                
+                <div class="comparison-grid">
+                    <div class="comparison-side">
+                        <h3>Traditional home sale</h3>
+                        <span class="comparison-stat">6%</span>
+                        <div class="comparison-label">commission*</div>
+                        
+                        <div class="comparison-details">
+                            <div class="comparison-item">
+                                <span>Average days to close a sale</span>
+                                <span>55 days ❌</span>
+                            </div>
+                            <div class="comparison-item">
+                                <span>Average number of showings</span>
+                                <span>15-25 showings ❌</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-vs">vs</div>
+                    
+                    <div class="comparison-side">
+                        <h3>Selling to HomeMAXX</h3>
+                        <span class="comparison-stat">0%</span>
+                        <div class="comparison-label">average commission*</div>
+                        
+                        <div class="comparison-details">
+                            <div class="comparison-item">
+                                <span>Average days to close a sale</span>
+                                <span>7-12 days ✅</span>
+                            </div>
+                            <div class="comparison-item">
+                                <span>Average number of showings</span>
+                                <span>1 showing ✅</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Transaction costs comparison -->
+                <div style="margin-top: 4rem;">
+                    <h3 style="text-align: center; margin-bottom: 2rem;">Transaction costs</h3>
+                    
+                    <div class="comparison-grid">
+                        <div class="comparison-side">
+                            <div class="comparison-details">
+                                <div class="comparison-item">
+                                    <span>Seller pays</span>
+                                    <span>2% - Seller pays ❌</span>
+                                </div>
+                                <div class="comparison-item">
+                                    <span>What Pros Closing Costs?</span>
+                                    <span>Up to 9% ❌</span>
+                                </div>
+                                <div class="comparison-item">
+                                    <span>Seller Concessions</span>
+                                    <span>$1,500 - $30,000 ❌</span>
+                                </div>
+                                <div class="comparison-item">
+                                    <span>Buyer's Inspection Repair costs</span>
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="comparison-vs">vs</div>
+                        
+                        <div class="comparison-side">
+                            <div class="comparison-details">
+                                <div class="comparison-item">
+                                    <span>None</span>
+                                    <span>✅</span>
+                                </div>
+                                <div class="comparison-item">
+                                    <span>What Pros Closing Costs?</span>
+                                    <span>None ✅</span>
+                                </div>
+                                <div class="comparison-item">
+                                    <span>Seller Concessions</span>
+                                    <span>None - Sell as-is ✅</span>
+                                </div>
+                                <div class="comparison-item">
+                                    <span>Buyer's Inspection Repair costs</span>
+                                    <span>None ✅</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center" style="margin-top: 3rem;">
+                    <button id="offerCTABtn" class="btn btn-primary btn-lg">Get your cash offer</button>
                 </div>
             </div>
         </section>
@@ -247,7 +424,7 @@
           var addr = (document.getElementById('heroAddress')||{}).value || '';
           if (!addr.trim()) { (document.getElementById('heroAddress')||{}).focus?.(); return; }
           try { if (window.gtag) window.gtag('event', 'hero_start', { action: 'click', location: 'homepage_hero' }); } catch(e) {}
-          window.location.href = 'pages/get-offer.html?address=' + encodeURIComponent(addr.trim());
+          window.location.href = 'pages/address-entry.html?address=' + encodeURIComponent(addr.trim());
         }
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', function(){
@@ -258,9 +435,29 @@
           var btn = document.getElementById('heroStart'); if (btn) btn.addEventListener('click', go);
           var inp = document.getElementById('heroAddress'); if (inp) inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); go(); }});
         }
+        
+        // Bind offer CTA button
+        document.addEventListener('DOMContentLoaded', function() {
+          const offerBtn = document.getElementById('offerCTABtn');
+          if (offerBtn) {
+            offerBtn.addEventListener('click', function() {
+              window.location.href = 'pages/address-entry.html';
+            });
+          }
+        });
       })();
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHBid-FjKVCrF1E4IL90jD71fTAUcwv4s&libraries=places&callback=initGooglePlaces"></script>
+    <script>
+      function initGooglePlaces() {
+        // Initialize Google Places for homepage
+        if (typeof window.attachPlaces === 'function') {
+          window.attachPlaces();
+        }
+      }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHBid-FjKVCrF1E4IL90jD71fTAUcwv4s&libraries=places&loading=async&callback=initGooglePlaces"></script>
+  <script src="assets/js/animated-highlights.js"></script>
+  <script src="assets/js/resume-offer.js"></script>
 
     <!-- Live slots remaining (Netlify Function) -->
     <script>
