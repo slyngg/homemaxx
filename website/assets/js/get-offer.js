@@ -16,6 +16,18 @@
     try { if (window.gtag) window.gtag('event', event, params || {}); } catch (e) {}
   }
 
+  // Live Slots: fetch remaining and display if ribbon exists
+  async function updateSlotsDisplay() {
+    try {
+      const res = await fetch('/.netlify/functions/slots', { headers: { 'Accept': 'application/json' }, cache: 'no-store' });
+      const json = await res.json();
+      if (json && typeof json.remaining === 'number') {
+        const el = document.getElementById('slotsRemainingFunnel');
+        if (el) el.textContent = String(json.remaining);
+      }
+    } catch (_) { /* no-op */ }
+  }
+
   // Minimize distractions: collapse main nav if present
   try {
     const mainNav = document.querySelector('.main-nav ul');
@@ -284,7 +296,19 @@
 
   // Redirect to thank-you page after GHL success
   document.addEventListener('ghl:submit:success', function () {
-    window.location.href = 'thank-you.html';
+    // Decrement slots counter but do not block redirect for long
+    try {
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 1200);
+      fetch('/.netlify/functions/slots', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'decrement' }),
+        signal: controller.signal,
+      }).catch(function(){}).finally(function(){ clearTimeout(t); });
+    } catch (_) {}
+    // Small delay to increase chance request fires, then redirect
+    setTimeout(function(){ window.location.href = 'thank-you.html'; }, 150);
   });
 
   // --- Step 2 dynamic UI: HOA dues + Repairs checklist ---
@@ -390,4 +414,6 @@
 
   // Initialize
   showStep(current);
+  // Initialize live slots display if present
+  updateSlotsDisplay();
 })();

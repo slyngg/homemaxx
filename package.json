@@ -1,0 +1,13 @@
+{
+  "name": "homemaxx-site",
+  "private": true,
+  "version": "1.0.0",
+  "description": "HomeMAXX static site with Netlify Functions",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^6.4.1"
+  }
+}

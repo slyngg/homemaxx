@@ -74,7 +74,7 @@
                     <!-- Offer banner: prominent and accessible -->
                     <div class="offer-banner" role="status" aria-live="polite">
                         <span class="badge">New</span>
-                        <span class="offer-text">$7,500 Instant Cash Offer — only <strong>5 slots</strong> available this month. See if you qualify.</span>
+                        <span class="offer-text">$7,500 Instant Cash Offer — only <strong><span id="slotsRemainingHome">5</span> slots</strong> available this month. See if you qualify.</span>
                     </div>
                     <!-- Address capture: primary CTA -->
                     <form class="hero-address" onsubmit="return false" aria-label="Start with your property address">
@@ -311,6 +311,17 @@
       })();
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrANlZTJp12AkuSXfukoEee9oW6W92rxs&libraries=places&callback=initGooglePlaces"></script>
+
+    <!-- Live slots remaining (Netlify Function) -->
+    <script>
+      (function fetchSlots(){
+        function setText(id, value){ var el = document.getElementById(id); if(el){ el.textContent = String(value); } }
+        fetch('/.netlify/functions/slots', { headers: { 'Accept': 'application/json' }, cache: 'no-store' })
+          .then(function(r){ return r.json(); })
+          .then(function(json){ if(json && typeof json.remaining === 'number'){ setText('slotsRemainingHome', json.remaining); } })
+          .catch(function(){});
+      })();
+    </script>
 
     <!-- Success/Error Alert Styles -->
     <style>
