@@ -631,21 +631,47 @@ input::placeholder, textarea::placeholder { color: #9ca3af; }
   color: #0b1220;
 }
 .go-step .question-subtitle { color: #64748b; font-size: 1.05rem; margin-bottom: 1rem; }
-
-/* Sticky bottom action bar with safe-area padding */
-.go-step .form-actions {
-  position: sticky;
-  bottom: 0;
-  padding-bottom: max(.5rem, env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, rgba(255,255,255,0), #ffffff 50%);
-}
 .go-step .form-actions .btn {
   border-radius: 22px;
   padding: .9rem 1.25rem;
 }
 
+/* Chevron affordances on Back/Next without HTML changes */
+.go-step .form-actions [data-action="back"]::before {
+  content: '‹';
+  display: inline-block;
+  margin-right: 6px;
+  font-size: 20px;
+  line-height: 1;
+}
+.go-step .form-actions [data-action="next"]::after {
+  content: '›';
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 20px;
+  line-height: 1;
+}
+
 /* Gentle dividers like iOS */
 .go-step .form-group + .form-group { border-top: 1px solid #eef2f7; padding-top: 1rem; }
+
+/* Question title sizing (works for label/h3 used as group headings) */
+.go-step .form-group > label,
+.go-step .form-group > h3,
+.go-step .form-group > h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0b1220;
+  margin-bottom: .5rem;
+}
+.go-step .form-group .help,
+.go-step .form-group .subtext,
+.go-step .form-group small {
+  color: #6b7280;
+}
+
+/* Larger, comfy spacing for question groups */
+.go-step .form-group { margin-bottom: 1rem; }
 
 /* Card-grid questions with image tiles */
 .go-step .as-cards {
@@ -681,4 +707,15 @@ input::placeholder, textarea::placeholder { color: #9ca3af; }
 /* Thin iOS-blue progress bar */
 .progress { height: 6px; background: #eef2f7; }
 .progress-bar { height: 6px; background: #1a56ff; border-radius: 3px; }
+
+/* Pill options polish (fallback for non-card options) */
+.go-step .form-check span {
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.go-step .form-check input[type="radio"]:checked + span,
+.go-step .form-check input[type="checkbox"]:checked + span {
+  border-color: #1a56ff;
+  background-color: rgba(26,86,255,0.06);
+  box-shadow: 0 0 0 3px rgba(26,86,255,.15);
+}
 
