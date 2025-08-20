@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!contactForm) return;
 
     // Update the form action with your actual GHL webhook URL
-    const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/YOUR_PIPELINE_ID/web_trigger';
+    const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/9333ce9b-d9ef-4d5c-baa3-be9fe343a536';
     
     // Update the form action URL
     contactForm.action = GHL_WEBHOOK_URL;
@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const hiddenFields = [
         { name: 'status', value: 'New Lead' },
         { name: 'leadSource', value: 'Website Form' },
-        { name: 'tags', value: 'website_lead' },
         { name: 'website', value: window.location.href }
     ];
 
@@ -42,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
         submitButton.disabled = true;
         buttonText.textContent = 'Processing...';
         spinner.classList.remove('d-none');
-        
+
         try {
             // Submit the form data to GHL
             const formData = new FormData(this);
@@ -58,12 +57,20 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.ok) {
                 showAlert('success', 'Thank you! Your information has been submitted successfully. We\'ll be in touch soon!');
                 contactForm.reset();
+                // Emit success event for funnel controller
+                try {
+                    document.dispatchEvent(new CustomEvent('ghl:submit:success', { detail: { status: 'ok' } }));
+                } catch (_) {}
             } else {
                 throw new Error('Failed to submit form');
             }
         } catch (error) {
             console.error('Error submitting form:', error);
             showAlert('danger', 'There was an error submitting your form. Please try again or contact us directly at info@homemaxx.llc');
+            // Emit error event
+            try {
+                document.dispatchEvent(new CustomEvent('ghl:submit:error', { detail: { error: String(error) } }));
+            } catch (_) {}
         } finally {
             // Reset button state
             submitButton.disabled = false;

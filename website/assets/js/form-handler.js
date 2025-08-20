@@ -1,5 +1,5 @@
 /**
- * HomeMaxx Form Handler
+ * HomeMAXX Form Handler
  * Handles form submission for the contact form with loading states and success/error messages
  */
 

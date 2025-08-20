@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Get Your Cash Offer | HomeMAXX</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* Ensure Places autocomplete dropdown appears above UI */
+    .pac-container { z-index: 2000 !important; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <div class="header-inner">
+        <div class="logo"><a href="/" class="logo-link"><span class="logo-text">Home<span class="text-primary">MAXX</span></span></a></div>
+        <nav class="main-nav" aria-label="Main navigation">
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="investment-opportunities.html">Properties</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="section bg-light">
+    <div class="container">
+      <div class="section-header text-center">
+        <h1>Get Your Cash Offer</h1>
+        <p class="lead">Answer a few questions. No obligation. It only takes a minute.</p>
+      </div>
+
+      <!-- Stepper -->
+      <div class="card" role="region" aria-label="Get Offer Steps">
+        <div class="progress" style="height: 8px; margin: 0">
+          <div id="go-progress" class="progress-bar" style="width: 25%" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25"></div>
+        </div>
+
+        <div class="card-content">
+          <form id="contact-form" class="go-form" method="POST" data-webform="true" novalidate>
+            <!-- Hidden context fields -->
+            <input type="hidden" name="source" value="Get Offer Funnel" />
+            <input type="hidden" name="tags" value="website_lead,get_offer" />
+
+            <!-- Step 1: Address -->
+            <fieldset class="go-step" data-step="1" aria-describedby="s1-desc">
+              <legend class="h3">Property Address</legend>
+              <p id="s1-desc" class="text-muted">We use this to generate your personalized offer.</p>
+
+              <div class="form-group">
+                <label for="propertyAddress">Property Address *</label>
+                <input type="text" id="propertyAddress" name="propertyAddress" class="form-control" required aria-required="true" autocomplete="street-address" />
+                <div class="invalid-feedback">Please enter a valid property address.</div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-primary" data-action="next">Continue</button>
+              </div>
+            </fieldset>
+
+            <!-- Step 2: Home Details -->
+            <fieldset class="go-step d-none" data-step="2" aria-describedby="s2-desc">
+              <legend class="h3">Home Details</legend>
+              <p id="s2-desc" class="text-muted">Tell us a bit about the property condition.</p>
+
+              <div class="grid two">
+                <div class="form-group">
+                  <label for="beds">Bedrooms *</label>
+                  <select id="beds" name="beds" class="form-control" required>
+                    <option value="" disabled selected>Select</option>
+                    <option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
+                  </select>
+                  <div class="invalid-feedback">Select bedrooms.</div>
+                </div>
+                <div class="form-group">
+                  <label for="baths">Bathrooms *</label>
+                  <select id="baths" name="baths" class="form-control" required>
+                    <option value="" disabled selected>Select</option>
+                    <option>1</option><option>1.5</option><option>2</option><option>2.5</option><option>3+</option>
+                  </select>
+                  <div class="invalid-feedback">Select bathrooms.</div>
+                </div>
+              </div>
+
+              <!-- Floors & Basement (optional parity fields) -->
+              <div class="grid two">
+                <div class="form-group">
+                  <label for="floors_above_ground">Floors (above ground) <span class="text-muted" style="font-weight:400">(optional)</span></label>
+                  <select id="floors_above_ground" name="floors_above_ground" class="form-control">
+                    <option value="" selected>Select</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3+</option>
+                  </select>
+                </div>
+                <div class="form-group" role="group" aria-labelledby="basement-label">
+                  <span id="basement-label" class="label">Basement <span class="text-muted" style="font-weight:400">(optional)</span></span>
+                  <div class="grid two" style="margin-top:.5rem">
+                    <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                      <input type="radio" name="basement" value="yes" />
+                      <span>Yes</span>
+                    </label>
+                    <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                      <input type="radio" name="basement" value="no" />
+                      <span>No</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="condition">Overall Condition *</label>
+                <select id="condition" name="condition" class="form-control" required>
+                  <option value="" disabled selected>Select</option>
+                  <option>Needs work</option>
+                  <option>Livable but dated</option>
+                  <option>Updated</option>
+                </select>
+                <div class="invalid-feedback">Select overall condition.</div>
+              </div>
+
+              <!-- Property Type (radio tiles) -->
+              <div class="form-group" role="group" aria-labelledby="prop-type-label">
+                <span id="prop-type-label" class="label">Property type *</span>
+                <div class="grid two" style="margin-top:.5rem">
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="prop_type" value="single_family" required />
+                    <span>Single-family</span>
+                  </label>
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="prop_type" value="townhome" required />
+                    <span>Townhome</span>
+                  </label>
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="prop_type" value="condo" required />
+                    <span>Condo</span>
+                  </label>
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="prop_type" value="multi_family" required />
+                    <span>Multi-family</span>
+                  </label>
+                </div>
+                <div class="invalid-feedback">Please select a property type.</div>
+              </div>
+
+              <!-- Year built, Square footage, Lot size (optional) -->
+              <div class="grid three">
+                <div class="form-group">
+                  <label for="year_built">Year built *</label>
+                  <input type="number" id="year_built" name="year_built" class="form-control" min="1800" max="2100" required />
+                  <div class="invalid-feedback">Enter the year built.</div>
+                </div>
+                <div class="form-group">
+                  <label for="sqft">Approx. square footage *</label>
+                  <input type="number" id="sqft" name="sqft" class="form-control" min="100" step="1" required />
+                  <div class="invalid-feedback">Enter approximate square footage.</div>
+                </div>
+                <div class="form-group">
+                  <label for="lot_size">Lot size (optional)</label>
+                  <input type="number" id="lot_size" name="lot_size" class="form-control" min="0" step="1" />
+                </div>
+              </div>
+
+              <!-- Parking -->
+              <div class="form-group" role="group" aria-labelledby="parking-label">
+                <span id="parking-label" class="label">Parking *</span>
+                <div class="grid two" style="margin-top:.5rem">
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="parking" value="garage" required />
+                    <span>Garage</span>
+                  </label>
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="parking" value="carport" required />
+                    <span>Carport</span>
+                  </label>
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="parking" value="street" required />
+                    <span>Street</span>
+                  </label>
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="parking" value="none" required />
+                    <span>None</span>
+                  </label>
+                </div>
+                <div class="garagespaces-wrap d-none" style="margin-top:.5rem">
+                  <label for="garage_spaces">Garage spaces (optional)</label>
+                  <input type="number" id="garage_spaces" name="garage_spaces" class="form-control" min="0" max="10" />
+                </div>
+                <div class="invalid-feedback">Please select parking.</div>
+              </div>
+
+              <!-- HOA + dues (dues optional, shown if HOA yes) -->
+              <div class="form-group" role="group" aria-labelledby="hoa-label">
+                <span id="hoa-label" class="label">Is there an HOA? *</span>
+                <div class="grid two" style="margin-top:.5rem">
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="hoa" value="yes" required />
+                    <span>Yes</span>
+                  </label>
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="hoa" value="no" required />
+                    <span>No</span>
+                  </label>
+                </div>
+                <div class="hoadues-wrap d-none" style="margin-top:.5rem">
+                  <label for="hoa_dues">Monthly HOA dues (optional)</label>
+                  <input type="number" id="hoa_dues" name="hoa_dues" class="form-control" min="0" step="1" />
+                </div>
+                <div class="invalid-feedback">Please select HOA yes or no.</div>
+              </div>
+
+              <!-- Occupancy -->
+              <div class="form-group" role="group" aria-labelledby="occupancy-label">
+                <span id="occupancy-label" class="label">Occupancy *</span>
+                <div class="grid two" style="margin-top:.5rem">
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="occupancy" value="owner" required />
+                    <span>Owner-occupied</span>
+                  </label>
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="occupancy" value="tenant" required />
+                    <span>Tenant</span>
+                  </label>
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="occupancy" value="vacant" required />
+                    <span>Vacant</span>
+                  </label>
+                </div>
+                <div class="invalid-feedback">Please select occupancy.</div>
+              </div>
+
+              <!-- ADU: Accessory Dwelling Unit -->
+              <div class="form-group" role="group" aria-labelledby="adu-label">
+                <div class="label-row" style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
+                  <span id="adu-label" class="label">Does the property have an ADU? *</span>
+                  <span class="help-icon" aria-label="What is an ADU?" title="An Accessory Dwelling Unit (ADU) is a smaller, independent residential living space on the same property as a primary single-family home. ADUs may be internal (converted basement/attic), attached (addition to a garage or home), or detached (backyard cottage/coach house). They have their own kitchen, bathroom, living area, and a separate entrance." style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#eef;color:#223;font-size:12px;cursor:help;user-select:none">i</span>
+                </div>
+                <div class="grid two" style="margin-top:.5rem">
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="has_adu" value="yes" required />
+                    <span>Yes</span>
+                  </label>
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="has_adu" value="no" required />
+                    <span>No</span>
+                  </label>
+                </div>
+                <div class="invalid-feedback">Please select whether the property has an ADU.</div>
+              </div>
+
+              <!-- Repairs -->
+              <div class="form-group" role="group" aria-labelledby="repairs-label">
+                <span id="repairs-label" class="label">Are repairs needed? *</span>
+                <div class="grid two" style="margin-top:.5rem">
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="repairs_needed" value="yes" required />
+                    <span>Yes</span>
+                  </label>
+                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
+                    <input type="radio" name="repairs_needed" value="no" required />
+                    <span>No</span>
+                  </label>
+                </div>
+                <div class="repairs-list d-none" style="margin-top:.5rem">
+                  <label class="label" style="display:block;margin-bottom:.5rem">Select all that apply</label>
+                  <div class="grid two">
+                    <label class="form-check"><input type="checkbox" name="repairs_list" value="roof" /> Roof</label>
+                    <label class="form-check"><input type="checkbox" name="repairs_list" value="foundation" /> Foundation</label>
+                    <label class="form-check"><input type="checkbox" name="repairs_list" value="plumbing" /> Plumbing</label>
+                    <label class="form-check"><input type="checkbox" name="repairs_list" value="electrical" /> Electrical</label>
+                    <label class="form-check"><input type="checkbox" name="repairs_list" value="hvac" /> HVAC</label>
+                    <label class="form-check"><input type="checkbox" name="repairs_list" value="cosmetic" /> Cosmetic</label>
+                  </div>
+                </div>
+                <div class="invalid-feedback">Please indicate if repairs are needed.</div>
+              </div>
+
+              <!-- Timeline to sell -->
+              <div class="form-group" role="group" aria-labelledby="timeline-label">
+                <span id="timeline-label" class="label">When are you looking to sell? *</span>
+                <div class="grid two" style="margin-top:.5rem">
+                  <label class="form-check"><input type="radio" name="sell_timeline" value="asap" required /> ASAP</label>
+                  <label class="form-check"><input type="radio" name="sell_timeline" value="2_4_weeks" required /> 2–4 weeks</label>
+                  <label class="form-check"><input type="radio" name="sell_timeline" value="1_3_months" required /> 1–3 months</label>
+                  <label class="form-check"><input type="radio" name="sell_timeline" value="3_plus_months" required /> 3+ months</label>
+                </div>
+                <div class="invalid-feedback">Please select a timeline.</div>
+              </div>
+
+              <!-- Mortgage status -->
+              <div class="form-group" role="group" aria-labelledby="mortgage-label">
+                <span id="mortgage-label" class="label">Mortgage status *</span>
+                <div class="grid two" style="margin-top:.5rem">
+                  <label class="form-check"><input type="radio" name="mortgage_status" value="paid_off" required /> Paid off</label>
+                  <label class="form-check"><input type="radio" name="mortgage_status" value="has_mortgage" required /> Has mortgage</label>
+                  <label class="form-check"><input type="radio" name="mortgage_status" value="behind" required /> Behind on payments</label>
+                </div>
+                <div class="invalid-feedback">Please select your mortgage status.</div>
+              </div>
+
+              <div class="poolspadetails d-none" style="margin-top:.5rem">
+                <label for="pool_spa_condition">Pool/Spa condition (optional)</label>
+                <select id="pool_spa_condition" name="pool_spa_condition" class="form-control">
+                  <option value="" selected>Prefer not to say</option>
+                  <option>Poor</option>
+                  <option>Fair</option>
+                  <option>Good</option>
+                  <option>Excellent</option>
+                </select>
+                <div style="margin-top:.5rem">
+                  <label for="pool_type">Pool type (optional)</label>
+                  <select id="pool_type" name="pool_type" class="form-control">
+                    <option value="" selected>Select</option>
+                    <option>In-ground</option>
+                    <option>Above-ground</option>
+                    <option>Community</option>
+                    <option>Private</option>
+                    <option>Unknown</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-actions space-between">
+                <button type="button" class="btn btn-outline" data-action="back">Back</button>
+                <button type="button" class="btn btn-primary" data-action="next">Continue</button>
+              </div>
+            </fieldset>
+
+            <!-- Step 3: Your Info -->
+            <fieldset class="go-step d-none" data-step="3" aria-describedby="s3-desc">
+              <legend class="h3">Your Information</legend>
+              <p id="s3-desc" class="text-muted">So we can send your offer.</p>
+
+              <div class="grid two">
+                <div class="form-group">
+                  <label for="firstName">First Name *</label>
+                  <input type="text" id="firstName" name="firstName" class="form-control" required />
+                  <div class="invalid-feedback">First name is required.</div>
+                </div>
+                <div class="form-group">
+                  <label for="lastName">Last Name *</label>
+                  <input type="text" id="lastName" name="lastName" class="form-control" required />
+                  <div class="invalid-feedback">Last name is required.</div>
+                </div>
+              </div>
+
+              <div class="grid two">
+                <div class="form-group">
+                  <label for="email">Email *</label>
+                  <input type="email" id="email" name="email" class="form-control" required autocomplete="email" />
+                  <div class="invalid-feedback">Enter a valid email.</div>
+                </div>
+                <div class="form-group">
+                  <label for="phone">Phone *</label>
+                  <input type="tel" id="phone" name="phone" class="form-control" required inputmode="tel" autocomplete="tel" />
+                  <div class="invalid-feedback">Enter a valid phone.</div>
+                </div>
+              </div>
+
+              <div class="form-actions space-between">
+                <button type="button" class="btn btn-outline" data-action="back">Back</button>
+                <button type="button" class="btn btn-primary" data-action="next">Continue</button>
+              </div>
+            </fieldset>
+
+            <!-- Step 4: Consent & Submit -->
+            <fieldset class="go-step d-none" data-step="4" aria-describedby="s4-desc">
+              <legend class="h3">Consent & Submit</legend>
+              <p id="s4-desc" class="text-muted">Review and submit to receive your cash offer.</p>
+
+              <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="privacy-policy" name="marketingConsent" value="true" required />
+                <label class="form-check-label" for="privacy-policy">
+                  By checking this box, I agree to the
+                  <a href="legal/privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+                  and
+                  <a href="legal/terms-of-service.html" target="_blank" rel="noopener noreferrer">Terms of Service</a>
+                  and consent to receive calls and texts (including by autodialer, prerecorded messages, and SMS/MMS) from HomeMAXX and its partners at the number provided. Consent is not a condition of purchase. Message and data rates may apply. Message frequency varies. Reply <strong>STOP</strong> to opt out, <strong>HELP</strong> for help.
+                </label>
+              </div>
+
+              <div class="form-actions space-between">
+                <button type="button" class="btn btn-outline" data-action="back">Back</button>
+                <button type="submit" class="btn btn-primary" id="submit-button">
+                  <span class="button-text">Get My Cash Offer</span>
+                  <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                </button>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+
+      <p class="text-muted mt-3" style="font-size: 0.9rem">We respect your privacy. You can manage preferences on our <a href="legal/opt-out.html">Opt-Out</a> page.</p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-about">
+          <div class="footer-logo">HomeMAXX</div>
+          <p>Sell your home fast for cash. No fees, no repairs, no hassle.</p>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2025 HomeMAXX. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../assets/js/get-offer.js"></script>
+  <script src="../assets/js/ghl-integration.js"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrANlZTJp12AkuSXfukoEee9oW6W92rxs&libraries=places&v=weekly&callback=initGooglePlaces"></script>
+</body>
+</html>

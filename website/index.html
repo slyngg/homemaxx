@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HomeMaxx | Fast Cash Offers for Your Home</title>
+    <title>HomeMAXX | Fast Cash Offers for Your Home</title>
+    <base href="/">
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
     <!-- CSS -->
@@ -14,6 +15,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Performance: preconnect to Maps for Places API -->
+    <link rel="preconnect" href="https://maps.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://maps.gstatic.com" crossorigin>
 </head>
 <body>
     <!-- Skip to main content -->
@@ -25,7 +29,7 @@
             <div class="header-inner">
                 <div class="logo">
                     <a href="/" class="logo-link">
-                        <span class="logo-text">Home<span class="text-primary">Maxx</span></span>
+                        <span class="logo-text">Home<span class="text-primary">MAXX</span></span>
                     </a>
                 </div>
                 <nav class="main-nav" id="main-navigation" aria-label="Main navigation">
@@ -37,12 +41,12 @@
                             <a href="pages/investment-opportunities.html" role="menuitem">Properties</a>
                         </li>
                         <li role="none">
-                            <a href="#contact" role="menuitem">Contact</a>
+                            <a href="pages/get-offer.html" role="menuitem">Contact</a>
                         </li>
                     </ul>
                 </nav>
                 <div class="header-cta">
-                    <a href="#contact" class="btn btn-primary">Get Offer</a>
+                    <a href="pages/get-offer.html" class="btn btn-primary">Get Offer</a>
                 </div>
                 <button class="mobile-menu-toggle" 
                         aria-label="Toggle mobile menu" 
@@ -62,14 +66,25 @@
 
     <main id="main-content">
         <!-- Hero Section -->
-        <section class="hero">
+        <section class="hero" aria-labelledby="hero-heading">
             <div class="container">
                 <div class="hero-content">
-                    <h1>Sell Your Home Fast for Cash</h1>
-                    <p class="lead">Get a fair cash offer in 24 hours. No fees, no commissions, no repairs needed. Sell your house as-is and close on your timeline.</p>
-                    <div class="hero-buttons">
-                        <a href="#contact" class="btn btn-primary">Get Your Cash Offer</a>
-                        <a href="#how-it-works" class="btn btn-outline">Learn How It Works</a>
+                    <h1 id="hero-heading">Get an Instant Cash Offer for Your Home</h1>
+                    <p class="lead">Qualifying sellers can receive <strong>$7,500 in as little as 48 hours</strong> after qualification — before your home is sold. No repairs. No showings.</p>
+                    <!-- Offer banner: prominent and accessible -->
+                    <div class="offer-banner" role="status" aria-live="polite">
+                        <span class="badge">New</span>
+                        <span class="offer-text">$7,500 Instant Cash Offer — limited availability. See if you qualify.</span>
+                    </div>
+                    <!-- Address capture: primary CTA -->
+                    <form class="hero-address" onsubmit="return false" aria-label="Start with your property address">
+                        <label for="heroAddress" class="sr-only">Enter property address</label>
+                        <input id="heroAddress" name="heroAddress" type="text" inputmode="text" autocomplete="street-address" placeholder="Enter property address" aria-describedby="hero-help" required>
+                        <button id="heroStart" class="btn btn-primary" type="button">Get My Cash Offer</button>
+                        <div id="hero-help" class="assistive-text">Use your street address to get started. Google Places helps autocomplete.</div>
+                    </form>
+                    <div class="hero-secondary">
+                        <a href="#how-it-works" class="btn btn-outline">How it works</a>
                     </div>
                 </div>
             </div>
@@ -164,7 +179,7 @@
                             </div>
                             <div class="form-group form-check">
                                 <input type="checkbox" class="form-check-input" id="privacy-policy" name="marketingConsent" value="true" required>
-                                <label class="form-check-label" for="privacy-policy">I agree to the <a href="pages/legal/privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a> and <a href="pages/legal/terms-of-service.html" target="_blank" rel="noopener noreferrer">Terms of Service</a>, and consent to receive marketing communications via email and SMS.</label>
+                                <label class="form-check-label" for="privacy-policy">By checking this box, I agree to the <a href="pages/legal/privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a> and <a href="pages/legal/terms-of-service.html" target="_blank" rel="noopener noreferrer">Terms of Service</a> and consent to receive calls and texts (including by autodialer, prerecorded messages, and SMS/MMS) from HomeMAXX and its partners at the number provided. Consent is not a condition of purchase. Message and data rates may apply. Message frequency varies. Reply <strong>STOP</strong> to opt out, <strong>HELP</strong> for help. You can also manage preferences on our <a href="pages/legal/opt-out.html" target="_blank" rel="noopener noreferrer">Opt-Out</a> page.</label>
                             </div>
                             <button type="submit" class="btn btn-primary btn-block" id="submit-button">
                                 <span class="button-text">Get My Cash Offer</span>
@@ -196,7 +211,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-about">
-                    <div class="footer-logo">HomeMaxx</div>
+                    <div class="footer-logo">HomeMAXX</div>
                     <p>We help homeowners sell their properties quickly and easily for cash, with no hidden fees or repairs needed.</p>
                     <div class="social-links">
                         <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -210,11 +225,13 @@
                     <ul>
                         <li><a href="/">Home</a></li>
                         <li><a href="pages/investment-opportunities.html">Investment Properties</a></li>
-                        <li><a href="#contact">Get a Cash Offer</a></li>
+                        <li><a href="pages/get-offer.html">Get a Cash Offer</a></li>
                         <li><a href="#contact?interest=investor">Investor Inquiries</a></li>
                         <li><a href="pages/legal/privacy-policy.html">Privacy Policy</a></li>
                         <li><a href="pages/legal/terms-of-service.html">Terms of Service</a></li>
                         <li><a href="pages/legal/investment-disclaimer.html">Investment Disclaimer</a></li>
+                        <li><a href="pages/legal/privacy-request.html">Privacy Request</a></li>
+                        <li><a href="pages/legal/opt-out.html">Opt-Out</a></li>
                     </ul>
                 </div>
                 <div class="footer-contact">
@@ -225,7 +242,7 @@
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; 2025 HomeMaxx. All rights reserved. | <a href="pages/legal/privacy-policy.html">Privacy Policy</a> | <a href="pages/legal/terms-of-service.html">Terms of Service</a> | <a href="pages/legal/investment-disclaimer.html">Investment Disclaimer</a></p>
+                <p>&copy; 2025 HomeMAXX. All rights reserved. | <a href="pages/legal/privacy-policy.html">Privacy Policy</a> | <a href="pages/legal/terms-of-service.html">Terms of Service</a> | <a href="pages/legal/investment-disclaimer.html">Investment Disclaimer</a> | <a href="pages/legal/privacy-request.html">Privacy Request</a> | <a href="pages/legal/opt-out.html">Opt-Out</a></p>
             </div>
         </div>
     </footer>
@@ -237,14 +254,75 @@
         </div>
     </div>
 
+    <!-- Google tag (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q6KGS5K7ZE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);} // eslint-disable-line
+      gtag('js', new Date());
+      gtag('config', 'G-Q6KGS5K7ZE');
+    </script>
+
     <!-- JavaScript -->
     <script src="assets/js/mobile-menu.js"></script>
     <script src="assets/js/accessibility.js"></script>
     <script src="assets/js/ghl-integration.js"></script>
     <script src="assets/js/main.js"></script>
     
+    <!-- Google Places Autocomplete -->
+    <script>
+      // Attach Places to both the hero input and the contact form input.
+      function initGooglePlaces() {
+        try {
+          var hero = document.getElementById('heroAddress');
+          if (hero && window.google && google.maps && google.maps.places) {
+            var acHero = new google.maps.places.Autocomplete(hero, { types: ['address'], fields: ['formatted_address'] });
+            acHero.addListener('place_changed', function () {
+              var p = acHero.getPlace();
+              if (p && p.formatted_address) hero.value = p.formatted_address;
+            });
+          }
+          var input = document.getElementById('propertyAddress');
+          if (input && window.google && google.maps && google.maps.places) {
+            var ac = new google.maps.places.Autocomplete(input, { types: ['address'], fields: ['formatted_address'] });
+            ac.addListener('place_changed', function () {
+              var place = ac.getPlace();
+              if (place && place.formatted_address) input.value = place.formatted_address;
+            });
+          }
+        } catch (e) { /* noop */ }
+      }
+      // Redirect into funnel with address param
+      (function bindHeroCTA(){
+        function go() {
+          var addr = (document.getElementById('heroAddress')||{}).value || '';
+          if (!addr.trim()) { (document.getElementById('heroAddress')||{}).focus?.(); return; }
+          window.location.href = 'pages/get-offer.html?address=' + encodeURIComponent(addr.trim());
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function(){
+            var btn = document.getElementById('heroStart'); if (btn) btn.addEventListener('click', go);
+            var inp = document.getElementById('heroAddress'); if (inp) inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); go(); }});
+          });
+        } else {
+          var btn = document.getElementById('heroStart'); if (btn) btn.addEventListener('click', go);
+          var inp = document.getElementById('heroAddress'); if (inp) inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); go(); }});
+        }
+      })();
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrANlZTJp12AkuSXfukoEee9oW6W92rxs&libraries=places&callback=initGooglePlaces"></script>
+
     <!-- Success/Error Alert Styles -->
     <style>
+        /* Minimal critical CSS for new hero elements to avoid CLS */
+        .offer-banner { display:flex; align-items:center; gap:.5rem; margin:.75rem 0 1rem; padding:.625rem .875rem; border-radius:10px; background:linear-gradient(90deg, rgba(255,215,115,.25), rgba(255,255,255,0)); border:1px solid rgba(255,193,7,.45); }
+        .offer-banner .badge { background:#FFC107; color:#111; font-weight:700; padding:.2rem .5rem; border-radius:6px; font-size:.8rem; }
+        .offer-banner .offer-text { font-weight:600; }
+        .hero-address { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1rem; }
+        .hero-address input { flex:1 1 360px; min-height:48px; padding:.75rem .9rem; border:1px solid var(--border, #e5e7eb); border-radius:12px; font-size:1rem; }
+        .hero-address .btn { min-height:48px; padding:.75rem 1rem; border-radius:12px; }
+        .assistive-text { font-size:.85rem; color:#6b7280; margin-top:.25rem; }
+        @media (max-width: 480px) { .hero-address input { flex-basis:100%; } }
         .form-alert {
             position: fixed;
             top: 20px;

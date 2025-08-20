@@ -1,4 +1,4 @@
-# HomeMaxx Website Deployment Checklist
+# HomeMAXX Website Deployment Checklist
 
 ## Pre-Deployment Tasks
 

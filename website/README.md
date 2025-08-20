@@ -1,6 +1,6 @@
-# HomeMaxx Real Estate Website
+# HomeMAXX Real Estate Website
 
-A modern, accessible, and responsive real estate website for HomeMaxx, built with HTML5, CSS3, and vanilla JavaScript.
+A modern, accessible, and responsive real estate website for HomeMAXX, built with HTML5, CSS3, and vanilla JavaScript.
 
 ## Features
 

@@ -1,4 +1,4 @@
-// HomeMaxx - Core JavaScript
+// HomeMAXX - Core JavaScript
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavigation();

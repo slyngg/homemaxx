@@ -1,4 +1,4 @@
-# HomeMaxx Design System
+# HomeMAXX Design System
 
 ## Table of Contents
 1. [Colors](#colors)

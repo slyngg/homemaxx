@@ -1,5 +1,5 @@
 /**
- * HomeMaxx Investment Opportunities
+ * HomeMAXX Investment Opportunities
  * Handles the display and interaction with investment properties
  */
 

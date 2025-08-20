@@ -1,6 +1,6 @@
-# HomeMaxx Website Deployment Guide
+# HomeMAXX Website Deployment Guide
 
-This guide provides step-by-step instructions for deploying the HomeMaxx website and setting up the GoHighLevel integration.
+This guide provides step-by-step instructions for deploying the HomeMAXX website and setting up the GoHighLevel integration.
 
 ## Prerequisites
 

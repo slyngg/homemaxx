@@ -1,4 +1,4 @@
-# HomeMaxx Design System
+# HomeMAXX Design System
 
 ## 1. Design Principles
 1. **User-Centric**: Every design decision prioritizes the needs of homeowners and real estate investors
