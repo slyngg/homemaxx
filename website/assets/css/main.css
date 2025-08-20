@@ -179,6 +179,34 @@ a:hover {
 .section { padding: 4rem 0; }
 .bg-light { background: var(--bg-light); }
 
+/* Utilities */
+.d-none { display: none !important; }
+.grid { display: grid; gap: 1rem; }
+.grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.form-actions { display: flex; gap: .75rem; margin-top: 1rem; }
+.form-actions.space-between { justify-content: space-between; }
+
+/* Funnel card + progress */
+.card { border: 1px solid rgba(255,255,255,.08); border-radius: 16px; background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); box-shadow: 0 10px 24px rgba(2,6,23,.25); overflow: hidden; }
+.card .card-content { padding: 1.25rem; }
+.progress { width: 100%; background: rgba(255,255,255,.06); }
+.progress-bar { height: 8px; background: linear-gradient(90deg, var(--primary), var(--primary-700)); }
+
+/* Slide-style steps */
+.go-form { position: relative; }
+.go-step { opacity: 0; transform: translateX(12px); transition: opacity .25s ease, transform .25s ease; pointer-events: none; }
+.go-step.is-active { opacity: 1; transform: none; pointer-events: auto; }
+
+/* Big, tappable option tiles (radio/checkbox) */
+.form-check { position: relative; }
+.form-check input[type="radio"],
+.form-check input[type="checkbox"] { position: absolute; opacity: 0; pointer-events: none; }
+.form-check span { display: block; width: 100%; padding: .9rem 1rem; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); color: #e6ebff; font-weight: 600; transition: var(--transition); }
+.form-check:hover span { border-color: var(--primary); box-shadow: 0 0 0 6px var(--ring); }
+.form-check input:checked + span { border-color: var(--primary); box-shadow: 0 0 0 4px var(--ring); background: linear-gradient(180deg, rgba(99,91,255,.25), rgba(99,91,255,.12)); color: #fff; }
+
 /* Skip link – hidden until focused */
 .skip-link {
   position: absolute;
@@ -423,3 +451,66 @@ a:hover {
     padding: 0.5rem 0;
   }
 }
+
+/* Modal (reusable) */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(3, 6, 23, 0.7);
+  backdrop-filter: blur(6px) saturate(1.1);
+  z-index: 2000;
+}
+.modal.active { display: flex; }
+.modal-content {
+  position: relative;
+  width: min(640px, 92vw);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  box-shadow: 0 24px 60px rgba(2,6,23,.6);
+  color: #e6ebff;
+  padding: 1.25rem 1.25rem;
+}
+.modal-content .close-modal {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: 0;
+  color: #e6ebff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.modal-content .modal-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: .5rem;
+}
+.modal-content .modal-body {
+  font-size: 1rem;
+  color: #c8cee8;
+}
+
+/* Minimal Mode: quick visual polish */
+.container {
+  max-width: 1040px;
+}
+.hero h1 {
+  font-size: clamp(1.9rem, 4.5vw, 3.25rem);
+  line-height: 1.1;
+}
+.hero .lead { font-size: clamp(1rem, 2.2vw, 1.125rem); }
+.hero .btn.btn-primary {
+  font-size: 1.0625rem;
+  padding: 0.9rem 1.15rem;
+  border-radius: 14px;
+}
+.trust-badges .trust-badge {
+  opacity: .9;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+}
+

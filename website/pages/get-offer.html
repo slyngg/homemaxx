@@ -286,12 +286,12 @@
                 <div class="repairs-list d-none" style="margin-top:.5rem">
                   <label class="label" style="display:block;margin-bottom:.5rem">Select all that apply</label>
                   <div class="grid two">
-                    <label class="form-check"><input type="checkbox" name="repairs_list" value="roof" /> Roof</label>
-                    <label class="form-check"><input type="checkbox" name="repairs_list" value="foundation" /> Foundation</label>
-                    <label class="form-check"><input type="checkbox" name="repairs_list" value="plumbing" /> Plumbing</label>
-                    <label class="form-check"><input type="checkbox" name="repairs_list" value="electrical" /> Electrical</label>
-                    <label class="form-check"><input type="checkbox" name="repairs_list" value="hvac" /> HVAC</label>
-                    <label class="form-check"><input type="checkbox" name="repairs_list" value="cosmetic" /> Cosmetic</label>
+                    <label class="form-check"><input type="checkbox" name="repairs_list" value="roof" /><span>Roof</span></label>
+                    <label class="form-check"><input type="checkbox" name="repairs_list" value="foundation" /><span>Foundation</span></label>
+                    <label class="form-check"><input type="checkbox" name="repairs_list" value="plumbing" /><span>Plumbing</span></label>
+                    <label class="form-check"><input type="checkbox" name="repairs_list" value="electrical" /><span>Electrical</span></label>
+                    <label class="form-check"><input type="checkbox" name="repairs_list" value="hvac" /><span>HVAC</span></label>
+                    <label class="form-check"><input type="checkbox" name="repairs_list" value="cosmetic" /><span>Cosmetic</span></label>
                   </div>
                 </div>
                 <div class="invalid-feedback">Please indicate if repairs are needed.</div>
@@ -433,9 +433,26 @@
     </div>
   </footer>
 
+  <!-- Offer Info Modal -->
+  <div id="offer-info-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="offerInfoTitle">
+    <div class="modal-content">
+      <button type="button" class="close-modal" aria-label="Close">&times;</button>
+      <h2 id="offerInfoTitle" class="modal-title">About the $7,500 Instant Cash Offer</h2>
+      <div class="modal-body">
+        <ul style="margin-left:1rem; list-style: disc;">
+          <li>For qualifying sellers after a brief verification call.</li>
+          <li>Funds can be disbursed in as little as 48 hours after qualification.</li>
+          <li>No repairs or showings required; sell your home as‑is.</li>
+          <li>Offer availability is limited monthly; remaining slots are shown above.</li>
+          <li>You can opt out of marketing at any time. See our <a href="legal/privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="../assets/js/get-offer.js"></script>
   <script src="../assets/js/ghl-integration.js"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrANlZTJp12AkuSXfukoEee9oW6W92rxs&libraries=places&v=weekly&loading=async&callback=initGooglePlaces"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHBid-FjKVCrF1E4IL90jD71fTAUcwv4s&libraries=places&v=weekly&loading=async&callback=initGooglePlaces"></script>
 </body>
 </html>

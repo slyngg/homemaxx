@@ -41,7 +41,13 @@
   }
 
   function showStep(index) {
-    steps.forEach((fs, i) => fs.classList.toggle('d-none', i !== index));
+    steps.forEach((fs, i) => {
+      const isActive = i === index;
+      // Keep display none for non-active steps to avoid layout jump
+      fs.classList.toggle('d-none', !isActive);
+      // Add active class for slide/fade transitions
+      fs.classList.toggle('is-active', isActive);
+    });
     const pct = Math.round(((index + 1) / steps.length) * 100);
     if (progressEl) {
       progressEl.style.width = pct + '%';
@@ -225,6 +231,26 @@
       track('funnel_submit_blocked');
       return false;
     }
+    // If valid, show the informational modal briefly without blocking submission
+    try {
+      const modal = document.getElementById('offer-info-modal');
+      if (modal) {
+        const content = modal.querySelector('.modal-content');
+        const closeBtn = modal.querySelector('.close-modal');
+        const open = () => { modal.classList.add('active'); modal.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; };
+        const close = () => { modal.classList.remove('active'); modal.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; };
+        // Bind one-time listeners each submit
+        const onBackdrop = (evt) => { if (evt.target === modal) close(); };
+        const onCloseBtn = () => close();
+        const onEsc = (evt) => { if (evt.key === 'Escape') close(); };
+        open();
+        // Auto close after 5 seconds
+        setTimeout(close, 5000);
+        modal.addEventListener('click', onBackdrop, { once: true });
+        if (closeBtn) closeBtn.addEventListener('click', onCloseBtn, { once: true });
+        document.addEventListener('keydown', onEsc, { once: true });
+      }
+    } catch (_) { /* no-op */ }
   });
 
   // Helper: safely set a radio by value
