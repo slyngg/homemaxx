@@ -223,6 +223,175 @@
     } catch(_) {}
   })();
 
+  // --- Micro-steps within Step 1 (Address & Basics) ---
+  (function microStepsStep1(){
+    try {
+      const stepIndex = 0; // Step 1 (0-based)
+      const stepEl = steps[stepIndex];
+      if (!stepEl) return;
+
+      // Collect question groups within Step 1
+      const groups = Array.from(stepEl.querySelectorAll('.form-group, [role="group"]'))
+        .filter(g => g.offsetParent !== null || true); // keep order as in DOM
+      if (!groups.length) return;
+      let sub = 0;
+
+      const backBtn = stepEl.querySelector('[data-action="back"]');
+      const nextBtn = stepEl.querySelector('[data-action="next"]');
+
+      function hideAll(){ groups.forEach(g => g.style.display = 'none'); }
+      function updateProgress(){
+        if (!progressEl) return;
+        const total = groups.length;
+        const sectionStart = (stepIndex / steps.length) * 100;
+        const sectionEnd = ((stepIndex + 1) / steps.length) * 100;
+        const pct = sectionStart + (sectionEnd - sectionStart) * Math.max(0, Math.min(1, (sub + 1) / total));
+        progressEl.style.width = pct + '%';
+        progressEl.setAttribute('aria-valuenow', String(Math.round(pct)));
+      }
+      function showSub(i){
+        sub = Math.max(0, Math.min(groups.length - 1, i));
+        hideAll();
+        const g = groups[sub];
+        if (g) g.style.display = '';
+        if (nextBtn) nextBtn.style.visibility = 'hidden';
+        updateProgress();
+      }
+      function advance(){
+        if (sub >= groups.length - 1) { next(); return; }
+        showSub(sub + 1);
+      }
+      function back(){
+        if (sub === 0) { prev(); return; }
+        showSub(sub - 1);
+      }
+
+      if (backBtn) backBtn.addEventListener('click', function(e){ if (current === stepIndex) { e.preventDefault(); back(); } });
+      if (nextBtn) nextBtn.addEventListener('click', function(e){ if (current === stepIndex) { e.preventDefault(); advance(); } });
+
+      // Auto-advance behaviors for inputs
+      groups.forEach(g => {
+        const inputs = Array.from(g.querySelectorAll('input, select, textarea'));
+        const isRadio = inputs.some(el => el.type === 'radio');
+        const isSelect = inputs.some(el => el.tagName === 'SELECT');
+        const isTextLike = inputs.some(el => el.type === 'text' || el.type === 'number' || el.tagName === 'TEXTAREA' || el.type === 'email' || el.type === 'tel');
+
+        if (isRadio) {
+          inputs.forEach(el => el.addEventListener('change', function(){
+            const any = g.querySelector('input[type="radio"]:checked');
+            if (any) advance();
+          }));
+        }
+        if (isSelect) {
+          inputs.forEach(el => el.addEventListener('change', function(){ if (el.value) advance(); }));
+        }
+        if (isTextLike) {
+          inputs.forEach(el => {
+            el.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); if (el.checkValidity()) advance(); }});
+            el.addEventListener('blur', function(){ if (el.checkValidity()) advance(); });
+          });
+        }
+      });
+
+      // Special handling: property address with Google Places -> advance on place selection
+      const addr = stepEl.querySelector('#propertyAddress, input[name="propertyAddress"], input[name="address"], #address');
+      if (addr) {
+        // When Places fills or value is present on blur, advance
+        addr.addEventListener('blur', function(){ if (addr.value && addr.value.trim().length > 5) advance(); });
+        // If autocomplete is attached elsewhere, hook a custom event
+        document.addEventListener('address:place_selected', function(){ if (current === stepIndex) advance(); });
+      }
+
+      // Hook into step transitions
+      const origShow = showStep;
+      showStep = function(index){
+        origShow(index);
+        if (index === stepIndex) { hideAll(); showSub(sub); }
+      };
+
+      if (current === stepIndex) { hideAll(); showSub(sub); }
+    } catch(_) { /* no-op */ }
+  })();
+
+  // --- Micro-steps within Step 3 (Your Info) ---
+  (function microStepsStep3(){
+    try {
+      const stepIndex = 2; // Step 3 (0-based)
+      const stepEl = steps[stepIndex];
+      if (!stepEl) return;
+
+      const groups = Array.from(stepEl.querySelectorAll('.form-group, [role="group"]'));
+      if (!groups.length) return;
+      let sub = 0;
+
+      const backBtn = stepEl.querySelector('[data-action="back"]');
+      const nextBtn = stepEl.querySelector('[data-action="next"]');
+
+      function hideAll(){ groups.forEach(g => g.style.display = 'none'); }
+      function updateProgress(){
+        if (!progressEl) return;
+        const total = groups.length;
+        const sectionStart = (stepIndex / steps.length) * 100;
+        const sectionEnd = ((stepIndex + 1) / steps.length) * 100;
+        const pct = sectionStart + (sectionEnd - sectionStart) * Math.max(0, Math.min(1, (sub + 1) / total));
+        progressEl.style.width = pct + '%';
+        progressEl.setAttribute('aria-valuenow', String(Math.round(pct)));
+      }
+      function showSub(i){
+        sub = Math.max(0, Math.min(groups.length - 1, i));
+        hideAll();
+        const g = groups[sub];
+        if (g) g.style.display = '';
+        if (nextBtn) nextBtn.style.visibility = 'hidden';
+        updateProgress();
+      }
+      function advance(){
+        if (sub >= groups.length - 1) { next(); return; }
+        showSub(sub + 1);
+      }
+      function back(){
+        if (sub === 0) { prev(); return; }
+        showSub(sub - 1);
+      }
+
+      if (backBtn) backBtn.addEventListener('click', function(e){ if (current === stepIndex) { e.preventDefault(); back(); } });
+      if (nextBtn) nextBtn.addEventListener('click', function(e){ if (current === stepIndex) { e.preventDefault(); advance(); } });
+
+      // Auto-advance behaviors for inputs
+      groups.forEach(g => {
+        const inputs = Array.from(g.querySelectorAll('input, select, textarea'));
+        const isTextLike = inputs.some(el => el.type === 'text' || el.type === 'email' || el.type === 'tel' || el.type === 'number' || el.tagName === 'TEXTAREA');
+        const isSelect = inputs.some(el => el.tagName === 'SELECT');
+        const isRadio = inputs.some(el => el.type === 'radio');
+
+        if (isRadio) {
+          inputs.forEach(el => el.addEventListener('change', function(){
+            const any = g.querySelector('input[type="radio"]:checked');
+            if (any) advance();
+          }));
+        }
+        if (isSelect) {
+          inputs.forEach(el => el.addEventListener('change', function(){ if (el.value) advance(); }));
+        }
+        if (isTextLike) {
+          inputs.forEach(el => {
+            el.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); if (el.checkValidity()) advance(); }});
+            el.addEventListener('blur', function(){ if (el.checkValidity()) advance(); });
+          });
+        }
+      });
+
+      // Hook into step transitions
+      const origShow = showStep;
+      showStep = function(index){
+        origShow(index);
+        if (index === stepIndex) { hideAll(); showSub(sub); }
+      };
+
+      if (current === stepIndex) { hideAll(); showSub(sub); }
+    } catch(_) { /* no-op */ }
+  })();
+
   // Prevent submit if last step invalid (redundant guard; ghl-integration handles submission)
   form.addEventListener('submit', function (e) {
     track('funnel_submit_attempt');
@@ -531,6 +700,185 @@
         toggleGarageSpaces();
       } catch (_) { /* no-op */ }
     });
+  })();
+
+  // --- Opendoor-style micro-steps within Step 2 (question-per-screen) ---
+  (function microSteps() {
+    try {
+      const stepIndex = 1; // Step 2 (0-based)
+      const stepEl = steps[stepIndex];
+      if (!stepEl) return;
+
+      // Collect question blocks in the order they appear
+      // Include .form-group and [role="group"], exclude conditional detail wrappers
+      const all = Array.from(stepEl.querySelectorAll('.form-group, [role="group"]'));
+      const questions = all.filter(el => !(
+        el.classList.contains('garagespaces-wrap') ||
+        el.classList.contains('hoadues-wrap') ||
+        el.classList.contains('repairs-list') ||
+        el.classList.contains('poolspadetails') ||
+        el.classList.contains('solardetails')
+      ));
+      if (!questions.length) return;
+
+      let sub = 0; // current question index
+
+      // Controls inside step 2
+      const backBtn = stepEl.querySelector('[data-action="back"]');
+      const nextBtn = stepEl.querySelector('[data-action="next"]');
+
+      function hideAllQs() { questions.forEach(q => q.style.display = 'none'); }
+
+      // Interpolate progress bar within this step to mimic per-question progress
+      function updateInterpolatedProgress() {
+        if (!progressEl) return;
+        const total = questions.length;
+        const sectionStart = (stepIndex / steps.length) * 100; // e.g., 25%
+        const sectionEnd = ((stepIndex + 1) / steps.length) * 100; // e.g., 50%
+        const frac = Math.max(0, Math.min(1, (sub + 1) / total));
+        const pct = sectionStart + (sectionEnd - sectionStart) * frac;
+        progressEl.style.width = pct + '%';
+        progressEl.setAttribute('aria-valuenow', String(Math.round(pct)));
+      }
+
+      function isManualAdvanceQuestion(q) {
+        // Some questions reveal follow-ups (e.g., HOA dues, Repairs list) -> don't auto-advance
+        const name = q.querySelector('input, select, textarea')?.getAttribute('name') || '';
+        return (
+          name === 'hoa' ||
+          name === 'repairs_needed' ||
+          name === 'has_pool_spa' ||
+          name === 'parking'
+        );
+      }
+
+      // No generic skip in this model; branching handled per-question (e.g., HOA)
+
+      function showSub(i) {
+        sub = Math.max(0, Math.min(questions.length - 1, i));
+        hideAllQs();
+        const q = questions[sub];
+        if (q) q.style.display = '';
+
+        // Show/hide buttons
+        if (backBtn) backBtn.style.visibility = (sub === 0 ? 'visible' : 'visible');
+        if (nextBtn) nextBtn.style.visibility = isManualAdvanceQuestion(q) ? 'visible' : 'hidden';
+
+        updateInterpolatedProgress();
+      }
+
+      function advanceSub() {
+        // If last question in this step, move to next main step
+        if (sub >= questions.length - 1) {
+          if (nextBtn) nextBtn.style.visibility = 'hidden';
+          next();
+          return;
+        }
+        showSub(sub + 1);
+      }
+
+      function backSub() {
+        if (sub === 0) { back(); return; }
+        showSub(sub - 1);
+      }
+
+      // Wire step-level buttons to micro navigation when on Step 2
+      if (backBtn) backBtn.addEventListener('click', function (e) {
+        if (current === stepIndex) { e.preventDefault(); backSub(); }
+      });
+      if (nextBtn) nextBtn.addEventListener('click', function (e) {
+        if (current === stepIndex) { e.preventDefault(); advanceSub(); }
+      });
+      // No skip handler
+
+      // Auto-advance rules
+      questions.forEach(q => {
+        const inputs = Array.from(q.querySelectorAll('input, select, textarea'));
+        const name = inputs[0]?.name || '';
+        const isRadioGroup = inputs.some(el => el.type === 'radio');
+        const isSelect = inputs.some(el => el.tagName === 'SELECT');
+        const isTextLike = inputs.some(el => el.type === 'number' || el.type === 'text' || el.tagName === 'TEXTAREA');
+
+        // Radios -> advance on change unless manual-advance question
+        if (isRadioGroup && !isManualAdvanceQuestion(q)) {
+          inputs.forEach(el => el.addEventListener('change', function(){
+            // ensure a selection is made
+            const any = q.querySelector('input[type="radio"]:checked');
+            if (any) advanceSub();
+          }));
+        }
+
+        // Special branching for HOA: if user selects "No", auto-advance and keep details hidden; if "Yes", require manual Next and reveal details via existing toggles.
+        if (name === 'hoa' && isRadioGroup) {
+          inputs.forEach(el => el.addEventListener('change', function(){
+            const val = q.querySelector('input[type="radio"]:checked')?.value?.toLowerCase();
+            if (!val) return;
+            if (val === 'no' || val === 'false' || val === '0') {
+              // Auto-advance past HOA segment
+              advanceSub();
+            } else {
+              // Stay on this micro-question and show Next so they can add HOA details next
+              if (nextBtn) nextBtn.style.visibility = 'visible';
+            }
+          }));
+        }
+
+        // Select -> advance on change when a value is chosen
+        if (isSelect && !isManualAdvanceQuestion(q)) {
+          inputs.forEach(el => el.addEventListener('change', function(){
+            if (el.value !== '') advanceSub();
+          }));
+        }
+
+        // Text/number -> advance on Enter or blur if valid
+        if (isTextLike) {
+          inputs.forEach(el => {
+            el.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); if (el.checkValidity()) advanceSub(); } });
+            el.addEventListener('blur', function(){ if (el.checkValidity()) advanceSub(); });
+          });
+        }
+
+        // Special cases where additional details appear: show Next button explicitly
+        if (isManualAdvanceQuestion(q) && nextBtn) {
+          // Keep Next visible when the controlling choice is interacted with
+          q.addEventListener('change', function(){ nextBtn.style.visibility = 'visible'; });
+        }
+      });
+
+      // Apply placeholder image cards heuristically for certain questions
+      const keywordImages = [
+        { k: 'kitchen', url: 'https://images.unsplash.com/photo-1505691723518-36a5ac3b2b8f?q=80&w=1200&auto=format&fit=crop' },
+        { k: 'bath', url: 'https://images.unsplash.com/photo-1584622781564-1f94a2b52b8e?q=80&w=1200&auto=format&fit=crop' },
+        { k: 'living', url: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1200&auto=format&fit=crop' },
+        { k: 'pool', url: 'https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?q=80&w=1200&auto=format&fit=crop' },
+        { k: 'exterior', url: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1200&auto=format&fit=crop' }
+      ];
+      function applyCardPlaceholders(q){
+        const titleText = (q.querySelector('label, .label, h3, h2')?.textContent || '').toLowerCase();
+        const match = keywordImages.find(m => titleText.includes(m.k));
+        if (!match) return;
+        q.classList.add('as-cards');
+        const spans = q.querySelectorAll('.form-check span');
+        spans.forEach((s, idx) => {
+          const imgUrl = match.url + '&sig=' + (idx+1);
+          s.style.setProperty('--card-bg', `url("${imgUrl}")`);
+        });
+      }
+      questions.forEach(applyCardPlaceholders);
+
+      // Initialize visibility only when we enter Step 2
+      const origShowStep = showStep;
+      showStep = function(index) {
+        origShowStep(index);
+        if (index === stepIndex) {
+          hideAllQs();
+          showSub(sub); // reveal current question
+        }
+      };
+
+      // Start with only first question visible if we land on Step 2 initially
+      if (current === stepIndex) { hideAllQs(); showSub(sub); }
+    } catch (_) { /* no-op */ }
   })();
 
   // Initialize
