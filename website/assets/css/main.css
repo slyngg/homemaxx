@@ -18,6 +18,12 @@
   --warning: #f59e0b;
   --info: #3b82f6;
   
+  /* Missing tokens used later */
+  --text-light: #c8cee8;
+  --primary-dark: #4A43E8;
+  --accent-dark: #E0A800;
+  --bg-light: rgba(255,255,255,0.02);
+  
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: 'Inter', var(--font-sans);
@@ -80,7 +86,8 @@ body {
   text-rendering: optimizeLegibility;
   font-kerning: normal;
   line-height: 1.7;
-  color: var(--text);
+  /* Keep light text on dark background for proper contrast */
+  color: #e6e9f5;
 }
 
 h1, h2, h3, h4, h5, h6 { 
@@ -88,7 +95,8 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700; 
   line-height: 1.2; 
   margin-bottom: var(--space-6);
-  color: var(--text);
+  /* Headings should stay light on dark hero */
+  color: #f3f6ff;
   letter-spacing: -0.025em;
 }
 
@@ -171,6 +179,22 @@ a:hover {
 .section { padding: 4rem 0; }
 .bg-light { background: var(--bg-light); }
 
+/* Skip link – hidden until focused */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: #111827;
+  color: #fff;
+  padding: .5rem .75rem;
+  border-radius: 8px;
+  z-index: 10000;
+}
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;
@@ -210,12 +234,15 @@ a:hover {
   border-bottom: 1px solid rgba(255,255,255,.06);
 }
 
+.header-inner { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding: .9rem 0; }
+.logo .logo-link { display:inline-flex; align-items:center; gap:.5rem; font-weight:800; font-size:1.25rem; color:#fff; }
 .site-header .logo-text { color: #fff; }
 .site-header .text-primary { color: var(--accent); }
 
-.main-nav a { color: #cfd6ff; }
+.main-nav ul { display:flex; align-items:center; gap: 1.25rem; list-style:none; margin:0; padding:0; }
+.main-nav a { color: #cfd6ff; display:inline-block; padding:.25rem .25rem; }
 .main-nav a:hover { color: #fff; }
-.mobile-menu-toggle { color:#e6ebff; border-color: rgba(255,255,255,.16); }
+.mobile-menu-toggle { color:#e6ebff; border: 1px solid rgba(255,255,255,.16); border-radius:8px; padding:.4rem .6rem; display:none; }
 
 /* Hero Section */
 .hero {
@@ -375,7 +402,7 @@ a:hover {
     width: 80%;
     max-width: 320px;
     height: 100vh;
-    background: white;
+    background: #0b1020;
     box-shadow: -5px 0 15px rgba(0,0,0,0.1);
     padding: 5rem 2rem 2rem;
     transition: right 0.3s ease;
