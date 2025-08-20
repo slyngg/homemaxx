@@ -297,6 +297,7 @@
         function go() {
           var addr = (document.getElementById('heroAddress')||{}).value || '';
           if (!addr.trim()) { (document.getElementById('heroAddress')||{}).focus?.(); return; }
+          try { if (window.gtag) window.gtag('event', 'hero_start', { action: 'click', location: 'homepage_hero' }); } catch(e) {}
           window.location.href = 'pages/get-offer.html?address=' + encodeURIComponent(addr.trim());
         }
         if (document.readyState === 'loading') {

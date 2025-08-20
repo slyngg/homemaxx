@@ -182,6 +182,22 @@ a:hover {
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
 }
 
+/* Strong, accessible outlines on keyboard focus */
+:focus-visible {
+  outline: 3px solid rgba(79, 70, 229, 0.5);
+  outline-offset: 2px;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+.btn:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(79, 70, 229, 0.5);
+  outline-offset: 2px;
+}
+
 .btn:active {
   transform: translateY(-2px);
   box-shadow: 0 4px 14px -2px rgba(79, 70, 229, 0.2);

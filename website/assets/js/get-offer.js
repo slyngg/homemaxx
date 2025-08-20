@@ -122,6 +122,28 @@
     });
   }
 
+  // Phone input: light US mask to reduce validation friction
+  (function bindPhoneMask(){
+    try {
+      const phone = document.getElementById('phone');
+      if (!phone) return;
+      function onlyDigits(v){ return (v||'').replace(/\D+/g,''); }
+      function formatUS(v){
+        const d = onlyDigits(v).slice(0,10);
+        if (d.length < 4) return d;
+        if (d.length < 7) return `(${d.slice(0,3)}) ${d.slice(3)}`;
+        return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+      }
+      phone.addEventListener('input', function(){
+        const pos = phone.selectionStart;
+        const formatted = formatUS(phone.value);
+        phone.value = formatted;
+        try { phone.setSelectionRange(pos, pos); } catch(_) {}
+      });
+      phone.addEventListener('blur', function(){ phone.value = formatUS(phone.value); });
+    } catch(_) {}
+  })();
+
   // Prevent submit if last step invalid (redundant guard; ghl-integration handles submission)
   form.addEventListener('submit', function (e) {
     track('funnel_submit_attempt');
