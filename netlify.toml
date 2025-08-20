@@ -18,7 +18,6 @@
 # Basic build settings
 [build.environment]
   NODE_VERSION = "18"
-  NPM_FLAGS = "--version"  # Just a placeholder
 
 # Disable build command in all contexts
 [context.production]
