@@ -63,9 +63,10 @@
             <input type="hidden" name="tags" value="website_lead,get_offer" />
 
             <!-- Step 1: Address -->
-            <fieldset class="go-step" data-step="1" aria-describedby="s1-desc">
+            <fieldset class="go-step" data-step="1" aria-describedby="s1-desc s1-errors">
               <legend class="h3">Property Address</legend>
               <p id="s1-desc" class="text-muted">Start with your address. Press Enter to continue faster.</p>
+              <div id="s1-errors" class="error-summary d-none" role="alert" aria-live="assertive" tabindex="-1"></div>
 
               <div class="form-group">
                 <label for="propertyAddress">Property Address *</label>
@@ -79,9 +80,10 @@
             </fieldset>
 
             <!-- Step 2: Home Details -->
-            <fieldset class="go-step d-none" data-step="2" aria-describedby="s2-desc">
+            <fieldset class="go-step d-none" data-step="2" aria-describedby="s2-desc s2-errors">
               <legend class="h3">Home Details</legend>
               <p id="s2-desc" class="text-muted">Tell us a bit about the property condition.</p>
+              <div id="s2-errors" class="error-summary d-none" role="alert" aria-live="assertive" tabindex="-1"></div>
 
               <div class="grid two">
                 <div class="form-group">
@@ -347,9 +349,10 @@
             </fieldset>
 
             <!-- Step 3: Your Info -->
-            <fieldset class="go-step d-none" data-step="3" aria-describedby="s3-desc">
+            <fieldset class="go-step d-none" data-step="3" aria-describedby="s3-desc s3-errors">
               <legend class="h3">Your Information</legend>
               <p id="s3-desc" class="text-muted">So we can send your offer.</p>
+              <div id="s3-errors" class="error-summary d-none" role="alert" aria-live="assertive" tabindex="-1"></div>
 
               <div class="grid two">
                 <div class="form-group">
@@ -384,9 +387,10 @@
             </fieldset>
 
             <!-- Step 4: Consent & Submit -->
-            <fieldset class="go-step d-none" data-step="4" aria-describedby="s4-desc">
+            <fieldset class="go-step d-none" data-step="4" aria-describedby="s4-desc s4-errors">
               <legend class="h3">Consent & Submit</legend>
               <p id="s4-desc" class="text-muted">Review and submit to receive your cash offer.</p>
+              <div id="s4-errors" class="error-summary d-none" role="alert" aria-live="assertive" tabindex="-1"></div>
 
               <div class="form-group form-check">
                 <input type="checkbox" class="form-check-input" id="privacy-policy" name="marketingConsent" value="true" required />
@@ -402,7 +406,7 @@
               <div class="form-actions space-between">
                 <button type="button" class="btn btn-outline" data-action="back">Back</button>
                 <button type="submit" class="btn btn-primary" id="submit-button">
-                  <span class="button-text">Get My Cash Offer</span>
+                  <span class="button-text">Get My Instant Cash Offer</span>
                   <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                 </button>
               </div>
@@ -432,6 +436,6 @@
   <!-- Scripts -->
   <script src="../assets/js/get-offer.js"></script>
   <script src="../assets/js/ghl-integration.js"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrANlZTJp12AkuSXfukoEee9oW6W92rxs&libraries=places&v=weekly&callback=initGooglePlaces"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrANlZTJp12AkuSXfukoEee9oW6W92rxs&libraries=places&v=weekly&loading=async&callback=initGooglePlaces"></script>
 </body>
 </html>

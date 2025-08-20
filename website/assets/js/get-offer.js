@@ -53,29 +53,102 @@
     track('funnel_step_view', { step_index: index + 1, step_total: steps.length });
   }
 
-  function validateStep(index) {
+  function validateStep(index, opts) {
+    const options = Object.assign({ focus: true }, opts);
     const fieldset = steps[index];
     if (!fieldset) return true;
     const inputs = Array.from(fieldset.querySelectorAll('input, select, textarea'));
     let valid = true;
-    inputs.forEach(el => {
-      // Reset state
-      el.classList.remove('is-invalid');
-      // Native validity check
-      if (!el.checkValidity()) {
-        valid = false;
-        el.classList.add('is-invalid');
+
+    // helpers
+    function labelFor(el) {
+      const id = el.getAttribute('id');
+      if (id) {
+        const lab = form.querySelector(`label[for="${id}"]`);
+        if (lab) return lab.textContent.trim().replace(/[*:]+$/, '').trim();
       }
-      // Simple phone format assist
+      if (el.getAttribute('aria-label')) return el.getAttribute('aria-label');
+      return (el.name || 'This field').replace(/[_-]/g, ' ');
+    }
+
+    const errors = [];
+    const handledGroups = new Set();
+    inputs.forEach(el => {
+      // Reset state first
+      el.classList.remove('is-invalid');
+
+      // Phone cleanup
       if (el.id === 'phone' && el.value) {
         el.value = el.value.replace(/[^0-9+\-()\s]/g, '').trim();
       }
+
+      // Native validity
+      const isGroupRadio = el.type === 'radio';
+      const isGroupCheckbox = el.type === 'checkbox' && el.hasAttribute('required') && form.querySelectorAll(`input[name="${el.name}"][type="checkbox"]`).length > 1;
+      let thisValid = true;
+      if (isGroupRadio) {
+        if (handledGroups.has(el.name)) return; // only once per radio group
+        handledGroups.add(el.name);
+        const anyChecked = !!form.querySelector(`input[type="radio"][name="${el.name}"]:checked`);
+        thisValid = anyChecked;
+      } else if (isGroupCheckbox) {
+        if (handledGroups.has(el.name)) return; // only once per checkbox group
+        handledGroups.add(el.name);
+        const anyChecked = !!form.querySelector(`input[type="checkbox"][name="${el.name}"]:checked`);
+        thisValid = anyChecked;
+      } else {
+        thisValid = el.checkValidity();
+      }
+
+      if (!thisValid) {
+        valid = false;
+        el.classList.add('is-invalid');
+        // Prefer inline invalid-feedback text if present
+        let msg = '';
+        const groupRoot = isGroupRadio || isGroupCheckbox ? el.closest('[role="group"], .form-group') || el.closest('.form-group') : el.closest('.form-group');
+        const fb = groupRoot?.querySelector('.invalid-feedback') || el.closest('.form-group')?.querySelector('.invalid-feedback');
+        if (fb && fb.textContent) msg = fb.textContent.trim();
+        if (!msg) msg = `${labelFor(el)} is required or invalid.`;
+        // ensure element has an id for linking
+        let linkEl = el;
+        if ((isGroupRadio || isGroupCheckbox)) {
+          const firstInGroup = form.querySelector(`[name="${el.name}"]`);
+          if (firstInGroup) linkEl = firstInGroup;
+        }
+        if (!linkEl.id) linkEl.id = `f_${linkEl.name || Math.random().toString(36).slice(2)}`;
+        errors.push({ id: linkEl.id, message: msg });
+      }
     });
+
+    // Update step error summary
+    const summary = fieldset.querySelector('.error-summary');
+    if (summary) {
+      if (errors.length) {
+        const list = errors.map(e => `<li><a href="#${e.id}">${e.message}</a></li>`).join('');
+        summary.innerHTML = `<strong>Please fix the following:</strong><ul>${list}</ul>`;
+        summary.classList.remove('d-none');
+        if (options.focus) {
+          // Move focus to summary and first invalid control for screen readers and keyboard users
+          try { summary.focus(); } catch(_) {}
+          const firstInvalidId = errors[0]?.id;
+          if (firstInvalidId) {
+            setTimeout(() => {
+              const target = document.getElementById(firstInvalidId);
+              if (target) { try { target.focus(); } catch(_) {} }
+            }, 0);
+          }
+        }
+      } else {
+        summary.classList.add('d-none');
+        summary.innerHTML = '';
+      }
+    }
+
     return valid;
   }
 
   function next() {
-    if (!validateStep(current)) {
+    if (!validateStep(current, { focus: true })) {
       track('funnel_step_error', { step_index: current + 1 });
       return;
     }
@@ -147,7 +220,7 @@
   // Prevent submit if last step invalid (redundant guard; ghl-integration handles submission)
   form.addEventListener('submit', function (e) {
     track('funnel_submit_attempt');
-    if (!validateStep(current)) {
+    if (!validateStep(current, { focus: true })) {
       e.preventDefault();
       track('funnel_submit_blocked');
       return false;
@@ -438,4 +511,39 @@
   showStep(current);
   // Initialize live slots display if present
   updateSlotsDisplay();
+
+  // Live validation: clear errors as user types/changes and update summary silently
+  (function bindLiveValidation(){
+    steps.forEach((fs, idx) => {
+      fs.addEventListener('input', function(e){
+        const t = e.target;
+        if (!(t instanceof HTMLElement)) return;
+        if (t.matches('input, select, textarea')) {
+          t.classList.remove('is-invalid');
+          validateStep(idx, { focus: false });
+        }
+      }, true);
+      fs.addEventListener('change', function(e){
+        const t = e.target;
+        if (!(t instanceof HTMLElement)) return;
+        if (t.matches('input, select, textarea')) {
+          t.classList.remove('is-invalid');
+          validateStep(idx, { focus: false });
+        }
+      }, true);
+      // Click on summary links focuses the field
+      const summary = fs.querySelector('.error-summary');
+      if (summary) {
+        summary.addEventListener('click', function(e){
+          const a = e.target.closest('a');
+          if (a && a.getAttribute('href') && a.getAttribute('href').startsWith('#')) {
+            e.preventDefault();
+            const id = a.getAttribute('href').slice(1);
+            const el = document.getElementById(id);
+            if (el) { try { el.focus(); } catch(_) {} }
+          }
+        });
+      }
+    });
+  })();
 })();
