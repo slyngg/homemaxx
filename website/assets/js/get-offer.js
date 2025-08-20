@@ -9,6 +9,7 @@
 
   const steps = Array.from(form.querySelectorAll('.go-step'));
   const progressEl = document.getElementById('go-progress');
+  const progressStatusEl = document.getElementById('go-progress-status');
   let current = 0; // index of steps
 
   function track(event, params) {
@@ -33,6 +34,9 @@
     if (progressEl) {
       progressEl.style.width = pct + '%';
       progressEl.setAttribute('aria-valuenow', String(pct));
+    }
+    if (progressStatusEl) {
+      progressStatusEl.textContent = `Step ${index + 1} of ${steps.length}`;
     }
     track('funnel_step_view', { step_index: index + 1, step_total: steps.length });
   }

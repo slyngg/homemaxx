@@ -9,9 +9,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Performance: preconnect for Places API -->
+  <link rel="preconnect" href="https://maps.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://maps.gstatic.com" crossorigin>
   <style>
     /* Ensure Places autocomplete dropdown appears above UI */
     .pac-container { z-index: 2000 !important; }
+    /* Offer ribbon */
+    .ribbon { display:flex; align-items:center; gap:.5rem; padding:.5rem .75rem; border:1px solid rgba(255,193,7,.45); background:linear-gradient(90deg, rgba(255,215,115,.25), rgba(255,255,255,0)); border-radius:10px; margin:.75rem 0 0; }
+    .ribbon .badge { background:#FFC107; color:#111; font-weight:700; padding:.15rem .45rem; border-radius:6px; font-size:.8rem; }
+    .assistive { font-size:.9rem; color:#6b7280; }
   </style>
 </head>
 <body>
@@ -36,6 +43,10 @@
       <div class="section-header text-center">
         <h1>Get Your Cash Offer</h1>
         <p class="lead">Answer a few questions. No obligation. It only takes a minute.</p>
+        <div class="ribbon" role="status" aria-live="polite">
+          <span class="badge">New</span>
+          <span><strong>$7,500 Instant Cash Offer</strong> — get funds in as little as 48 hours after qualification.</span>
+        </div>
       </div>
 
       <!-- Stepper -->
@@ -43,6 +54,7 @@
         <div class="progress" style="height: 8px; margin: 0">
           <div id="go-progress" class="progress-bar" style="width: 25%" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25"></div>
         </div>
+        <div id="go-progress-status" class="assistive" aria-live="polite" style="padding:.5rem .75rem">Step 1 of 4</div>
 
         <div class="card-content">
           <form id="contact-form" class="go-form" method="POST" data-webform="true" novalidate>
@@ -53,7 +65,7 @@
             <!-- Step 1: Address -->
             <fieldset class="go-step" data-step="1" aria-describedby="s1-desc">
               <legend class="h3">Property Address</legend>
-              <p id="s1-desc" class="text-muted">We use this to generate your personalized offer.</p>
+              <p id="s1-desc" class="text-muted">Start with your address. Press Enter to continue faster.</p>
 
               <div class="form-group">
                 <label for="propertyAddress">Property Address *</label>
