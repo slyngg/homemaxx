@@ -2,6 +2,7 @@
 class OfferResume {
   constructor() {
     this.storageKey = 'homemaxx_offer_progress';
+    this.progress = this.getSavedProgress();
     this.init();
   }
 
@@ -35,9 +36,8 @@ class OfferResume {
   }
 
   checkForSavedProgress() {
-    const savedProgress = this.getSavedProgress();
-    if (savedProgress && savedProgress.address) {
-      this.showResumeOption(savedProgress);
+    if (this.progress && this.progress.address) {
+      this.showResumeOption(this.progress);
     }
   }
 
@@ -97,24 +97,7 @@ class OfferResume {
     // Create resume banner if it doesn't exist
     let resumeBanner = document.getElementById('resume-offer-banner');
     if (!resumeBanner) {
-      resumeBanner = document.createElement('div');
-      resumeBanner.id = 'resume-offer-banner';
-      resumeBanner.className = 'resume-offer-banner';
-      resumeBanner.innerHTML = `
-        <div class="resume-content">
-          <div class="resume-icon">🏠</div>
-          <div class="resume-text">
-            <h4>Continue your offer for ${savedProgress.address}</h4>
-            <p>You were on step ${savedProgress.lastStep + 1} of 8</p>
-          </div>
-          <button class="btn btn-primary resume-btn" onclick="window.offerResume.resumeOffer()">
-            Continue Offer
-          </button>
-          <button class="btn btn-outline dismiss-btn" onclick="window.offerResume.dismissResume()">
-            ✕
-          </button>
-        </div>
-      `;
+      resumeBanner = this.createBanner();
       
       // Insert at top of main content
       const main = document.querySelector('main') || document.body;
@@ -125,13 +108,41 @@ class OfferResume {
     this.addResumeStyles();
   }
 
+  createBanner() {
+    const banner = document.createElement('div');
+    banner.className = 'offer-banner';
+    banner.innerHTML = `
+      <div class="offer-banner-content">
+        <span class="offer-banner-text">
+          Finish your offer today
+        </span>
+        <span class="offer-banner-address">${this.progress.address}</span>
+        <div class="cash-offer-indicator">
+          ${this.progress.cashOfferClaimed ? 
+            `<span class="cash-badge">💰 $${this.progress.cashAmount || 7500} INSTANT CASH</span>
+             <span class="spots-text">7 spots left</span>` : 
+            `<span class="cash-badge">💰 $7,500 INSTANT CASH</span>
+             <span class="spots-text">7 spots left</span>`
+          }
+        </div>
+      </div>
+    `;
+
+    // Enhanced click handler with proper navigation
+    banner.addEventListener('click', () => {
+      this.resumeOffer();
+    });
+
+    return banner;
+  }
+
   addResumeStyles() {
     if (document.getElementById('resume-offer-styles')) return;
 
     const style = document.createElement('style');
     style.id = 'resume-offer-styles';
     style.textContent = `
-      .resume-offer-banner {
+      .offer-banner {
         background: linear-gradient(135deg, var(--primary-light), rgba(26, 86, 255, 0.1));
         border: 2px solid var(--primary);
         border-radius: 12px;
@@ -141,64 +152,40 @@ class OfferResume {
         animation: slideInFromTop 0.5s ease-out;
       }
 
-      .resume-content {
+      .offer-banner-content {
         display: flex;
         align-items: center;
         gap: 1rem;
         flex-wrap: wrap;
       }
 
-      .resume-icon {
-        font-size: 2rem;
-        background: var(--primary);
-        color: white;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .resume-text {
-        flex: 1;
-        min-width: 200px;
-      }
-
-      .resume-text h4 {
-        margin: 0 0 0.25rem 0;
+      .offer-banner-text {
         font-size: 1.1rem;
         font-weight: 600;
         color: var(--text);
       }
 
-      .resume-text p {
-        margin: 0;
+      .offer-banner-address {
         font-size: 0.875rem;
         color: var(--text-secondary);
       }
 
-      .resume-btn {
-        white-space: nowrap;
-      }
-
-      .dismiss-btn {
-        background: none;
-        border: 1px solid var(--border);
-        color: var(--text-secondary);
-        padding: 0.5rem;
-        min-width: auto;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
+      .cash-offer-indicator {
         display: flex;
         align-items: center;
-        justify-content: center;
+        gap: 0.5rem;
       }
 
-      .dismiss-btn:hover {
-        background: var(--surface);
-        color: var(--text);
+      .cash-badge {
+        background: var(--primary);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+      }
+
+      .spots-text {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
       }
 
       @keyframes slideInFromTop {
@@ -213,13 +200,9 @@ class OfferResume {
       }
 
       @media (max-width: 768px) {
-        .resume-content {
+        .offer-banner-content {
           flex-direction: column;
           text-align: center;
-        }
-        
-        .resume-text {
-          min-width: auto;
         }
       }
     `;
@@ -227,18 +210,37 @@ class OfferResume {
   }
 
   resumeOffer() {
-    const savedProgress = this.getSavedProgress();
-    if (savedProgress && savedProgress.address) {
-      // Redirect to funnel with saved address and step
-      const params = new URLSearchParams({
-        address: savedProgress.address,
-        step: savedProgress.lastStep || 0,
-        resume: 'true'
-      });
-      window.location.href = `pages/get-offer.html?${params.toString()}`;
+    const currentPage = window.location.pathname;
+    const targetUrl = '/Users/moretticayden/Desktop/homemaxx/website/pages/get-offer.html';
+    
+    // Build URL with proper parameters
+    const params = new URLSearchParams();
+    
+    if (this.progress.address) {
+      params.set('address', this.progress.address);
+    }
+    
+    if (this.progress.currentStep !== undefined) {
+      params.set('step', this.progress.currentStep.toString());
+    }
+    
+    if (this.progress.cashOfferClaimed) {
+      params.set('cashOffer', 'true');
+      params.set('amount', (this.progress.cashAmount || 7500).toString());
+    }
+    
+    // Add resume flag
+    params.set('resume', 'true');
+    
+    const fullUrl = `${targetUrl}?${params.toString()}`;
+    
+    // Navigate to funnel with proper parameters
+    if (currentPage.includes('get-offer.html')) {
+      // Already on funnel page, just update state
+      window.location.search = params.toString();
     } else {
-      // No saved progress, start fresh
-      window.location.href = 'pages/address-entry.html';
+      // Navigate from homepage or other page
+      window.location.href = fullUrl.replace('/Users/moretticayden/Desktop/homemaxx/website/', '');
     }
   }
 

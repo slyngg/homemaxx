@@ -1,84 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Opt-Out | HomeMAXX</title>
-  <base href="/" />
-  <link rel="stylesheet" href="assets/css/main.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opt-Out of Communications - HomeMAXX</title>
+    <link rel="stylesheet" href="../../assets/css/opendoor-style.css">
+    <style>
+        .opt-out-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .opt-out-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .opt-out-section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .opt-out-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .btn-submit {
+            background: #dc3545;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-submit:hover {
+            background: #c82333;
+        }
+        .quick-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .method-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            text-align: center;
+        }
+        .method-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+    </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="container">
-      <div class="header-inner">
-        <div class="logo"><a href="/" class="logo-link">Home<span class="text-primary">MAXX</span></a></div>
-        <nav class="main-nav" aria-label="Main navigation">
-          <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="pages/investment-opportunities.html">Properties</a></li>
-            <li><a href="/#contact">Contact</a></li>
-          </ul>
-        </nav>
-      </div>
-    </div>
-  </header>
-
-  <main id="main-content">
-    <section class="section bg-light">
-      <div class="container">
-        <div class="section-header">
-          <h1>Opt-Out of Communications</h1>
-          <p class="lead">Manage your communication preferences with HomeMAXX.</p>
-        </div>
-
-        <div class="card">
-          <div class="card-body">
-            <h2>Quick Opt-Out (SMS)</h2>
-            <p>
-              You can opt out of SMS at any time by replying <strong>STOP</strong> to any text message we send. For help, reply <strong>HELP</strong>.
-              Message and data rates may apply. Message frequency varies.
-            </p>
-
-            <div class="alert info" style="margin:1rem 0; padding:1rem; border-left:4px solid var(--primary); background: #f8f8ff;">
-              <p><strong>Looking to make a privacy request (access/delete/share opt-out)?</strong> Use our <a href="pages/legal/privacy-request.html">Privacy Request</a> wizard to check eligibility by jurisdiction and submit your request.</p>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="../../index.html" class="nav-logo">
+                    <strong>Home<span style="color: #1a73e8;">MAXX</span></strong>
+                </a>
             </div>
+        </nav>
+    </header>
 
-            <p class="mt-4 text-sm text-muted">To make a broader privacy request (access, deletion, correction, or opt-out of sale/sharing), please use our <a href="pages/legal/privacy-request.html">Privacy Request</a> page. SMS opt-out via STOP remains the fastest way to stop messages.</p>
-          </div>
+    <main class="opt-out-container">
+        <div class="opt-out-header">
+            <h1>Opt-Out of Communications</h1>
+            <p>Manage your communication preferences with HomeMAXX.</p>
         </div>
 
-        <p class="mt-6 text-sm">
-          See also our <a href="pages/legal/privacy-policy.html">Privacy Policy</a> for more details on your rights and how we handle your data.
-        </p>
-      </div>
-    </section>
-  </main>
+        <div class="opt-out-section">
+            <h2>Quick Opt-Out (SMS)</h2>
+            <p>You can opt out of SMS at any time by replying <strong>STOP</strong> to any text message we send. For help, reply <strong>HELP</strong>. Message and data rates may apply. Message frequency varies.</p>
+            
+            <p><strong>Looking to make a privacy request (access/delete/share opt-out)?</strong> Use our <a href="privacy-request.html">Privacy Request</a> wizard to check eligibility by jurisdiction and submit your request.</p>
+            
+            <p>To make a broader privacy request (access, deletion, correction, or opt-out of sale/sharing), please use our <a href="privacy-request.html">Privacy Request</a> page. SMS opt-out via STOP remains the fastest way to stop messages.</p>
+            
+            <p>See also our <a href="privacy-policy.html">Privacy Policy</a> for more details on your rights and how we handle your data.</p>
+        </div>
 
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-about">
-          <div class="footer-logo">HomeMAXX</div>
-          <p>We help homeowners sell their properties quickly and easily for cash.</p>
+        <div class="quick-methods">
+            <div class="method-card">
+                <div class="method-icon">📱</div>
+                <h3>Text Messages</h3>
+                <p>Reply <strong>STOP</strong> to any text message</p>
+                <p>For help: Reply <strong>HELP</strong></p>
+            </div>
+            
+            <div class="method-card">
+                <div class="method-icon">📧</div>
+                <h3>Email</h3>
+                <p>Click "Unsubscribe" link in any email</p>
+                <p>Or use the form below</p>
+            </div>
+            
+            <div class="method-card">
+                <div class="method-icon">📞</div>
+                <h3>Phone Calls</h3>
+                <p>Call our opt-out line:</p>
+                <p><strong>(888) 555-MAXX</strong></p>
+            </div>
         </div>
-        <div class="footer-links">
-          <h3>Quick Links</h3>
-          <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="pages/legal/privacy-policy.html">Privacy Policy</a></li>
-            <li><a href="pages/legal/terms-of-service.html">Terms of Service</a></li>
-            <li><a href="pages/legal/privacy-request.html">Privacy Request</a></li>
-          </ul>
+
+        <div class="opt-out-form">
+            <h2>Complete Opt-Out Form</h2>
+            <p>Use this form to opt out of all marketing communications from HomeMAXX.</p>
+            
+            <form id="optOutForm">
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567">
+                </div>
+                
+                <div class="form-group">
+                    <label for="optOutType">What would you like to opt out of? *</label>
+                    <select id="optOutType" name="optOutType" required>
+                        <option value="">Select an option</option>
+                        <option value="all">All marketing communications</option>
+                        <option value="email">Email only</option>
+                        <option value="sms">Text messages only</option>
+                        <option value="phone">Phone calls only</option>
+                        <option value="mail">Direct mail only</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reason">Reason for opting out (optional)</label>
+                    <select id="reason" name="reason">
+                        <option value="">Select a reason</option>
+                        <option value="too_frequent">Too frequent</option>
+                        <option value="not_interested">Not interested</option>
+                        <option value="sold_property">Already sold property</option>
+                        <option value="wrong_person">Wrong person</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn-submit">Submit Opt-Out Request</button>
+            </form>
         </div>
-      </div>
-      <div class="copyright">
-        <p>&copy; 2025 HomeMAXX. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
+
+        <div class="opt-out-section">
+            <h2>Important Information</h2>
+            <ul>
+                <li>We help homeowners sell their properties quickly and easily for cash.</li>
+                <li>Processing your opt-out request may take up to 10 business days.</li>
+                <li>You may still receive transactional messages related to active services.</li>
+                <li>Opting out will not affect any pending real estate transactions.</li>
+                <li>You can re-subscribe at any time by contacting us.</li>
+            </ul>
+        </div>
+
+        <div class="opt-out-section">
+            <h2>Contact Information</h2>
+            <p>If you need assistance with opting out or have questions:</p>
+            <p>
+                <strong>HomeMAXX LLC</strong><br>
+                Customer Service<br>
+                123 Real Estate Blvd, Suite 100<br>
+                Atlanta, GA 30309<br>
+                Email: <a href="mailto:optout@homemaxx.com">optout@homemaxx.com</a><br>
+                Phone: (888) 555-MAXX
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 HomeMAXX LLC. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="terms-of-service.html">Terms of Service</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
+                <a href="opt-out.html">Opt-Out</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('optOutForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Show success message
+            const form = this;
+            form.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <h3 style="color: #28a745;">✓ Opt-Out Request Submitted</h3>
+                    <p>Your request has been received and will be processed within 10 business days.</p>
+                    <p>You should stop receiving communications of the selected type shortly.</p>
+                    <p>If you continue to receive unwanted communications after 10 business days, please contact us at <a href="mailto:optout@homemaxx.com">optout@homemaxx.com</a>.</p>
+                </div>
+            `;
+            
+            // Track opt-out submission
+            if (window.gtag) {
+                gtag('event', 'opt_out_submitted', {
+                    event_category: 'privacy',
+                    event_label: data.optOutType || 'unknown'
+                });
+            }
+            
+            console.log('Opt-out request submitted:', data);
+        });
+    </script>
 </body>
 </html>
