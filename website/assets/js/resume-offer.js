@@ -46,9 +46,20 @@ class OfferResume {
       const progressData = {
         ...data,
         timestamp: Date.now(),
-        lastStep: data.currentStep || 0
+        lastStep: data.currentStep || 0,
+        address: data.address || data.propertyAddress // Ensure address is always saved
       };
+      
+      // If this is a new address, overwrite any existing progress
+      const existingProgress = this.getSavedProgress();
+      if (existingProgress && existingProgress.address && 
+          progressData.address && 
+          existingProgress.address !== progressData.address) {
+        console.log('New address detected, overwriting previous progress');
+      }
+      
       localStorage.setItem(this.storageKey, JSON.stringify(progressData));
+      console.log('Progress saved:', progressData);
     } catch (error) {
       console.error('Failed to save progress:', error);
     }

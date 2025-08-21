@@ -1083,10 +1083,136 @@
     });
   })();
 
+  // Enhanced initialization with loading screen and cash offer detection
+  function initializeFunnel() {
+    // Check for cash offer claim from URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const cashOfferClaimed = urlParams.get('cashOffer') === 'true';
+    const cashAmount = urlParams.get('amount') || '7500';
+    
+    if (cashOfferClaimed) {
+      // Add cash offer indicator to funnel
+      addCashOfferIndicator(cashAmount);
+      
+      // Save cash offer claim to progress
+      if (window.offerResume) {
+        window.offerResume.saveProgress({
+          cashOfferClaimed: true,
+          cashAmount: parseInt(cashAmount),
+          claimTimestamp: Date.now(),
+          currentStep: current
+        });
+      }
+    }
+    
+    // Show the first step immediately to prevent layout jump
+    showStep(current);
+    
+    // Initialize live slots display if present
+    updateSlotsDisplay();
+    
+    // Hide loading screen after a brief delay to ensure smooth transition
+    setTimeout(() => {
+      hideLoadingScreen();
+    }, 800);
+    
+    // Save initial progress if address is provided
+    const addressParam = urlParams.get('address');
+    if (addressParam && window.offerResume) {
+      window.offerResume.saveProgress({
+        address: addressParam,
+        currentStep: current,
+        timestamp: Date.now()
+      });
+    }
+  }
+
+  // Add cash offer indicator to funnel header
+  function addCashOfferIndicator(amount) {
+    const header = document.querySelector('.funnel-header') || document.querySelector('header');
+    if (header) {
+      const indicator = document.createElement('div');
+      indicator.className = 'cash-offer-active';
+      indicator.innerHTML = `
+        <div class="cash-offer-banner">
+          <span class="cash-icon">💰</span>
+          <span class="cash-text">$${amount} INSTANT CASH CLAIMED</span>
+          <span class="cash-status">✅ Qualifying in progress</span>
+        </div>
+      `;
+      
+      // Add styles for cash offer banner
+      if (!document.getElementById('cash-offer-funnel-styles')) {
+        const style = document.createElement('style');
+        style.id = 'cash-offer-funnel-styles';
+        style.textContent = `
+          .cash-offer-active {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 0.75rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(255, 107, 53, 0.3);
+          }
+          
+          .cash-offer-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-weight: 600;
+          }
+          
+          .cash-icon {
+            font-size: 1.25rem;
+          }
+          
+          .cash-text {
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+          }
+          
+          .cash-status {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+          }
+          
+          @media (max-width: 768px) {
+            .cash-offer-banner {
+              flex-direction: column;
+              gap: 0.5rem;
+            }
+            
+            .cash-text {
+              font-size: 0.875rem;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      
+      header.insertAdjacentElement('afterend', indicator);
+    }
+  }
+
+  // Hide loading screen once funnel is ready
+  function hideLoadingScreen() {
+    const loadingScreen = document.getElementById('funnel-loading');
+    if (loadingScreen) {
+      loadingScreen.classList.add('hidden');
+      setTimeout(() => {
+        loadingScreen.remove();
+      }, 500);
+    }
+  }
+
   // Initialize
-  showStep(current);
-  // Initialize live slots display if present
-  updateSlotsDisplay();
+  initializeFunnel();
 
   // Live validation: clear errors as user types/changes and update summary silently
   (function bindLiveValidation(){

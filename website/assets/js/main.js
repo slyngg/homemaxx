@@ -271,3 +271,301 @@ document.addEventListener('keydown', (e) => {
     closeModal();
   }
 });
+
+// Address confirmation modal functionality
+function createAddressConfirmationModal() {
+    const modal = document.createElement('div');
+    modal.id = 'address-confirmation-modal';
+    modal.className = 'address-modal-overlay';
+    modal.innerHTML = `
+        <div class="address-modal">
+            <div class="address-modal-header">
+                <h3>Confirm your address</h3>
+                <button class="address-modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="address-modal-body">
+                <p>Is this the correct address for your property?</p>
+                <div class="confirmed-address" id="confirmed-address-display"></div>
+                <div class="address-modal-actions">
+                    <button class="btn btn-outline" id="edit-address-btn">Edit address</button>
+                    <button class="btn btn-primary" id="confirm-address-btn">Yes, that's correct</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal styles
+    if (!document.getElementById('address-modal-styles')) {
+        const style = document.createElement('style');
+        style.id = 'address-modal-styles';
+        style.textContent = `
+            .address-modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+            
+            .address-modal-overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .address-modal {
+                background: white;
+                border-radius: 12px;
+                max-width: 500px;
+                width: 90%;
+                max-height: 90vh;
+                overflow-y: auto;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+                transform: translateY(20px);
+                transition: transform 0.3s ease;
+            }
+            
+            .address-modal-overlay.active .address-modal {
+                transform: translateY(0);
+            }
+            
+            .address-modal-header {
+                padding: 1.5rem;
+                border-bottom: 1px solid var(--border);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .address-modal-header h3 {
+                margin: 0;
+                font-size: 1.25rem;
+                font-weight: 600;
+            }
+            
+            .address-modal-close {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                color: var(--text-secondary);
+            }
+            
+            .address-modal-close:hover {
+                background: var(--surface);
+                color: var(--text);
+            }
+            
+            .address-modal-body {
+                padding: 1.5rem;
+            }
+            
+            .confirmed-address {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 1rem;
+                margin: 1rem 0;
+                font-weight: 500;
+                color: var(--text);
+            }
+            
+            .address-modal-actions {
+                display: flex;
+                gap: 1rem;
+                justify-content: flex-end;
+                margin-top: 1.5rem;
+            }
+            
+            @media (max-width: 768px) {
+                .address-modal-actions {
+                    flex-direction: column;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    return modal;
+}
+
+// Enhanced address handling for hero form
+function setupHeroAddressForm() {
+    const heroForm = document.querySelector('.hero-address');
+    const heroInput = document.getElementById('heroAddress');
+    const heroButton = document.getElementById('heroStart');
+    
+    if (!heroForm || !heroInput || !heroButton) return;
+    
+    let selectedPlace = null;
+    
+    // Initialize Google Places Autocomplete
+    function initAutocomplete() {
+        if (window.google && window.google.maps && window.google.maps.places) {
+            const autocomplete = new google.maps.places.Autocomplete(heroInput, {
+                types: ['address'],
+                fields: ['formatted_address', 'address_components', 'geometry']
+            });
+            
+            autocomplete.addListener('place_changed', function() {
+                selectedPlace = autocomplete.getPlace();
+                if (selectedPlace && selectedPlace.formatted_address) {
+                    heroInput.value = selectedPlace.formatted_address;
+                }
+            });
+        }
+    }
+    
+    // Show address confirmation modal
+    function showAddressConfirmation(address) {
+        const modal = createAddressConfirmationModal();
+        document.body.appendChild(modal);
+        
+        const addressDisplay = modal.querySelector('#confirmed-address-display');
+        const confirmBtn = modal.querySelector('#confirm-address-btn');
+        const editBtn = modal.querySelector('#edit-address-btn');
+        const closeBtn = modal.querySelector('.address-modal-close');
+        
+        addressDisplay.textContent = address;
+        
+        // Show modal
+        setTimeout(() => modal.classList.add('active'), 10);
+        
+        // Handle confirmation
+        confirmBtn.addEventListener('click', function() {
+            // Save address to progress
+            if (window.offerResume) {
+                window.offerResume.saveProgress({
+                    address: address,
+                    currentStep: 0,
+                    timestamp: Date.now()
+                });
+            }
+            
+            // Redirect to funnel with address
+            const params = new URLSearchParams({ address: address });
+            window.location.href = `pages/get-offer.html?${params.toString()}`;
+        });
+        
+        // Handle edit
+        editBtn.addEventListener('click', function() {
+            closeModal();
+            heroInput.focus();
+        });
+        
+        // Handle close
+        function closeModal() {
+            modal.classList.remove('active');
+            setTimeout(() => modal.remove(), 300);
+        }
+        
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+        });
+    }
+    
+    // Handle form submission
+    heroButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const address = heroInput.value.trim();
+        if (!address) {
+            heroInput.focus();
+            return;
+        }
+        
+        // If we have a selected place from autocomplete, use that
+        if (selectedPlace && selectedPlace.formatted_address) {
+            showAddressConfirmation(selectedPlace.formatted_address);
+        } else {
+            // Otherwise use the typed address
+            showAddressConfirmation(address);
+        }
+    });
+    
+    // Handle Enter key
+    heroInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            heroButton.click();
+        }
+    });
+    
+    // Initialize autocomplete when Google Maps is ready
+    if (window.google) {
+        initAutocomplete();
+    } else {
+        window.initGooglePlaces = function() {
+            initAutocomplete();
+        };
+    }
+}
+
+// Enhanced finish offer button functionality
+function setupFinishOfferButton() {
+    const offerBanner = document.querySelector('.offer-banner');
+    if (!offerBanner) return;
+    
+    // Make the entire banner clickable
+    offerBanner.style.cursor = 'pointer';
+    offerBanner.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        if (window.offerResume) {
+            const savedProgress = window.offerResume.getSavedProgress();
+            if (savedProgress && savedProgress.address) {
+                // Resume existing offer
+                window.offerResume.resumeOffer();
+            } else {
+                // Start new offer
+                window.location.href = 'pages/address-entry.html';
+            }
+        } else {
+            // Fallback
+            window.location.href = 'pages/address-entry.html';
+        }
+    });
+    
+    // Update banner text based on saved progress
+    function updateOfferBanner() {
+        if (window.offerResume) {
+            const savedProgress = window.offerResume.getSavedProgress();
+            const offerText = offerBanner.querySelector('.offer-text strong');
+            
+            if (savedProgress && savedProgress.address && offerText) {
+                offerText.textContent = savedProgress.address;
+            }
+        }
+    }
+    
+    // Update banner on load and when progress changes
+    updateOfferBanner();
+    
+    // Listen for storage changes (if user saves progress in another tab)
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'homemaxx_offer_progress') {
+            updateOfferBanner();
+        }
+    });
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    setupHeroAddressForm();
+    setupFinishOfferButton();
+});

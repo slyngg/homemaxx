@@ -48,46 +48,114 @@ async function decrement() {
   return { remaining };
 }
 
-exports.handler = async function (event) {
+exports.handler = async (event, context) => {
+  // CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+  };
+
+  // Handle preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers,
+      body: ''
+    };
+  }
+
   try {
-    const method = event.httpMethod || 'GET';
-    // Allow GET from anywhere, POST from same-origin (basic guard)
-    const headers = {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Cache-Control': 'no-store',
+    // Simple in-memory storage for demo (in production, use a database)
+    let slotsData = {
+      remaining: 7,
+      total: 7,
+      lastUpdated: Date.now()
     };
 
-    if (method === 'OPTIONS') {
-      return { statusCode: 204, headers, body: '' };
+    // Try to get existing data from environment or use default
+    if (process.env.SLOTS_REMAINING) {
+      slotsData.remaining = parseInt(process.env.SLOTS_REMAINING);
     }
 
-    if (method === 'GET') {
-      const { remaining, monthKey } = await readRemaining();
-      return { statusCode: 200, headers, body: JSON.stringify({ remaining, monthKey }) };
+    if (event.httpMethod === 'GET') {
+      // Return current slots count
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          success: true,
+          data: slotsData
+        })
+      };
     }
 
-    if (method === 'POST') {
-      // Optional: minimal referer check
-      try {
-        const referer = event.headers && (event.headers.referer || event.headers.Referer);
-        if (referer && !/homemaxx\.(netlify\.app|llc)/.test(referer)) {
-          // Still proceed but no-op; or enforce by returning 403.
-        }
-      } catch (_) {}
+    if (event.httpMethod === 'POST') {
+      const body = JSON.parse(event.body || '{}');
+      const action = body.action;
 
-      const body = event.body ? JSON.parse(event.body) : {};
-      if (!body || body.action !== 'decrement') {
-        return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid action' }) };
+      if (action === 'decrement' && slotsData.remaining > 0) {
+        slotsData.remaining -= 1;
+        slotsData.lastUpdated = Date.now();
+        
+        // Log the decrement for tracking
+        console.log(`Slots decremented: ${slotsData.remaining} remaining`);
+        
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            success: true,
+            data: slotsData,
+            message: 'Slot claimed successfully'
+          })
+        };
       }
-      const { remaining } = await decrement();
-      return { statusCode: 200, headers, body: JSON.stringify({ remaining }) };
+
+      if (action === 'reset') {
+        slotsData.remaining = slotsData.total;
+        slotsData.lastUpdated = Date.now();
+        
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            success: true,
+            data: slotsData,
+            message: 'Slots reset to maximum'
+          })
+        };
+      }
+
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          error: 'Invalid action or no slots remaining'
+        })
+      };
     }
 
-    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method Not Allowed' }) };
-  } catch (err) {
-    return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: String(err && err.message || err) }) };
+    return {
+      statusCode: 405,
+      headers,
+      body: JSON.stringify({
+        success: false,
+        error: 'Method not allowed'
+      })
+    };
+
+  } catch (error) {
+    console.error('Slots function error:', error);
+    
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({
+        success: false,
+        error: 'Internal server error'
+      })
+    };
   }
 };
