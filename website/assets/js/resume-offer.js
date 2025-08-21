@@ -143,54 +143,92 @@ class OfferResume {
     style.id = 'resume-offer-styles';
     style.textContent = `
       .offer-banner {
-        background: linear-gradient(135deg, var(--primary-light), rgba(26, 86, 255, 0.1));
-        border: 2px solid var(--primary);
+        background: linear-gradient(135deg, #1a56ff, #0d47a1);
+        border: 2px solid #1a56ff;
         border-radius: 12px;
-        margin: 1rem 0;
-        padding: 1rem;
-        box-shadow: 0 4px 12px rgba(26, 86, 255, 0.15);
+        margin: 1rem auto;
+        padding: 1.5rem;
+        box-shadow: 0 8px 25px rgba(26, 86, 255, 0.3);
         animation: slideInFromTop 0.5s ease-out;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        max-width: 1200px;
+        position: relative;
+        z-index: 100;
+      }
+
+      .offer-banner:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 35px rgba(26, 86, 255, 0.4);
       }
 
       .offer-banner-content {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         gap: 1rem;
         flex-wrap: wrap;
       }
 
       .offer-banner-text {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--text);
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
       }
 
       .offer-banner-address {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: 1rem;
+        color: rgba(255,255,255,0.9);
+        font-weight: 500;
+        background: rgba(255,255,255,0.1);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
       }
 
       .cash-offer-indicator {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 1rem;
+        flex-shrink: 0;
       }
 
       .cash-badge {
-        background: var(--primary);
-        color: white;
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        color: #1a56ff;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 800;
+        font-size: 1.1rem;
+        text-shadow: none;
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        animation: glow 2s ease-in-out infinite alternate;
       }
 
       .spots-text {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: 0.9rem;
+        color: rgba(255,255,255,0.8);
+        font-weight: 600;
+        background: rgba(220, 53, 69, 0.8);
+        padding: 0.4rem 0.8rem;
+        border-radius: 15px;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+
+      @keyframes glow {
+        from { box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); }
+        to { box-shadow: 0 6px 25px rgba(255, 215, 0, 0.7); }
+      }
+
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
       }
 
       @keyframes slideInFromTop {
         from {
-          transform: translateY(-20px);
+          transform: translateY(-30px);
           opacity: 0;
         }
         to {
@@ -200,9 +238,24 @@ class OfferResume {
       }
 
       @media (max-width: 768px) {
+        .offer-banner {
+          margin: 1rem;
+          padding: 1rem;
+        }
+        
         .offer-banner-content {
           flex-direction: column;
           text-align: center;
+          gap: 1rem;
+        }
+        
+        .offer-banner-text {
+          font-size: 1.1rem;
+        }
+        
+        .cash-offer-indicator {
+          flex-direction: column;
+          gap: 0.5rem;
         }
       }
     `;
@@ -211,7 +264,7 @@ class OfferResume {
 
   resumeOffer() {
     const currentPage = window.location.pathname;
-    const targetUrl = '/Users/moretticayden/Desktop/homemaxx/website/pages/get-offer.html';
+    const targetUrl = 'pages/get-offer.html';
     
     // Build URL with proper parameters
     const params = new URLSearchParams();
@@ -240,7 +293,7 @@ class OfferResume {
       window.location.search = params.toString();
     } else {
       // Navigate from homepage or other page
-      window.location.href = fullUrl.replace('/Users/moretticayden/Desktop/homemaxx/website/', '');
+      window.location.href = fullUrl;
     }
   }
 
