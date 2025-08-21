@@ -99,9 +99,17 @@ class OfferResume {
     if (!resumeBanner) {
       resumeBanner = this.createBanner();
       
-      // Insert at top of main content
+      // Insert below header, not at top of main content
+      const header = document.querySelector('.site-header');
       const main = document.querySelector('main') || document.body;
-      main.insertBefore(resumeBanner, main.firstChild);
+      
+      if (header && header.nextSibling) {
+        // Insert after header
+        header.parentNode.insertBefore(resumeBanner, header.nextSibling);
+      } else {
+        // Fallback: insert at top of main content with proper margin
+        main.insertBefore(resumeBanner, main.firstChild);
+      }
     }
 
     // Add styles
