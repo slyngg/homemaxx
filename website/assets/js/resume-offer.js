@@ -157,12 +157,13 @@ class OfferResume {
         margin: 1rem auto;
         padding: 1.5rem;
         box-shadow: 0 8px 25px rgba(26, 86, 255, 0.3);
-        animation: slideInFromTop 0.5s ease-out;
         cursor: pointer;
         transition: all 0.3s ease;
         max-width: 1200px;
-        position: relative;
-        z-index: 100;
+        position: static;
+        z-index: 10;
+        display: block;
+        width: calc(100% - 2rem);
       }
 
       .offer-banner:hover {
@@ -232,17 +233,6 @@ class OfferResume {
       @keyframes pulse {
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.05); }
-      }
-
-      @keyframes slideInFromTop {
-        from {
-          transform: translateY(-30px);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
       }
 
       @media (max-width: 768px) {

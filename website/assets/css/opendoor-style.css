@@ -340,30 +340,79 @@ p {
 
 /* Offer Banner */
 .offer-banner {
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white;
+  padding: 12px 20px;
+  text-align: center;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(255, 107, 53, 0.3);
+  margin: 1rem auto;
+  border-radius: 8px;
+  max-width: 1200px;
+  position: static;
+  z-index: 10;
+}
+
+.offer-banner:hover {
+  background: linear-gradient(135deg, #e55a2b, #e8841a);
+  transform: translateY(2px);
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+}
+
+.offer-banner-content {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  margin: 1.5rem auto 2rem;
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  background: var(--primary-50);
-  border: 1px solid var(--primary-200);
-  max-width: fit-content;
+  gap: 16px;
+  flex-wrap: wrap;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-.offer-banner .badge {
-  background: var(--primary);
-  color: white;
+.offer-banner-text {
+  font-size: 16px;
+}
+
+.offer-banner-address {
   font-weight: 700;
-  padding: 0.25rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.875rem;
+  text-decoration: underline;
 }
 
-.offer-banner .offer-text {
-  font-weight: 600;
-  color: var(--text);
+.cash-offer-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cash-badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.spots-text {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .offer-banner-content {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .offer-banner-text {
+    font-size: 14px;
+  }
+  
+  .cash-offer-indicator {
+    flex-direction: column;
+    gap: 6px;
+  }
 }
 
 /* Hero Address Form */
@@ -1105,76 +1154,4 @@ p {
 
 .legal-notice a:hover {
   text-decoration: underline;
-}
-
-/* Resume Offer Banner Fixes */
-.offer-banner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(135deg, #ff6b35, #f7931e);
-  color: white;
-  padding: 12px 20px;
-  text-align: center;
-  font-weight: 600;
-  z-index: 1000;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 10px rgba(255, 107, 53, 0.3);
-}
-
-.offer-banner:hover {
-  background: linear-gradient(135deg, #e55a2b, #e8841a);
-  transform: translateY(2px);
-  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
-}
-
-.offer-banner-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.offer-banner-text {
-  font-size: 16px;
-}
-
-.offer-banner-address {
-  font-weight: 700;
-  text-decoration: underline;
-}
-
-.cash-offer-indicator {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-}
-
-.cash-badge {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: bold;
-  animation: flash 2s infinite;
-}
-
-@media (max-width: 768px) {
-  .offer-banner-content {
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .offer-banner-text {
-    font-size: 14px;
-  }
-  
-  .cash-offer-indicator {
-    justify-content: center;
-  }
 }
