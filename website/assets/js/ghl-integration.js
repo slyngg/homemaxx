@@ -45,10 +45,20 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             // Submit the form data to GHL
             const formData = new FormData(this);
+            
+            // Convert FormData to JSON for better GHL compatibility
+            const jsonData = {};
+            for (let [key, value] of formData.entries()) {
+                jsonData[key] = value;
+            }
+            
+            console.log('Submitting to GHL:', jsonData);
+            
             const response = await fetch(GHL_WEBHOOK_URL, {
                 method: 'POST',
-                body: formData,
+                body: JSON.stringify(jsonData),
                 headers: {
+                    'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 }
             });

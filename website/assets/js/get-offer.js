@@ -452,28 +452,28 @@
         
         <div class="condition-cards">
           <button type="button" class="condition-card" onclick="selectCondition('kitchen', 'fixer')">
-            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1505691723518-36a5ac3b2b8f?q=80&w=400')"></div>
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=400&auto=format&fit=crop')"></div>
             <div class="card-content">
               <h4>Fixer Upper</h4>
               <p>Kitchen needs significant repairs</p>
             </div>
           </button>
           <button type="button" class="condition-card" onclick="selectCondition('kitchen', 'dated')">
-            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1584622781564-1f94a2b52b8e?q=80&w=400')"></div>
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=400&auto=format&fit=crop')"></div>
             <div class="card-content">
               <h4>Dated</h4>
               <p>Kitchen hasn't been updated recently</p>
             </div>
           </button>
           <button type="button" class="condition-card" onclick="selectCondition('kitchen', 'standard')">
-            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=400')"></div>
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=400&auto=format&fit=crop')"></div>
             <div class="card-content">
               <h4>Standard</h4>
               <p>Kitchen is in good condition</p>
             </div>
           </button>
           <button type="button" class="condition-card" onclick="selectCondition('kitchen', 'high-end')">
-            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=400')"></div>
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=400&auto=format&fit=crop')"></div>
             <div class="card-content">
               <h4>High end</h4>
               <p>Recently updated with premium finishes</p>
@@ -512,28 +512,28 @@
         
         <div class="condition-cards">
           <button type="button" class="condition-card" onclick="selectCondition('bathroom', 'fixer')">
-            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1584622781564-1f94a2b52b8e?q=80&w=400')"></div>
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1620626011761-996317b8d101?q=80&w=400&auto=format&fit=crop')"></div>
             <div class="card-content">
               <h4>Fixer Upper</h4>
               <p>Bathroom needs significant repairs</p>
             </div>
           </button>
           <button type="button" class="condition-card" onclick="selectCondition('bathroom', 'dated')">
-            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1505691723518-36a5ac3b2b8f?q=80&w=400')"></div>
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1584622781564-1f94a2b52b8e?q=80&w=400&auto=format&fit=crop')"></div>
             <div class="card-content">
               <h4>Dated</h4>
               <p>Bathroom hasn't been updated recently</p>
             </div>
           </button>
           <button type="button" class="condition-card" onclick="selectCondition('bathroom', 'standard')">
-            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=400')"></div>
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?q=80&w=400&auto=format&fit=crop')"></div>
             <div class="card-content">
               <h4>Standard</h4>
               <p>Bathroom is in good condition</p>
             </div>
           </button>
           <button type="button" class="condition-card" onclick="selectCondition('bathroom', 'high-end')">
-            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=400')"></div>
+            <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1507652313519-d4e9174996dd?q=80&w=400&auto=format&fit=crop')"></div>
             <div class="card-content">
               <h4>High end</h4>
               <p>Recently updated with premium finishes</p>
