@@ -36,10 +36,24 @@ class OfferResume {
   }
 
   checkForSavedProgress() {
-    if (this.progress && this.progress.address && Object.keys(this.progress).length > 2) {
+    console.log('Checking saved progress:', this.progress);
+    
+    // Only show banner if there's meaningful progress beyond just address
+    if (this.progress && 
+        this.progress.address && 
+        (this.progress.currentStep > 0 || 
+         this.progress.lastStep > 0 || 
+         Object.keys(this.progress).length > 3)) {
+      console.log('Showing resume banner for progress:', this.progress);
       this.showResumeOption(this.progress);
+    } else {
+      console.log('No meaningful progress found, not showing banner');
+      // Remove any existing banner
+      const existingBanner = document.getElementById('resume-offer-banner');
+      if (existingBanner) {
+        existingBanner.remove();
+      }
     }
-    // If no progress, don't show any banner - let the regular $7500 offer display
   }
 
   saveProgress(data) {
