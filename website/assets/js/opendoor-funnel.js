@@ -12,14 +12,39 @@ class OpendoorFunnel {
     this.formData = {};
     this.userType = 'owner'; // 'owner', 'agent', or 'hoa'
     this.steps = [];
+    this.preconfirmedAddress = null;
     
     this.init();
   }
 
   init() {
+    // Check for pre-confirmed address from URL parameters or localStorage
+    this.checkPreconfirmedAddress();
     this.createSteps();
     this.bindEvents();
-    this.showStep(0);
+    
+    // Start from appropriate step
+    const startStep = this.preconfirmedAddress ? 1 : 0; // Skip address step if pre-confirmed
+    this.showStep(startStep);
+  }
+
+  checkPreconfirmedAddress() {
+    // Check URL parameters first
+    const urlParams = new URLSearchParams(window.location.search);
+    const addressParam = urlParams.get('address');
+    
+    // Check localStorage for address from landing page
+    const storedAddress = localStorage.getItem('homemaxx_confirmed_address');
+    
+    if (addressParam) {
+      this.preconfirmedAddress = decodeURIComponent(addressParam);
+      this.formData.address = this.preconfirmedAddress;
+    } else if (storedAddress) {
+      this.preconfirmedAddress = storedAddress;
+      this.formData.address = this.preconfirmedAddress;
+      // Clear from localStorage after use
+      localStorage.removeItem('homemaxx_confirmed_address');
+    }
   }
 
   createSteps() {
@@ -28,7 +53,8 @@ class OpendoorFunnel {
         id: 'address',
         title: 'Enter your home address',
         subtitle: '',
-        render: () => this.renderAddressStep()
+        render: () => this.renderAddressStep(),
+        condition: () => !this.preconfirmedAddress // Only show if no pre-confirmed address
       },
       {
         id: 'property-details',
