@@ -516,55 +516,7 @@ function setupHeroAddressForm() {
     }
 }
 
-// Enhanced finish offer button functionality
-function setupFinishOfferButton() {
-    const offerBanner = document.querySelector('.offer-banner');
-    if (!offerBanner) return;
-    
-    // Make the entire banner clickable
-    offerBanner.style.cursor = 'pointer';
-    offerBanner.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        // Wait for resume-offer.js to load if needed
-        if (window.offerResume) {
-            const savedProgress = window.offerResume.getSavedProgress();
-            if (savedProgress && savedProgress.address) {
-                // Resume existing offer - go directly to funnel
-                window.offerResume.resumeOffer();
-                return;
-            }
-        }
-        
-        // If no saved progress, start new offer
-        window.location.href = 'pages/address-entry.html';
-    });
-    
-    // Update banner text based on saved progress
-    function updateOfferBanner() {
-        if (window.offerResume) {
-            const savedProgress = window.offerResume.getSavedProgress();
-            const offerText = offerBanner.querySelector('.offer-text strong');
-            
-            if (savedProgress && savedProgress.address && offerText) {
-                offerText.textContent = savedProgress.address;
-            }
-        }
-    }
-    
-    // Update banner on load and when progress changes
-    updateOfferBanner();
-    
-    // Listen for storage changes (if user saves progress in another tab)
-    window.addEventListener('storage', function(e) {
-        if (e.key === 'homemaxx_offer_progress') {
-            updateOfferBanner();
-        }
-    });
-}
-
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     setupHeroAddressForm();
-    setupFinishOfferButton();
 });

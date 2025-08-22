@@ -36,9 +36,10 @@ class OfferResume {
   }
 
   checkForSavedProgress() {
-    if (this.progress && this.progress.address) {
+    if (this.progress && this.progress.address && Object.keys(this.progress).length > 2) {
       this.showResumeOption(this.progress);
     }
+    // If no progress, don't show any banner - let the regular $7500 offer display
   }
 
   saveProgress(data) {
