@@ -420,13 +420,12 @@
           }
         } catch (e) { /* noop */ }
       }
-      // Redirect into funnel with address param
+      // Remove the conflicting redirect functionality - let main.js handle it
       (function bindHeroCTA(){
         function go() {
           var addr = (document.getElementById('heroAddress')||{}).value || '';
           if (!addr.trim()) { (document.getElementById('heroAddress')||{}).focus?.(); return; }
           try { if (window.gtag) window.gtag('event', 'hero_start', { action: 'click', location: 'homepage_hero' }); } catch(e) {}
-          window.location.href = 'pages/address-entry.html?address=' + encodeURIComponent(addr.trim());
         }
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', function(){
