@@ -160,10 +160,13 @@ class OfferResume {
         cursor: pointer;
         transition: all 0.3s ease;
         max-width: 1200px;
-        position: static;
-        z-index: 10;
-        display: block;
+        position: static !important;
+        z-index: 10 !important;
+        display: block !important;
         width: calc(100% - 2rem);
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
       }
 
       .offer-banner:hover {
