@@ -145,25 +145,17 @@ class OfferResume {
   createBanner() {
     const banner = document.createElement('div');
     banner.id = 'resume-offer-banner';
-    banner.className = 'offer-banner';
+    banner.className = 'resume-banner';
     banner.innerHTML = `
-      <div class="offer-banner-content">
-        <span class="offer-banner-text">
-          Finish your offer today
-        </span>
-        <span class="offer-banner-address">${this.progress.address}</span>
-        <div class="cash-offer-indicator">
-          ${this.progress.cashOfferClaimed ? 
-            `<span class="cash-badge"> $${this.progress.cashAmount || 7500} INSTANT CASH</span>
-             <span class="spots-text">7 spots left</span>` : 
-            `<span class="cash-badge">$7,500 INSTANT CASH</span>
-             <span class="spots-text">7 spots left</span>`
-          }
-        </div>
+      <div class="resume-content">
+        <span class="resume-text">Finish your offer today</span>
+        <span class="resume-address">${this.progress.address}</span>
+        <svg class="resume-arrow" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
       </div>
     `;
 
-    // Enhanced click handler with proper navigation
     banner.addEventListener('click', () => {
       this.resumeOffer();
     });
@@ -177,124 +169,61 @@ class OfferResume {
     const style = document.createElement('style');
     style.id = 'resume-offer-styles';
     style.textContent = `
-      .offer-banner {
-        background: linear-gradient(135deg, #1a56ff, #0d47a1);
-        border: 2px solid #1a56ff;
-        border-radius: 12px;
+      .resume-banner {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
         margin: 1rem auto;
-        padding: 1.5rem;
-        box-shadow: 0 8px 25px rgba(26, 86, 255, 0.3);
+        padding: 1rem 1.5rem;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         max-width: 1200px;
-        position: static !important;
-        z-index: 10 !important;
-        display: block !important;
-        width: calc(100% - 2rem);
-        top: auto !important;
-        left: auto !important;
-        right: auto !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       }
 
-      .offer-banner:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 35px rgba(26, 86, 255, 0.4);
+      .resume-banner:hover {
+        border-color: #3b82f6;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
       }
 
-      .offer-banner-content {
+      .resume-content {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 1rem;
-        flex-wrap: wrap;
       }
 
-      .offer-banner-text {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: white;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      }
-
-      .offer-banner-address {
+      .resume-text {
         font-size: 1rem;
-        color: rgba(255,255,255,0.9);
         font-weight: 500;
-        background: rgba(255,255,255,0.1);
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        backdrop-filter: blur(10px);
+        color: #111827;
       }
 
-      .cash-offer-indicator {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
+      .resume-address {
+        font-size: 0.875rem;
+        color: #6b7280;
+        flex: 1;
+        text-align: center;
+      }
+
+      .resume-arrow {
+        color: #9ca3af;
         flex-shrink: 0;
       }
 
-      .cash-badge {
-        background: linear-gradient(135deg, #ffd700, #ffed4e);
-        color: #1a56ff;
-        padding: 0.75rem 1.5rem;
-        border-radius: 25px;
-        font-weight: 800;
-        font-size: 1.1rem;
-        text-shadow: none;
-        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
-        animation: glow 2s ease-in-out infinite alternate;
-      }
-
-      .spots-text {
-        font-size: 0.9rem;
-        color: rgba(255,255,255,0.8);
-        font-weight: 600;
-        background: rgba(220, 53, 69, 0.8);
-        padding: 0.4rem 0.8rem;
-        border-radius: 15px;
-        animation: pulse 1.5s ease-in-out infinite;
-      }
-
-      @keyframes glow {
-        from { box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); }
-        to { box-shadow: 0 6px 25px rgba(255, 215, 0, 0.7); }
-      }
-
-      @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-      }
-
-      @keyframes slideOutToTop {
-        from {
-          transform: translateY(0);
-          opacity: 1;
-        }
-        to {
-          transform: translateY(-20px);
-          opacity: 0;
-        }
-      }
-
       @media (max-width: 768px) {
-        .offer-banner {
+        .resume-banner {
           margin: 1rem;
-          padding: 1rem;
         }
         
-        .offer-banner-content {
+        .resume-content {
           flex-direction: column;
           text-align: center;
-          gap: 1rem;
-        }
-        
-        .offer-banner-text {
-          font-size: 1.1rem;
-        }
-        
-        .cash-offer-indicator {
-          flex-direction: column;
           gap: 0.5rem;
+        }
+        
+        .resume-address {
+          text-align: center;
         }
       }
     `;

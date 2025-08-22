@@ -5,461 +5,348 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Get Your Cash Offer | HomeMAXX</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
-  <link rel="stylesheet" href="../assets/css/opendoor-style.css" />
-  <link rel="stylesheet" href="../assets/css/smooth-funnel.css" />
-  <script src="../assets/js/smooth-funnel.js" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <!-- Performance: preconnect for Places API -->
   <link rel="preconnect" href="https://maps.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://maps.gstatic.com" crossorigin>
   <style>
-    /* Ensure Places autocomplete dropdown appears above UI */
-    .pac-container { z-index: 2000 !important; }
-    /* Offer ribbon */
-    .ribbon { display:flex; align-items:center; gap:.5rem; padding:.5rem .75rem; border:1px solid rgba(255,193,7,.45); background:linear-gradient(90deg, rgba(255,215,115,.25), rgba(255,255,255,0)); border-radius:10px; margin:.75rem 0 0; }
-    .ribbon .badge { background:#FFC107; color:#111; font-weight:700; padding:.15rem .45rem; border-radius:6px; font-size:.8rem; }
-    .assistive { font-size:.9rem; color:#6b7280; }
+    /* Reset and base styles */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f8fafc;
+      color: #1f2937;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* Fullscreen funnel container */
+    .funnel-container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      background: white;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Header */
+    .funnel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .logo .text-primary { color: #3b82f6; }
+
+    .save-btn {
+      background: none;
+      border: none;
+      color: #6b7280;
+      font-size: 0.875rem;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    .save-btn:hover { color: #3b82f6; }
+
+    /* Progress bar */
+    .progress-container {
+      margin-bottom: 3rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #3b82f6;
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+
+    /* Step content */
+    .step-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .step-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+
+    .step-subtitle {
+      color: #6b7280;
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Form elements */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    /* Option buttons */
+    .option-grid {
+      display: grid;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .option-btn {
+      padding: 1.25rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      background: white;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 1rem;
+    }
+
+    .option-btn:hover {
+      border-color: #3b82f6;
+      background: #f8fafc;
+    }
+
+    .option-btn.selected {
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+
+    /* Image options */
+    .image-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .image-option {
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .image-option:hover {
+      border-color: #3b82f6;
+    }
+
+    .image-option.selected {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .image-option img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+    }
+
+    .image-option-content {
+      padding: 1rem;
+    }
+
+    .image-option-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .image-option-desc {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    /* Navigation */
+    .step-navigation {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 2rem;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-back {
+      background: none;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-back:hover { color: #374151; }
+
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+      min-width: 120px;
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+
+    .btn-primary:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    /* Skip button */
+    .btn-skip {
+      background: none;
+      border: none;
+      color: #6b7280;
+      font-size: 0.875rem;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    .btn-skip:hover { color: #374151; }
+
+    /* Property details grid */
+    .property-details {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .detail-row:last-child { border-bottom: none; }
+
+    .detail-label {
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+
+    .detail-value {
+      font-weight: 600;
+    }
+
+    .edit-link {
+      color: #3b82f6;
+      font-size: 0.875rem;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .edit-link:hover { text-decoration: underline; }
+
+    /* Hidden class */
+    .hidden { display: none !important; }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .funnel-container {
+        padding: 1.5rem 1rem;
+      }
+
+      .step-title {
+        font-size: 1.75rem;
+      }
+
+      .image-options {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Loading Screen -->
-  <div id="funnel-loading" class="funnel-loading-overlay">
-    <div class="funnel-loading-content">
-      <div class="loading-spinner"></div>
-      <h3>Preparing your offer...</h3>
-      <p>Getting property details and market data</p>
+  <div class="funnel-container">
+    <!-- Header -->
+    <div class="funnel-header">
+      <div class="logo">Home<span class="text-primary">MAXX</span></div>
+      <button class="save-btn" onclick="saveDraft()">Save</button>
     </div>
-  </div>
 
-  <a href="#main" class="skip-link">Skip to main content</a>
-
-  <header class="site-header">
-    <div class="container">
-      <div class="header-inner">
-        <div class="logo"><a href="/" class="logo-link"><span class="logo-text">Home<span class="text-primary">MAXX</span></span></a></div>
-        <nav class="main-nav" aria-label="Main navigation">
-          <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="investment-opportunities.html">Properties</a></li>
-          </ul>
-        </nav>
+    <!-- Progress -->
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width: 12.5%"></div>
       </div>
     </div>
-  </header>
 
-  <main id="main" class="section">
-    <div class="container">
-      <div class="section-header text-center">
-        <h1>Let's start your offer</h1>
-        <p class="lead">Enter your address to get started. This helps us find sales data for your home and other homes nearby.</p>
-      </div>
-
-      <!-- Stepper -->
-      <div class="card" role="region" aria-label="Get Offer Steps">
-        <div class="progress" style="height: 4px; margin: 0; background: var(--border-light);">
-          <div id="go-progress" class="progress-bar" style="width: 12.5%; background: var(--primary); transition: width 0.3s ease;" aria-valuemin="0" aria-valuemax="100" aria-valuenow="12"></div>
-        </div>
-        <div id="go-progress-status" class="assistive" aria-live="polite" style="padding:.75rem 1rem; font-size: 0.875rem; color: var(--text-muted);">Step 1 of 8</div>
-
-        <div class="card-content go-form" style="padding: 2rem; min-height: 500px;">
-          <form id="contact-form" class="go-form" method="POST" data-webform="true" novalidate>
-            <!-- Hidden context fields -->
-            <input type="hidden" name="source" value="Get Offer Funnel" />
-            <input type="hidden" name="tags" value="website_lead,get_offer" />
-
-            <!-- Step 1: Address -->
-            <fieldset class="go-step" data-step="1" aria-describedby="s1-desc s1-errors">
-              <legend class="h3">Property Address</legend>
-              <p id="s1-desc" class="text-muted">Start with your address. Press Enter to continue faster.</p>
-              <div id="s1-errors" class="error-summary d-none" role="alert" aria-live="assertive" tabindex="-1"></div>
-
-              <div class="form-group">
-                <label for="propertyAddress">Property Address *</label>
-                <input type="text" id="propertyAddress" name="propertyAddress" class="form-control" required aria-required="true" autocomplete="street-address" />
-                <div class="invalid-feedback">Please enter a valid property address.</div>
-              </div>
-
-              <div class="form-actions">
-                <button type="button" class="btn btn-primary" data-action="next">Continue</button>
-              </div>
-            </fieldset>
-
-            <!-- Step 2: Home Details -->
-            <fieldset class="go-step d-none" data-step="2" aria-describedby="s2-desc s2-errors">
-              <legend class="h3">Home Details</legend>
-              <p id="s2-desc" class="text-muted">Tell us a bit about the property condition.</p>
-              <div id="s2-errors" class="error-summary d-none" role="alert" aria-live="assertive" tabindex="-1"></div>
-
-              <div class="grid two">
-                <div class="form-group">
-                  <label for="beds">Bedrooms *</label>
-                  <select id="beds" name="beds" class="form-control" required>
-                    <option value="" disabled selected>Select</option>
-                    <option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
-                  </select>
-                  <div class="invalid-feedback">Select bedrooms.</div>
-                </div>
-                <div class="form-group">
-                  <label for="baths">Bathrooms *</label>
-                  <select id="baths" name="baths" class="form-control" required>
-                    <option value="" disabled selected>Select</option>
-                    <option>1</option><option>1.5</option><option>2</option><option>2.5</option><option>3+</option>
-                  </select>
-                  <div class="invalid-feedback">Select bathrooms.</div>
-                </div>
-              </div>
-
-              <!-- Floors & Basement (optional parity fields) -->
-              <div class="grid two">
-                <div class="form-group">
-                  <label for="floors_above_ground">Floors (above ground) <span class="text-muted" style="font-weight:400">(optional)</span></label>
-                  <select id="floors_above_ground" name="floors_above_ground" class="form-control">
-                    <option value="" selected>Select</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3+</option>
-                  </select>
-                </div>
-                <div class="form-group" role="group" aria-labelledby="basement-label">
-                  <span id="basement-label" class="label">Basement <span class="text-muted" style="font-weight:400">(optional)</span></span>
-                  <div class="grid two" style="margin-top:.5rem">
-                    <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                      <input type="radio" name="basement" value="yes" />
-                      <span>Yes</span>
-                    </label>
-                    <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                      <input type="radio" name="basement" value="no" />
-                      <span>No</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="condition">Overall Condition *</label>
-                <select id="condition" name="condition" class="form-control" required>
-                  <option value="" disabled selected>Select</option>
-                  <option>Needs work</option>
-                  <option>Livable but dated</option>
-                  <option>Updated</option>
-                </select>
-                <div class="invalid-feedback">Select overall condition.</div>
-              </div>
-
-              <!-- Property Type (radio tiles) -->
-              <div class="form-group" role="group" aria-labelledby="prop-type-label">
-                <span id="prop-type-label" class="label">Property type *</span>
-                <div class="grid two" style="margin-top:.5rem">
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="prop_type" value="single_family" required />
-                    <span>Single-family</span>
-                  </label>
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="prop_type" value="townhome" required />
-                    <span>Townhome</span>
-                  </label>
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="prop_type" value="condo" required />
-                    <span>Condo</span>
-                  </label>
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="prop_type" value="multi_family" required />
-                    <span>Multi-family</span>
-                  </label>
-                </div>
-                <div class="invalid-feedback">Please select a property type.</div>
-              </div>
-
-              <!-- Year built, Square footage, Lot size (optional) -->
-              <div class="grid three">
-                <div class="form-group">
-                  <label for="year_built">Year built *</label>
-                  <input type="number" id="year_built" name="year_built" class="form-control" min="1800" max="2100" required />
-                  <div class="invalid-feedback">Enter the year built.</div>
-                </div>
-                <div class="form-group">
-                  <label for="sqft">Approx. square footage *</label>
-                  <input type="number" id="sqft" name="sqft" class="form-control" min="100" step="1" required />
-                  <div class="invalid-feedback">Enter approximate square footage.</div>
-                </div>
-                <div class="form-group">
-                  <label for="lot_size">Lot size (optional)</label>
-                  <input type="number" id="lot_size" name="lot_size" class="form-control" min="0" step="1" />
-                </div>
-              </div>
-
-              <!-- Parking -->
-              <div class="form-group" role="group" aria-labelledby="parking-label">
-                <span id="parking-label" class="label">Parking *</span>
-                <div class="grid two" style="margin-top:.5rem">
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="parking" value="garage" required />
-                    <span>Garage</span>
-                  </label>
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="parking" value="carport" required />
-                    <span>Carport</span>
-                  </label>
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="parking" value="street" required />
-                    <span>Street</span>
-                  </label>
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="parking" value="none" required />
-                    <span>None</span>
-                  </label>
-                </div>
-                <div class="garagespaces-wrap d-none" style="margin-top:.5rem">
-                  <label for="garage_spaces">Garage spaces (optional)</label>
-                  <input type="number" id="garage_spaces" name="garage_spaces" class="form-control" min="0" max="10" />
-                </div>
-                <div class="invalid-feedback">Please select parking.</div>
-              </div>
-
-              <!-- HOA + dues (dues optional, shown if HOA yes) -->
-              <div class="form-group" role="group" aria-labelledby="hoa-label">
-                <span id="hoa-label" class="label">Is there an HOA? *</span>
-                <div class="grid two" style="margin-top:.5rem">
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="hoa" value="yes" required />
-                    <span>Yes</span>
-                  </label>
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="hoa" value="no" required />
-                    <span>No</span>
-                  </label>
-                </div>
-                <div class="hoadues-wrap d-none" style="margin-top:.5rem">
-                  <label for="hoa_dues">Monthly HOA dues (optional)</label>
-                  <input type="number" id="hoa_dues" name="hoa_dues" class="form-control" min="0" step="1" />
-                </div>
-                <div class="invalid-feedback">Please select HOA yes or no.</div>
-              </div>
-
-              <!-- Occupancy -->
-              <div class="form-group" role="group" aria-labelledby="occupancy-label">
-                <span id="occupancy-label" class="label">Occupancy *</span>
-                <div class="grid two" style="margin-top:.5rem">
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="occupancy" value="owner" required />
-                    <span>Owner-occupied</span>
-                  </label>
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="occupancy" value="tenant" required />
-                    <span>Tenant</span>
-                  </label>
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="occupancy" value="vacant" required />
-                    <span>Vacant</span>
-                  </label>
-                </div>
-                <div class="invalid-feedback">Please select occupancy.</div>
-              </div>
-
-              <!-- ADU: Accessory Dwelling Unit -->
-              <div class="form-group" role="group" aria-labelledby="adu-label">
-                <div class="label-row" style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
-                  <span id="adu-label" class="label">Does the property have an ADU? *</span>
-                  <span class="help-icon" aria-label="What is an ADU?" title="An Accessory Dwelling Unit (ADU) is a smaller, independent residential living space on the same property as a primary single-family home. ADUs may be internal (converted basement/attic), attached (addition to a garage or home), or detached (backyard cottage/coach house). They have their own kitchen, bathroom, living area, and a separate entrance." style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#eef;color:#223;font-size:12px;cursor:help;user-select:none">i</span>
-                </div>
-                <div class="grid two" style="margin-top:.5rem">
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="has_adu" value="yes" required />
-                    <span>Yes</span>
-                  </label>
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="has_adu" value="no" required />
-                    <span>No</span>
-                  </label>
-                </div>
-                <div class="invalid-feedback">Please select whether the property has an ADU.</div>
-              </div>
-
-              <!-- Repairs -->
-              <div class="form-group" role="group" aria-labelledby="repairs-label">
-                <span id="repairs-label" class="label">Are repairs needed? *</span>
-                <div class="grid two" style="margin-top:.5rem">
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="repairs_needed" value="yes" required />
-                    <span>Yes</span>
-                  </label>
-                  <label class="form-check" style="display:flex;gap:.5rem;align-items:center">
-                    <input type="radio" name="repairs_needed" value="no" required />
-                    <span>No</span>
-                  </label>
-                </div>
-                <div class="repairs-list d-none" style="margin-top:.5rem">
-                  <label class="label" style="display:block;margin-bottom:.5rem">Select all that apply</label>
-                  <div class="grid two">
-                    <label class="form-check"><input type="checkbox" name="repairs_list" value="roof" /><span>Roof</span></label>
-                    <label class="form-check"><input type="checkbox" name="repairs_list" value="foundation" /><span>Foundation</span></label>
-                    <label class="form-check"><input type="checkbox" name="repairs_list" value="plumbing" /><span>Plumbing</span></label>
-                    <label class="form-check"><input type="checkbox" name="repairs_list" value="electrical" /><span>Electrical</span></label>
-                    <label class="form-check"><input type="checkbox" name="repairs_list" value="hvac" /><span>HVAC</span></label>
-                    <label class="form-check"><input type="checkbox" name="repairs_list" value="cosmetic" /><span>Cosmetic</span></label>
-                  </div>
-                </div>
-                <div class="invalid-feedback">Please indicate if repairs are needed.</div>
-              </div>
-
-              <!-- Timeline to sell -->
-              <div class="form-group" role="group" aria-labelledby="timeline-label">
-                <span id="timeline-label" class="label">When are you looking to sell? *</span>
-                <div class="grid two" style="margin-top:.5rem">
-                  <label class="form-check"><input type="radio" name="sell_timeline" value="asap" required /> ASAP</label>
-                  <label class="form-check"><input type="radio" name="sell_timeline" value="2_4_weeks" required /> 2–4 weeks</label>
-                  <label class="form-check"><input type="radio" name="sell_timeline" value="1_3_months" required /> 1–3 months</label>
-                  <label class="form-check"><input type="radio" name="sell_timeline" value="3_plus_months" required /> 3+ months</label>
-                </div>
-                <div class="invalid-feedback">Please select a timeline.</div>
-              </div>
-
-              <!-- Mortgage status -->
-              <div class="form-group" role="group" aria-labelledby="mortgage-label">
-                <span id="mortgage-label" class="label">Mortgage status *</span>
-                <div class="grid two" style="margin-top:.5rem">
-                  <label class="form-check"><input type="radio" name="mortgage_status" value="paid_off" required /> Paid off</label>
-                  <label class="form-check"><input type="radio" name="mortgage_status" value="has_mortgage" required /> Has mortgage</label>
-                  <label class="form-check"><input type="radio" name="mortgage_status" value="behind" required /> Behind on payments</label>
-                </div>
-                <div class="invalid-feedback">Please select your mortgage status.</div>
-              </div>
-
-              <div class="poolspadetails d-none" style="margin-top:.5rem">
-                <label for="pool_spa_condition">Pool/Spa condition (optional)</label>
-                <select id="pool_spa_condition" name="pool_spa_condition" class="form-control">
-                  <option value="" selected>Prefer not to say</option>
-                  <option>Poor</option>
-                  <option>Fair</option>
-                  <option>Good</option>
-                  <option>Excellent</option>
-                </select>
-                <div style="margin-top:.5rem">
-                  <label for="pool_type">Pool type (optional)</label>
-                  <select id="pool_type" name="pool_type" class="form-control">
-                    <option value="" selected>Select</option>
-                    <option>In-ground</option>
-                    <option>Above-ground</option>
-                    <option>Community</option>
-                    <option>Private</option>
-                    <option>Unknown</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-actions space-between">
-                <button type="button" class="btn btn-outline" data-action="back">Back</button>
-                <button type="button" class="btn btn-primary" data-action="next">Continue</button>
-              </div>
-            </fieldset>
-
-            <!-- Step 3: Your Info -->
-            <fieldset class="go-step d-none" data-step="3" aria-describedby="s3-desc s3-errors">
-              <legend class="h3">Your Information</legend>
-              <p id="s3-desc" class="text-muted">So we can send your offer.</p>
-              <div id="s3-errors" class="error-summary d-none" role="alert" aria-live="assertive" tabindex="-1"></div>
-
-              <div class="grid two">
-                <div class="form-group">
-                  <label for="firstName">First Name *</label>
-                  <input type="text" id="firstName" name="firstName" class="form-control" required />
-                  <div class="invalid-feedback">First name is required.</div>
-                </div>
-                <div class="form-group">
-                  <label for="lastName">Last Name *</label>
-                  <input type="text" id="lastName" name="lastName" class="form-control" required />
-                  <div class="invalid-feedback">Last name is required.</div>
-                </div>
-              </div>
-
-              <div class="grid two">
-                <div class="form-group">
-                  <label for="email">Email *</label>
-                  <input type="email" id="email" name="email" class="form-control" required autocomplete="email" />
-                  <div class="invalid-feedback">Enter a valid email.</div>
-                </div>
-                <div class="form-group">
-                  <label for="phone">Phone *</label>
-                  <input type="tel" id="phone" name="phone" class="form-control" required inputmode="tel" autocomplete="tel" />
-                  <div class="invalid-feedback">Enter a valid phone.</div>
-                </div>
-              </div>
-
-              <div class="form-actions space-between">
-                <button type="button" class="btn btn-outline" data-action="back">Back</button>
-                <button type="button" class="btn btn-primary" data-action="next">Continue</button>
-              </div>
-            </fieldset>
-
-            <!-- Step 4: Consent & Submit -->
-            <fieldset class="go-step d-none" data-step="4" aria-describedby="s4-desc s4-errors">
-              <legend class="h3">Consent & Submit</legend>
-              <p id="s4-desc" class="text-muted">Review and submit to receive your cash offer.</p>
-              <div id="s4-errors" class="error-summary d-none" role="alert" aria-live="assertive" tabindex="-1"></div>
-
-              <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="privacy-policy" name="marketingConsent" value="true" required />
-                <label class="form-check-label" for="privacy-policy">
-                  By checking this box, I agree to the
-                  <a href="legal/privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
-                  and
-                  <a href="legal/terms-of-service.html" target="_blank" rel="noopener noreferrer">Terms of Service</a>
-                  and consent to receive calls and texts (including by autodialer, prerecorded messages, and SMS/MMS) from HomeMAXX and its partners at the number provided. Consent is not a condition of purchase. Message and data rates may apply. Message frequency varies. Reply <strong>STOP</strong> to opt out, <strong>HELP</strong> for help.
-                </label>
-              </div>
-
-              <div class="form-actions space-between">
-                <button type="button" class="btn btn-outline" data-action="back">Back</button>
-                <button type="submit" class="btn btn-primary" id="submit-button">
-                  <span class="button-text">Get My Instant Cash Offer</span>
-                  <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                </button>
-              </div>
-            </fieldset>
-          </form>
-        </div>
-      </div>
-
-      <p class="text-muted mt-3" style="font-size: 0.9rem">We respect your privacy. You can manage preferences on our <a href="legal/opt-out.html">Opt-Out</a> page.</p>
+    <!-- Step Content -->
+    <div class="step-content" id="step-content">
+      <!-- Steps will be dynamically inserted here -->
     </div>
-  </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-about">
-          <div class="footer-logo">HomeMAXX</div>
-          <p>Sell your home fast for cash. No fees, no repairs, no hassle.</p>
-        </div>
-      </div>
-      <div class="copyright">
-        <p>&copy; 2025 HomeMAXX. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Offer Info Modal -->
-  <div id="offer-info-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="offerInfoTitle">
-    <div class="modal-content">
-      <button type="button" class="close-modal" aria-label="Close">&times;</button>
-      <h2 id="offerInfoTitle" class="modal-title">About the $7,500 Instant Cash Offer</h2>
-      <div class="modal-body">
-        <ul style="margin-left:1rem; list-style: disc;">
-          <li>For qualifying sellers after a brief verification call.</li>
-          <li>Funds can be disbursed in as little as 48 hours after qualification.</li>
-          <li>No repairs or showings required; sell your home as‑is.</li>
-          <li>Offer availability is limited monthly; remaining slots are shown above.</li>
-          <li>You can opt out of marketing at any time. See our <a href="legal/privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a>.</li>
-        </ul>
-      </div>
+    <!-- Navigation -->
+    <div class="step-navigation">
+      <button class="btn-back" id="back-btn" onclick="goBack()" style="display: none;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+        </svg>
+        Back
+      </button>
+      <button class="btn btn-primary" id="next-btn" onclick="goNext()">Next</button>
     </div>
   </div>
 
   <!-- Scripts -->
-  <script src="../assets/js/get-offer.js"></script>
-  <script src="../assets/js/ghl-integration.js"></script>
+  <script src="../assets/js/opendoor-funnel.js"></script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHBid-FjKVCrF1E4IL90jD71fTAUcwv4s&libraries=places&v=weekly&loading=async&callback=initGooglePlaces"></script>
 </body>
 </html>
