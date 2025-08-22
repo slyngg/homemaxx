@@ -526,19 +526,18 @@ function setupFinishOfferButton() {
     offerBanner.addEventListener('click', function(e) {
         e.preventDefault();
         
+        // Wait for resume-offer.js to load if needed
         if (window.offerResume) {
             const savedProgress = window.offerResume.getSavedProgress();
             if (savedProgress && savedProgress.address) {
-                // Resume existing offer
+                // Resume existing offer - go directly to funnel
                 window.offerResume.resumeOffer();
-            } else {
-                // Start new offer
-                window.location.href = 'pages/address-entry.html';
+                return;
             }
-        } else {
-            // Fallback
-            window.location.href = 'pages/address-entry.html';
         }
+        
+        // If no saved progress, start new offer
+        window.location.href = 'pages/address-entry.html';
     });
     
     // Update banner text based on saved progress
