@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual Offer Input - HomeMAXX</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .header {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .header h1 {
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      color: #64748b;
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 2rem;
+    }
+
+    .form-section {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .calculator-card, .templates-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+      border: 2px solid #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    .template-btn {
+      width: 100%;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      text-align: left;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .template-btn:hover {
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+
+    .template-btn.active {
+      border-color: #3b82f6;
+      background: #dbeafe;
+    }
+
+    .template-title {
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 0.25rem;
+    }
+
+    .template-desc {
+      font-size: 0.875rem;
+      color: #64748b;
+    }
+
+    .template-ratio {
+      font-size: 0.875rem;
+      color: #059669;
+      font-weight: 600;
+    }
+
+    .calculator {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    .calc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .calc-row:last-child {
+      border-bottom: none;
+      font-weight: 600;
+      color: #059669;
+      font-size: 1.125rem;
+    }
+
+    .calc-label {
+      color: #64748b;
+    }
+
+    .calc-value {
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .results-section {
+      background: #f0f9ff;
+      border: 2px solid #0ea5e9;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      display: none;
+    }
+
+    .results-section.show {
+      display: block;
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .results-icon {
+      font-size: 1.5rem;
+    }
+
+    .results-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0c4a6e;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .result-item {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .result-label {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 0.25rem;
+    }
+
+    .result-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .approval-section {
+      background: #fefce8;
+      border: 2px solid #eab308;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    .approval-title {
+      font-weight: 600;
+      color: #a16207;
+      margin-bottom: 0.5rem;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .status-pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-approved {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-rejected {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Manual Offer Input System</h1>
+      <p>Input and calculate offers manually while maintaining hedge fund standards</p>
+    </div>
+
+    <div class="main-content">
+      <div class="form-section">
+        <h2 style="margin-bottom: 1.5rem;">Property & Offer Details</h2>
+        
+        <form id="manualOfferForm">
+          <div class="form-group">
+            <label class="form-label">Property Address *</label>
+            <input type="text" class="form-input" id="propertyAddress" placeholder="123 Main St, Las Vegas, NV 89101" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Market Value *</label>
+              <input type="number" class="form-input" id="marketValue" placeholder="320000" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Square Footage</label>
+              <input type="number" class="form-input" id="squareFootage" placeholder="2100">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Bedrooms</label>
+              <input type="number" class="form-input" id="bedrooms" placeholder="4">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bathrooms</label>
+              <input type="number" step="0.5" class="form-input" id="bathrooms" placeholder="2.5">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Property Condition</label>
+            <select class="form-select" id="propertyCondition">
+              <option value="excellent">Excellent - Move-in ready</option>
+              <option value="good">Good - Minor cosmetic work</option>
+              <option value="fair" selected>Fair - Some repairs needed</option>
+              <option value="poor">Poor - Major repairs required</option>
+              <option value="distressed">Distressed - Extensive rehab</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Estimated Repair Costs</label>
+            <input type="number" class="form-input" id="repairCosts" placeholder="15000">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Seller Motivation</label>
+            <select class="form-select" id="sellerMotivation">
+              <option value="high">High - Must sell ASAP</option>
+              <option value="medium" selected>Medium - Motivated but flexible</option>
+              <option value="low">Low - Testing the market</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Manual Offer Amount</label>
+            <input type="number" class="form-input" id="manualOffer" placeholder="Leave blank to use template calculation">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Team Member Notes</label>
+            <textarea class="form-textarea" id="teamNotes" placeholder="Add any additional context, comparable sales data, or special considerations..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Team Member</label>
+              <input type="text" class="form-input" id="teamMember" placeholder="Your name" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Approval Status</label>
+              <select class="form-select" id="approvalStatus">
+                <option value="pending">Pending Review</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Needs Revision</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+            Calculate & Submit Offer
+          </button>
+        </form>
+
+        <div id="resultsSection" class="results-section">
+          <div class="results-header">
+            <span class="results-icon">🎯</span>
+            <span class="results-title">Offer Calculation Results</span>
+          </div>
+          
+          <div class="results-grid" id="resultsGrid">
+            <!-- Results will be populated here -->
+          </div>
+
+          <div class="approval-section">
+            <div class="approval-title">Approval Workflow</div>
+            <div>Status: <span id="approvalBadge" class="status-badge status-pending">Pending Review</span></div>
+            <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #64748b;">
+              This offer will be submitted to the lead management system for processing.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <div class="templates-card">
+          <h3 style="margin-bottom: 1rem;">Offer Templates</h3>
+          <p style="color: #64748b; font-size: 0.875rem; margin-bottom: 1rem;">
+            Select a template to auto-calculate based on market value
+          </p>
+
+          <div class="template-btn" data-template="distressed-seller">
+            <div class="template-title">Distressed Seller</div>
+            <div class="template-desc">Motivated seller, quick close</div>
+            <div class="template-ratio">55% of market value</div>
+          </div>
+
+          <div class="template-btn active" data-template="standard-wholesale">
+            <div class="template-title">Standard Wholesale</div>
+            <div class="template-desc">Standard wholesale deal</div>
+            <div class="template-ratio">60% of market value</div>
+          </div>
+
+          <div class="template-btn" data-template="premium-property">
+            <div class="template-title">Premium Property</div>
+            <div class="template-desc">High-end, competitive market</div>
+            <div class="template-ratio">65% of market value</div>
+          </div>
+
+          <div class="template-btn" data-template="fix-and-flip">
+            <div class="template-title">Fix & Flip</div>
+            <div class="template-desc">Heavy rehab required</div>
+            <div class="template-ratio">50% of market value</div>
+          </div>
+        </div>
+
+        <div class="calculator-card">
+          <h3 style="margin-bottom: 1rem;">Quick Calculator</h3>
+          
+          <div class="calculator" id="quickCalculator">
+            <div class="calc-row">
+              <span class="calc-label">Market Value:</span>
+              <span class="calc-value" id="calcMarketValue">$0</span>
+            </div>
+            <div class="calc-row">
+              <span class="calc-label">Template Ratio:</span>
+              <span class="calc-value" id="calcRatio">60%</span>
+            </div>
+            <div class="calc-row">
+              <span class="calc-label">Base Offer:</span>
+              <span class="calc-value" id="calcBaseOffer">$0</span>
+            </div>
+            <div class="calc-row">
+              <span class="calc-label">Repair Costs:</span>
+              <span class="calc-value" id="calcRepairCosts">-$0</span>
+            </div>
+            <div class="calc-row">
+              <span class="calc-label">Carrying Costs:</span>
+              <span class="calc-value" id="calcCarryingCosts">-$0</span>
+            </div>
+            <div class="calc-row">
+              <span class="calc-label">Final Offer:</span>
+              <span class="calc-value" id="calcFinalOffer">$0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Template data
+    const TEMPLATES = {
+      'distressed-seller': { ratio: 0.55, description: 'Motivated seller, quick close needed', assignmentMultiplier: 1.2 },
+      'standard-wholesale': { ratio: 0.60, description: 'Standard wholesale deal', assignmentMultiplier: 1.0 },
+      'premium-property': { ratio: 0.65, description: 'High-end property, competitive market', assignmentMultiplier: 1.5 },
+      'fix-and-flip': { ratio: 0.50, description: 'Heavy rehab required', assignmentMultiplier: 0.8 }
+    };
+
+    let selectedTemplate = 'standard-wholesale';
+
+    // DOM elements
+    const templateBtns = document.querySelectorAll('.template-btn');
+    const marketValueInput = document.getElementById('marketValue');
+    const repairCostsInput = document.getElementById('repairCosts');
+    const manualOfferInput = document.getElementById('manualOffer');
+    const form = document.getElementById('manualOfferForm');
+    const resultsSection = document.getElementById('resultsSection');
+
+    // Template selection
+    templateBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        templateBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedTemplate = btn.dataset.template;
+        updateCalculator();
+      });
+    });
+
+    // Real-time calculator updates
+    [marketValueInput, repairCostsInput].forEach(input => {
+      input.addEventListener('input', updateCalculator);
+    });
+
+    function updateCalculator() {
+      const marketValue = parseFloat(marketValueInput.value) || 0;
+      const repairCosts = parseFloat(repairCostsInput.value) || 0;
+      const template = TEMPLATES[selectedTemplate];
+
+      if (marketValue > 0) {
+        const baseOffer = marketValue * template.ratio;
+        const carryingCosts = marketValue * 0.015; // 1.5% for 6 months
+        const finalOffer = baseOffer - repairCosts - carryingCosts;
+
+        document.getElementById('calcMarketValue').textContent = `$${marketValue.toLocaleString()}`;
+        document.getElementById('calcRatio').textContent = `${(template.ratio * 100)}%`;
+        document.getElementById('calcBaseOffer').textContent = `$${Math.round(baseOffer).toLocaleString()}`;
+        document.getElementById('calcRepairCosts').textContent = `-$${repairCosts.toLocaleString()}`;
+        document.getElementById('calcCarryingCosts').textContent = `-$${Math.round(carryingCosts).toLocaleString()}`;
+        document.getElementById('calcFinalOffer').textContent = `$${Math.round(finalOffer).toLocaleString()}`;
+      }
+    }
+
+    // Form submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = {
+        address: document.getElementById('propertyAddress').value,
+        marketValue: parseFloat(marketValueInput.value),
+        squareFootage: parseFloat(document.getElementById('squareFootage').value) || 2000,
+        bedrooms: parseInt(document.getElementById('bedrooms').value) || 3,
+        bathrooms: parseFloat(document.getElementById('bathrooms').value) || 2,
+        propertyCondition: document.getElementById('propertyCondition').value,
+        repairCosts: parseFloat(repairCostsInput.value) || 0,
+        sellerMotivation: document.getElementById('sellerMotivation').value,
+        manualOffer: parseFloat(manualOfferInput.value) || null,
+        offerTemplate: manualOfferInput.value ? null : selectedTemplate,
+        teamMemberNotes: document.getElementById('teamNotes').value,
+        approvedBy: document.getElementById('teamMember').value,
+        approvalStatus: document.getElementById('approvalStatus').value
+      };
+
+      try {
+        const response = await fetch('/.netlify/functions/calculate-offer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+        displayResults(result);
+      } catch (error) {
+        console.error('Error calculating offer:', error);
+        alert('Error calculating offer. Please try again.');
+      }
+    });
+
+    function displayResults(result) {
+      const { cashOfferRange, assignmentFeeProjection, qualificationScore, bonusEligible } = result;
+      
+      const resultsGrid = document.getElementById('resultsGrid');
+      resultsGrid.innerHTML = `
+        <div class="result-item">
+          <div class="result-label">Final Offer</div>
+          <div class="result-value">$${cashOfferRange.primary.toLocaleString()}</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label">Offer Range</div>
+          <div class="result-value">$${cashOfferRange.range.min.toLocaleString()} - $${cashOfferRange.range.max.toLocaleString()}</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label">Assignment Fee</div>
+          <div class="result-value">$${assignmentFeeProjection.projectedFee.toLocaleString()}</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label">Qualification Score</div>
+          <div class="result-value">${qualificationScore}/100</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label">$7,500 Bonus</div>
+          <div class="result-value">${bonusEligible ? '✅ Eligible' : '❌ Not Eligible'}</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label">Profit Margin</div>
+          <div class="result-value">${cashOfferRange.actualRatio ? ((1 - cashOfferRange.actualRatio) * 100).toFixed(1) : 'N/A'}%</div>
+        </div>
+      `;
+
+      // Update approval badge
+      const approvalStatus = document.getElementById('approvalStatus').value;
+      const approvalBadge = document.getElementById('approvalBadge');
+      approvalBadge.className = `status-badge status-${approvalStatus}`;
+      approvalBadge.textContent = approvalStatus.charAt(0).toUpperCase() + approvalStatus.slice(1);
+
+      resultsSection.classList.add('show');
+      resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Initialize calculator
+    updateCalculator();
+  </script>
+</body>
+</html>

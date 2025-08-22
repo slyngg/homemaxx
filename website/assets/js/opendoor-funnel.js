@@ -13,6 +13,9 @@ class OpendoorFunnel {
     this.userType = 'owner'; // 'owner', 'agent', or 'hoa'
     this.steps = [];
     this.preconfirmedAddress = null;
+    this.isQualifiedForBonus = false;
+    this.appointmentBooked = false;
+    this.offerData = null;
     
     this.init();
   }
@@ -117,6 +120,26 @@ class OpendoorFunnel {
         title: 'Sign in to get your offer',
         subtitle: 'It\'s totally free and there\'s no commitment.',
         render: () => this.renderContactStep()
+      },
+      {
+        id: 'qualification-result',
+        title: 'Checking your qualification...',
+        subtitle: 'We\'re reviewing your information to see if you qualify for our $7,500 instant cash offer.',
+        render: () => this.renderQualificationStep()
+      },
+      {
+        id: 'calendar-booking',
+        title: '🎉 You qualify for our $7,500 instant cash offer!',
+        subtitle: 'Schedule a quick 30-minute consultation to claim your offer and discuss next steps.',
+        render: () => this.renderCalendarBookingStep(),
+        condition: () => this.isQualifiedForBonus
+      },
+      {
+        id: 'booking-confirmation',
+        title: 'Appointment confirmed!',
+        subtitle: 'We\'ve sent you a confirmation email with all the details.',
+        render: () => this.renderBookingConfirmationStep(),
+        condition: () => this.appointmentBooked
       }
     ];
 
@@ -170,6 +193,16 @@ class OpendoorFunnel {
 
   nextStep() {
     if (!this.validateCurrentStep()) return;
+    
+    const currentStepId = this.steps.filter(step => !step.condition || step.condition())[this.currentStep].id;
+    
+    // Trigger qualification check when moving to qualification step
+    if (currentStepId === 'contact-info') {
+      // Move to qualification step and start the process
+      this.showStep(this.currentStep + 1);
+      setTimeout(() => this.performQualificationCheck(), 500);
+      return;
+    }
     
     if (this.currentStep < this.totalSteps - 1) {
       this.showStep(this.currentStep + 1);
@@ -497,6 +530,363 @@ class OpendoorFunnel {
         <a href="#" style="color: #3b82f6;">Privacy Policy</a>.
       </p>
     `;
+  }
+
+  renderQualificationStep() {
+    return `
+      <div class="qualification-container">
+        <div class="qualification-loading" id="qualification-loading">
+          <div class="loading-spinner"></div>
+          <p>Analyzing your property and calculating your personalized offer...</p>
+          <div class="loading-steps">
+            <div class="loading-step active" id="step-1">📍 Analyzing location and market data</div>
+            <div class="loading-step" id="step-2">🏠 Evaluating property condition and features</div>
+            <div class="loading-step" id="step-3">💰 Calculating assignment fee potential</div>
+            <div class="loading-step" id="step-4">✅ Determining qualification status</div>
+          </div>
+        </div>
+        
+        <div class="qualification-results" id="qualification-results" style="display: none;">
+          <!-- Results will be populated by JavaScript -->
+        </div>
+      </div>
+    `;
+  }
+
+  async performQualificationCheck() {
+    // Show loading animation
+    this.showLoadingSteps();
+    
+    try {
+      // Prepare property data from form
+      const propertyData = this.preparePropertyDataForCalculation();
+      
+      // Call the calculate-offer Netlify function
+      const response = await fetch('/.netlify/functions/calculate-offer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(propertyData)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to calculate offer');
+      }
+      
+      const offerData = await response.json();
+      
+      // Update qualification status
+      this.isQualifiedForBonus = offerData.qualificationScore >= 70;
+      this.offerData = offerData;
+      
+      // Hide loading and show results
+      document.getElementById('qualification-loading').style.display = 'none';
+      document.getElementById('qualification-results').style.display = 'block';
+      document.getElementById('qualification-results').innerHTML = this.renderOfferResults(offerData);
+      
+      // Update step navigation
+      this.updateQualificationNavigation();
+      
+    } catch (error) {
+      console.error('Qualification check failed:', error);
+      this.showQualificationError();
+    }
+  }
+
+  showLoadingSteps() {
+    const steps = ['step-1', 'step-2', 'step-3', 'step-4'];
+    let currentStep = 0;
+    
+    const interval = setInterval(() => {
+      if (currentStep > 0) {
+        document.getElementById(steps[currentStep - 1]).classList.remove('active');
+        document.getElementById(steps[currentStep - 1]).classList.add('completed');
+      }
+      
+      if (currentStep < steps.length) {
+        document.getElementById(steps[currentStep]).classList.add('active');
+        currentStep++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 1500);
+  }
+
+  preparePropertyDataForCalculation() {
+    return {
+      address: this.formData.address || this.preconfirmedAddress,
+      bedrooms: this.extractBedroomsFromDetails(),
+      bathrooms: this.extractBathroomsFromDetails(),
+      squareFootage: this.extractSquareFootageFromDetails(),
+      yearBuilt: this.extractYearBuiltFromDetails(),
+      lotSize: this.extractLotSizeFromDetails(),
+      kitchenQuality: this.formData['kitchen-quality'] || 'average',
+      timeline: this.formData['timeline'] || 'flexible',
+      propertyIssues: this.formData['property-issues'] || [],
+      hasHOA: this.formData.hasHOA === 'yes',
+      hoaFees: this.formData['hoa-fees'] || 0,
+      ownerType: this.formData['owner-type'] || 'owner',
+      userType: this.userType
+    };
+  }
+
+  extractBedroomsFromDetails() {
+    // Extract from property details or default
+    return 4; // TODO: Extract from actual property details
+  }
+
+  extractBathroomsFromDetails() {
+    return 2.5; // TODO: Extract from actual property details
+  }
+
+  extractSquareFootageFromDetails() {
+    return 2093; // TODO: Extract from actual property details
+  }
+
+  extractYearBuiltFromDetails() {
+    return 2005; // TODO: Extract from actual property details
+  }
+
+  extractLotSizeFromDetails() {
+    return 0.18; // TODO: Extract from actual property details
+  }
+
+  renderOfferResults(offerData) {
+    const { 
+      marketValue, 
+      cashOfferRange, 
+      assignmentFeeProjection, 
+      qualificationScore, 
+      bonusEligible,
+      marketInsights,
+      nextSteps 
+    } = offerData;
+
+    const isQualified = qualificationScore >= 70;
+    const assignmentTier = assignmentFeeProjection.tier;
+    const assignmentAmount = assignmentFeeProjection.projectedFee;
+
+    return `
+      <div class="offer-results">
+        ${isQualified ? this.renderQualifiedOffer(offerData) : this.renderUnqualifiedResult(offerData)}
+      </div>
+    `;
+  }
+
+  renderQualifiedOffer(offerData) {
+    const { 
+      marketValue, 
+      cashOfferRange, 
+      assignmentFeeProjection, 
+      bonusEligible,
+      marketInsights 
+    } = offerData;
+
+    return `
+      <div class="qualified-offer">
+        <div class="success-header">
+          <div class="success-icon">🎉</div>
+          <h2>Congratulations! You qualify for our $7,500 instant cash offer!</h2>
+          <p class="success-subtitle">Plus, we've calculated your personalized property offer below</p>
+        </div>
+
+        <div class="offer-breakdown">
+          <div class="offer-card primary">
+            <div class="offer-label">Your Cash Offer Range</div>
+            <div class="offer-amount">$${cashOfferRange.min.toLocaleString()} - $${cashOfferRange.max.toLocaleString()}</div>
+            <div class="offer-note">Based on current market conditions and property analysis</div>
+          </div>
+
+          <div class="offer-details-grid">
+            <div class="detail-card">
+              <div class="detail-icon">🏠</div>
+              <div class="detail-content">
+                <div class="detail-label">Estimated Market Value</div>
+                <div class="detail-value">$${marketValue.toLocaleString()}</div>
+              </div>
+            </div>
+
+            <div class="detail-card assignment-fee">
+              <div class="detail-icon">${assignmentFeeProjection.tier === 'premium' ? '💎' : '💰'}</div>
+              <div class="detail-content">
+                <div class="detail-label">Assignment Fee Potential</div>
+                <div class="detail-value">$${assignmentFeeProjection.projectedFee.toLocaleString()}</div>
+                <div class="detail-tier ${assignmentFeeProjection.tier}">${assignmentFeeProjection.tier.toUpperCase()} TIER</div>
+              </div>
+            </div>
+
+            ${bonusEligible ? `
+              <div class="detail-card bonus">
+                <div class="detail-icon">⭐</div>
+                <div class="detail-content">
+                  <div class="detail-label">Bonus Eligible</div>
+                  <div class="detail-value">Up to $15,000</div>
+                  <div class="detail-note">Exceptional property potential</div>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+
+        <div class="market-insights">
+          <h3>Market Insights</h3>
+          <div class="insights-grid">
+            ${marketInsights.map(insight => `
+              <div class="insight-item">
+                <div class="insight-icon">${insight.icon}</div>
+                <div class="insight-content">
+                  <div class="insight-title">${insight.title}</div>
+                  <div class="insight-description">${insight.description}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="next-steps-preview">
+          <h3>What happens next?</h3>
+          <div class="steps-list">
+            <div class="step-item">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <div class="step-title">Schedule consultation</div>
+                <div class="step-description">30-minute call to discuss your offer and timeline</div>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <div class="step-title">Property evaluation</div>
+                <div class="step-description">Quick walkthrough to confirm condition and finalize offer</div>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <div class="step-title">Receive $7,500 cash</div>
+                <div class="step-description">Get your instant cash within 48 hours of agreement</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cta-section">
+          <button class="btn btn-primary btn-large" onclick="goNext()">
+            Schedule My Consultation
+          </button>
+          <p class="cta-note">Secure your $7,500 instant cash offer today</p>
+        </div>
+      </div>
+    `;
+  }
+
+  renderUnqualifiedResult(offerData) {
+    const { marketValue, cashOfferRange, qualificationScore, nextSteps } = offerData;
+
+    return `
+      <div class="unqualified-result">
+        <div class="result-header">
+          <div class="result-icon">📋</div>
+          <h2>Thank you for your interest!</h2>
+          <p class="result-subtitle">We've analyzed your property and prepared a personalized assessment</p>
+        </div>
+
+        <div class="offer-summary">
+          <div class="offer-card">
+            <div class="offer-label">Estimated Cash Offer Range</div>
+            <div class="offer-amount">$${cashOfferRange.min.toLocaleString()} - $${cashOfferRange.max.toLocaleString()}</div>
+            <div class="offer-note">Based on current market analysis</div>
+          </div>
+
+          <div class="qualification-score">
+            <div class="score-label">Property Assessment Score</div>
+            <div class="score-value">${qualificationScore}/100</div>
+            <div class="score-bar">
+              <div class="score-fill" style="width: ${qualificationScore}%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alternative-options">
+          <h3>How we can still help you</h3>
+          <div class="options-grid">
+            <div class="option-card">
+              <div class="option-icon">🏠</div>
+              <div class="option-title">Traditional Cash Offer</div>
+              <div class="option-description">We can still make a competitive cash offer for your property</div>
+            </div>
+            <div class="option-card">
+              <div class="option-icon">🤝</div>
+              <div class="option-title">Market Analysis</div>
+              <div class="option-description">Get detailed insights about your property's market potential</div>
+            </div>
+            <div class="option-card">
+              <div class="option-icon">📞</div>
+              <div class="option-title">Expert Consultation</div>
+              <div class="option-description">Speak with our team about your selling options</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cta-section">
+          <button class="btn btn-primary" onclick="scheduleConsultation()">
+            Schedule Free Consultation
+          </button>
+          <button class="btn btn-secondary" onclick="requestTraditionalOffer()">
+            Request Traditional Offer
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  updateQualificationNavigation() {
+    const nextBtn = document.getElementById('next-btn');
+    if (this.isQualifiedForBonus) {
+      nextBtn.textContent = 'Schedule Consultation';
+      nextBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+    } else {
+      nextBtn.textContent = 'Continue';
+    }
+  }
+
+  showQualificationError() {
+    document.getElementById('qualification-loading').style.display = 'none';
+    document.getElementById('qualification-results').style.display = 'block';
+    document.getElementById('qualification-results').innerHTML = `
+      <div class="error-state">
+        <div class="error-icon">⚠️</div>
+        <h3>Unable to calculate offer</h3>
+        <p>We're experiencing technical difficulties. Please try again or contact our team directly.</p>
+        <button class="btn btn-primary" onclick="this.performQualificationCheck()">Try Again</button>
+        <button class="btn btn-secondary" onclick="contactSupport()">Contact Support</button>
+      </div>
+    `;
+  }
+
+  renderCalendarBookingStep() {
+    return `
+      <div class="calendar-booking">
+        <p>Schedule a quick 30-minute consultation to claim your offer and discuss next steps.</p>
+        <button class="btn btn-primary" onclick="bookAppointment()">Book Appointment</button>
+      </div>
+    `;
+  }
+
+  renderBookingConfirmationStep() {
+    return `
+      <div class="booking-confirmation">
+        <p>Appointment confirmed!</p>
+        <p>We've sent you a confirmation email with all the details.</p>
+      </div>
+    `;
+  }
+
+  bookAppointment() {
+    // TO DO: implement appointment booking logic
+    this.appointmentBooked = true;
+    this.showStep(this.currentStep + 1);
   }
 
   saveDraft() {
