@@ -38,20 +38,30 @@ class OfferResume {
   checkForSavedProgress() {
     console.log('Checking saved progress:', this.progress);
     
-    // Only show banner if there's meaningful progress beyond just address
-    if (this.progress && 
+    // Clear any existing banner first
+    const existingBanner = document.getElementById('resume-offer-banner');
+    if (existingBanner) {
+      existingBanner.remove();
+    }
+    
+    // Only show banner if there's REAL survey progress beyond just address entry
+    const hasRealProgress = this.progress && 
         this.progress.address && 
-        (this.progress.currentStep > 0 || 
-         this.progress.lastStep > 0 || 
-         Object.keys(this.progress).length > 3)) {
-      console.log('Showing resume banner for progress:', this.progress);
+        (this.progress.currentStep > 1 || 
+         this.progress.lastStep > 1 || 
+         this.progress.propertyDetails ||
+         this.progress.contactInfo ||
+         this.progress.timeline);
+         
+    if (hasRealProgress) {
+      console.log('Showing resume banner for real progress:', this.progress);
       this.showResumeOption(this.progress);
     } else {
-      console.log('No meaningful progress found, not showing banner');
-      // Remove any existing banner
-      const existingBanner = document.getElementById('resume-offer-banner');
-      if (existingBanner) {
-        existingBanner.remove();
+      console.log('No real survey progress found, not showing banner');
+      // Auto-clear minimal data that shouldn't trigger banner
+      if (this.progress && this.progress.address && (!this.progress.currentStep || this.progress.currentStep <= 1)) {
+        console.log('Auto-clearing minimal progress data');
+        this.clearProgress();
       }
     }
   }
@@ -103,6 +113,7 @@ class OfferResume {
   clearProgress() {
     try {
       localStorage.removeItem(this.storageKey);
+      this.progress = null;
     } catch (error) {
       console.error('Failed to clear progress:', error);
     }
@@ -133,6 +144,7 @@ class OfferResume {
 
   createBanner() {
     const banner = document.createElement('div');
+    banner.id = 'resume-offer-banner';
     banner.className = 'offer-banner';
     banner.innerHTML = `
       <div class="offer-banner-content">
@@ -142,9 +154,9 @@ class OfferResume {
         <span class="offer-banner-address">${this.progress.address}</span>
         <div class="cash-offer-indicator">
           ${this.progress.cashOfferClaimed ? 
-            `<span class="cash-badge">💰 $${this.progress.cashAmount || 7500} INSTANT CASH</span>
+            `<span class="cash-badge"> $${this.progress.cashAmount || 7500} INSTANT CASH</span>
              <span class="spots-text">7 spots left</span>` : 
-            `<span class="cash-badge">💰 $7,500 INSTANT CASH</span>
+            `<span class="cash-badge">$7,500 INSTANT CASH</span>
              <span class="spots-text">7 spots left</span>`
           }
         </div>
@@ -253,6 +265,17 @@ class OfferResume {
         50% { transform: scale(1.05); }
       }
 
+      @keyframes slideOutToTop {
+        from {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateY(-20px);
+          opacity: 0;
+        }
+      }
+
       @media (max-width: 768px) {
         .offer-banner {
           margin: 1rem;
@@ -333,25 +356,35 @@ class OfferResume {
   }
 }
 
-// Add slide out animation
-const slideOutStyle = document.createElement('style');
-slideOutStyle.textContent = `
-  @keyframes slideOutToTop {
-    from {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    to {
-      transform: translateY(-20px);
-      opacity: 0;
-    }
-  }
-`;
-document.head.appendChild(slideOutStyle);
-
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
+  // Auto-clear any existing minimal data on page load BEFORE initializing
+  const existingData = localStorage.getItem('homemaxx_offer_progress');
+  if (existingData) {
+    try {
+      const parsed = JSON.parse(existingData);
+      console.log('Found existing data:', parsed);
+      // If it's just address data without real survey progress, clear it
+      if (parsed.address && (!parsed.currentStep || parsed.currentStep <= 1) && !parsed.propertyDetails) {
+        console.log('Auto-clearing minimal data on page load');
+        localStorage.removeItem('homemaxx_offer_progress');
+      }
+    } catch (e) {
+      console.log('Clearing corrupted data');
+      localStorage.removeItem('homemaxx_offer_progress');
+    }
+  }
+  
+  // Initialize after cleanup
   window.offerResume = new OfferResume();
+  
+  // Debug method for manual cleanup
+  window.debugCleanup = function() {
+    window.offerResume.clearProgress();
+    const banner = document.getElementById('resume-offer-banner');
+    if (banner) banner.remove();
+    console.log('All progress data cleared');
+  };
 });
 
 // Export for use in other scripts
