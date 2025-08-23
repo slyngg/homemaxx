@@ -153,6 +153,55 @@ class OpendoorFunnel {
     window.selectOption = (value) => this.selectOption(value);
     window.selectImageOption = (value) => this.selectImageOption(value);
     window.toggleMultiSelect = (value) => this.toggleMultiSelect(value);
+    
+    // CRITICAL: Bind submitForm to global scope for HTML onclick handlers
+    window.submitForm = () => this.submitForm();
+    
+    // Listen for language changes
+    window.addEventListener('languageChanged', (event) => {
+      this.handleLanguageChange(event.detail.language);
+    });
+  }
+
+  handleLanguageChange(language) {
+    // Re-render current step with new language
+    this.showStep(this.currentStep);
+    
+    // Update any dynamic content that needs translation
+    this.updateFunnelTranslations(language);
+  }
+  
+  updateFunnelTranslations(language) {
+    // Get translations from language toggle instance
+    const translations = window.languageToggle?.translations[language];
+    if (!translations) return;
+    
+    // Update step navigation buttons
+    const backBtn = document.getElementById('back-btn');
+    const nextBtn = document.getElementById('next-btn');
+    
+    if (backBtn && backBtn.querySelector('span')) {
+      backBtn.querySelector('span').textContent = translations['btn.back'] || 'Back';
+    }
+    
+    // Update next button text based on current step
+    if (nextBtn) {
+      const currentStepId = this.steps.filter(step => !step.condition || step.condition())[this.currentStep]?.id;
+      
+      if (currentStepId === 'contact-info') {
+        nextBtn.textContent = translations['contact.submit'] || 'Get My Cash Offer';
+      } else if (this.currentStep === this.totalSteps - 1) {
+        nextBtn.textContent = translations['btn.continue'] || 'Continue';
+      } else {
+        nextBtn.textContent = translations['btn.next'] || 'Next';
+      }
+    }
+    
+    // Update save button
+    const saveBtn = document.querySelector('.save-btn');
+    if (saveBtn) {
+      saveBtn.textContent = translations['btn.save'] || 'Save & Exit';
+    }
   }
 
   showStep(stepIndex) {
@@ -173,11 +222,11 @@ class OpendoorFunnel {
     
     backBtn.style.display = stepIndex > 0 ? 'flex' : 'none';
     
-    // Render step content
+    // Render step content with data-translate attributes
     const content = document.getElementById('step-content');
     content.innerHTML = `
-      <h1 class="step-title">${step.title}</h1>
-      ${step.subtitle ? `<p class="step-subtitle">${step.subtitle}</p>` : ''}
+      <h1 class="step-title" data-translate="step-${step.id}-title">${step.title}</h1>
+      ${step.subtitle ? `<p class="step-subtitle" data-translate="step-${step.id}-subtitle">${step.subtitle}</p>` : ''}
       <div class="step-body">
         ${step.render()}
       </div>
@@ -188,6 +237,11 @@ class OpendoorFunnel {
       nextBtn.textContent = 'Continue with email';
     } else {
       nextBtn.textContent = 'Next';
+    }
+    
+    // Apply current language translations if language toggle is available
+    if (window.languageToggle) {
+      window.languageToggle.applyLanguage(window.languageToggle.currentLanguage);
     }
   }
 
@@ -335,18 +389,10 @@ class OpendoorFunnel {
   renderOwnerTypeStep() {
     return `
       <div class="option-grid">
-        <button class="option-btn" onclick="selectOption('owner')">
-          Yes, I own this home
-        </button>
-        <button class="option-btn" onclick="selectOption('agent')">
-          No, I'm an agent
-        </button>
-        <button class="option-btn" onclick="selectOption('agent-owner')">
-          I'm an agent, and I own this home
-        </button>
-        <button class="option-btn" onclick="selectOption('other')">
-          Other
-        </button>
+        <button class="option-btn" onclick="selectOption('owner')" data-translate="owner-type-owner">Yes, I own this home</button>
+        <button class="option-btn" onclick="selectOption('agent')" data-translate="owner-type-agent">No, I'm an agent</button>
+        <button class="option-btn" onclick="selectOption('agent-owner')" data-translate="owner-type-agent-owner">I'm an agent, and I own this home</button>
+        <button class="option-btn" onclick="selectOption('other')" data-translate="owner-type-other">Other</button>
       </div>
     `;
   }
@@ -355,22 +401,22 @@ class OpendoorFunnel {
     return `
       <div class="option-grid" style="gap: 2rem;">
         <div class="agent-option">
-          <h3>Refer to HomeMAXX</h3>
-          <p style="color: #6b7280; margin: 0.5rem 0;">Eligible for 1% referral commission</p>
+          <h3 data-translate="agent-options-refer">Refer to HomeMAXX</h3>
+          <p style="color: #6b7280; margin: 0.5rem 0;" data-translate="agent-options-refer-description">Eligible for 1% referral commission</p>
           <ul style="color: #6b7280; font-size: 0.875rem; margin: 1rem 0; padding-left: 1rem;">
-            <li>Ideal for when you can't (or don't want to) represent a client</li>
-            <li>Share the homeowner's contact information with HomeMAXX</li>
-            <li>That's all there is to it — we work with the homeowner to complete the sale</li>
+            <li data-translate="agent-options-refer-1">Ideal for when you can't (or don't want to) represent a client</li>
+            <li data-translate="agent-options-refer-2">Share the homeowner's contact information with HomeMAXX</li>
+            <li data-translate="agent-options-refer-3">That's all there is to it — we work with the homeowner to complete the sale</li>
           </ul>
         </div>
         
         <div class="agent-option">
-          <h3>Represent your client</h3>
-          <p style="color: #6b7280; margin: 0.5rem 0;">Eligible for 1% commission + seller commission</p>
+          <h3 data-translate="agent-options-represent">Represent your client</h3>
+          <p style="color: #6b7280; margin: 0.5rem 0;" data-translate="agent-options-represent-description">Eligible for 1% commission + seller commission</p>
           <ul style="color: #6b7280; font-size: 0.875rem; margin: 1rem 0; padding-left: 1rem;">
-            <li>Ideal for clients that need more guidance and support</li>
-            <li>You'll represent your client throughout the entire process</li>
-            <li>You'll work directly with HomeMAXX and expect to have a representation agreement with your client</li>
+            <li data-translate="agent-options-represent-1">Ideal for clients that need more guidance and support</li>
+            <li data-translate="agent-options-represent-2">You'll represent your client throughout the entire process</li>
+            <li data-translate="agent-options-represent-3">You'll work directly with HomeMAXX and expect to have a representation agreement with your client</li>
           </ul>
         </div>
       </div>
@@ -380,11 +426,11 @@ class OpendoorFunnel {
   renderTimelineStep() {
     return `
       <div class="option-grid">
-        <button class="option-btn" onclick="selectOption('asap')">ASAP</button>
-        <button class="option-btn" onclick="selectOption('2-4-weeks')">2-4 weeks</button>
-        <button class="option-btn" onclick="selectOption('4-6-weeks')">4-6 weeks</button>
-        <button class="option-btn" onclick="selectOption('6-weeks-plus')">6+ weeks</button>
-        <button class="option-btn" onclick="selectOption('just-browsing')">Just browsing</button>
+        <button class="option-btn" onclick="selectOption('asap')" data-translate="timeline-asap">ASAP</button>
+        <button class="option-btn" onclick="selectOption('2-4-weeks')" data-translate="timeline-2-4-weeks">2-4 weeks</button>
+        <button class="option-btn" onclick="selectOption('4-6-weeks')" data-translate="timeline-4-6-weeks">4-6 weeks</button>
+        <button class="option-btn" onclick="selectOption('6-weeks-plus')" data-translate="timeline-6-weeks-plus">6+ weeks</button>
+        <button class="option-btn" onclick="selectOption('just-browsing')" data-translate="timeline-just-browsing">Just browsing</button>
       </div>
     `;
   }
@@ -405,37 +451,37 @@ class OpendoorFunnel {
   renderKitchenQualityStep() {
     return `
       <div class="image-options">
-        <div class="image-option" onclick="selectImageOption('fixer-upper')">
+        <div class="image-option" onclick="selectImageOption('fixer-upper')" data-translate="kitchen-quality-fixer-upper">
           <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Fixer Upper Kitchen">
           <div class="image-option-content">
             <div class="image-option-title">Fixer Upper</div>
-            <div class="image-option-desc">Kitchen needs significant repairs</div>
+            <div class="image-option-description">Needs major work</div>
           </div>
         </div>
-        <div class="image-option" onclick="selectImageOption('dated')">
+        <div class="image-option" onclick="selectImageOption('dated')" data-translate="kitchen-quality-dated">
           <img src="https://images.unsplash.com/photo-1556909114-4f5f9e8b8c8c?w=300&h=120&fit=crop" alt="Dated Kitchen">
           <div class="image-option-content">
             <div class="image-option-title">Dated</div>
-            <div class="image-option-desc">Kitchen hasn't been updated recently</div>
+            <div class="image-option-description">Needs updating</div>
           </div>
         </div>
-        <div class="image-option" onclick="selectImageOption('standard')">
+        <div class="image-option" onclick="selectImageOption('standard')" data-translate="kitchen-quality-standard">
           <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Standard Kitchen">
           <div class="image-option-content">
             <div class="image-option-title">Standard</div>
-            <div class="image-option-desc">Kitchen is updated with common finishes</div>
+            <div class="image-option-description">Move-in ready</div>
           </div>
         </div>
-        <div class="image-option" onclick="selectImageOption('high-end')">
+        <div class="image-option" onclick="selectImageOption('high-end')" data-translate="kitchen-quality-high-end">
           <img src="https://images.unsplash.com/photo-1556909114-4f5f9e8b8c8c?w=300&h=120&fit=crop" alt="High End Kitchen">
           <div class="image-option-content">
             <div class="image-option-title">High end</div>
-            <div class="image-option-desc">Kitchen has high-quality upgrades</div>
+            <div class="image-option-description">Recently renovated</div>
           </div>
         </div>
       </div>
       <div style="text-align: center; margin-top: 1rem;">
-        <button class="btn-skip" onclick="goNext()">Skip</button>
+        <button class="btn-skip" onclick="goNext()" data-translate="kitchen-quality-skip">Skip</button>
       </div>
     `;
   }
@@ -443,8 +489,8 @@ class OpendoorFunnel {
   renderHOAStep() {
     return `
       <div class="option-grid">
-        <button class="option-btn" onclick="selectOption('yes')">Yes</button>
-        <button class="option-btn" onclick="selectOption('no')">No</button>
+        <button class="option-btn" onclick="selectOption('yes')" data-translate="hoa-yes">Yes</button>
+        <button class="option-btn" onclick="selectOption('no')" data-translate="hoa-no">No</button>
       </div>
     `;
   }
@@ -467,36 +513,36 @@ class OpendoorFunnel {
   renderPropertyIssuesStep() {
     return `
       <div class="option-grid">
-        <button class="option-btn" onclick="toggleMultiSelect('solar-panels')">
+        <button class="option-btn" onclick="toggleMultiSelect('solar-panels')" data-translate="property-issues-solar-panels">
           <strong>Leased or financed solar panels</strong><br>
           <small style="color: #6b7280;">You may need to buy out the lease or remove the panels to sell to us</small>
         </button>
-        <button class="option-btn" onclick="toggleMultiSelect('foundation-issues')">
+        <button class="option-btn" onclick="toggleMultiSelect('foundation-issues')" data-translate="property-issues-foundation-issues">
           <strong>Known foundation issues</strong><br>
           <small style="color: #6b7280;">Excessive cracking, uneven floors</small>
         </button>
-        <button class="option-btn" onclick="toggleMultiSelect('fire-damage')">
+        <button class="option-btn" onclick="toggleMultiSelect('fire-damage')" data-translate="property-issues-fire-damage">
           <strong>Fire damage</strong>
         </button>
-        <button class="option-btn" onclick="toggleMultiSelect('well-water')">
+        <button class="option-btn" onclick="toggleMultiSelect('well-water')" data-translate="property-issues-well-water">
           <strong>Well water</strong><br>
           <small style="color: #6b7280;">You maintain a well to supply water</small>
         </button>
-        <button class="option-btn" onclick="toggleMultiSelect('septic-system')">
+        <button class="option-btn" onclick="toggleMultiSelect('septic-system')" data-translate="property-issues-septic-system">
           <strong>Septic system</strong><br>
           <small style="color: #6b7280;">Separate from municipal sewage</small>
         </button>
-        <button class="option-btn" onclick="toggleMultiSelect('asbestos-siding')">
+        <button class="option-btn" onclick="toggleMultiSelect('asbestos-siding')" data-translate="property-issues-asbestos-siding">
           <strong>Asbestos siding</strong>
         </button>
-        <button class="option-btn" onclick="toggleMultiSelect('horse-property')">
+        <button class="option-btn" onclick="toggleMultiSelect('horse-property')" data-translate="property-issues-horse-property">
           <strong>Horse property</strong><br>
           <small style="color: #6b7280;">Livestock live on property</small>
         </button>
-        <button class="option-btn" onclick="toggleMultiSelect('mobile-home')">
+        <button class="option-btn" onclick="toggleMultiSelect('mobile-home')" data-translate="property-issues-mobile-home">
           <strong>Mobile or manufactured home</strong>
         </button>
-        <button class="option-btn" onclick="toggleMultiSelect('none')">
+        <button class="option-btn" onclick="toggleMultiSelect('none')" data-translate="property-issues-none">
           <strong>None of the above</strong>
         </button>
       </div>
@@ -506,25 +552,21 @@ class OpendoorFunnel {
   renderContactStep() {
     return `
       <div style="text-align: center; margin-bottom: 2rem;">
-        <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
-          Continue with Google
-        </button>
-        <p style="color: #6b7280; margin: 1rem 0;">or</p>
+        <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;" data-translate="contact-google">Continue with Google</button>
+        <p style="color: #6b7280; margin: 1rem 0;" data-translate="contact-or">or</p>
       </div>
       
       <div class="form-group">
-        <label class="form-label">Email *</label>
+        <label class="form-label" data-translate="contact-email">Email *</label>
         <input type="email" 
                class="form-input" 
                placeholder="Enter your email"
                id="email-input">
       </div>
       
-      <button class="btn btn-primary" style="width: 100%;" onclick="submitForm()">
-        Continue with email
-      </button>
+      <button class="btn btn-primary" style="width: 100%;" onclick="submitForm()" data-translate="contact-submit">Continue with email</button>
       
-      <p style="font-size: 0.75rem; color: #6b7280; text-align: center; margin-top: 1rem;">
+      <p style="font-size: 0.75rem; color: #6b7280; text-align: center; margin-top: 1rem;" data-translate="contact-terms">
         By clicking "Continue", you agree to HomeMAXX's 
         <a href="#" style="color: #3b82f6;">terms of service</a> and 
         <a href="#" style="color: #3b82f6;">Privacy Policy</a>.
@@ -537,12 +579,12 @@ class OpendoorFunnel {
       <div class="qualification-container">
         <div class="qualification-loading" id="qualification-loading">
           <div class="loading-spinner"></div>
-          <p>Analyzing your property and calculating your personalized offer...</p>
+          <p data-translate="qualification-loading">Analyzing your property and calculating your personalized offer...</p>
           <div class="loading-steps">
-            <div class="loading-step active" id="step-1">📍 Analyzing location and market data</div>
-            <div class="loading-step" id="step-2">🏠 Evaluating property condition and features</div>
-            <div class="loading-step" id="step-3">💰 Calculating assignment fee potential</div>
-            <div class="loading-step" id="step-4">✅ Determining qualification status</div>
+            <div class="loading-step active" id="step-1" data-translate="qualification-step-1">📍 Analyzing location and market data</div>
+            <div class="loading-step" id="step-2" data-translate="qualification-step-2">🏠 Evaluating property condition and features</div>
+            <div class="loading-step" id="step-3" data-translate="qualification-step-3">💰 Calculating assignment fee potential</div>
+            <div class="loading-step" id="step-4" data-translate="qualification-step-4">✅ Determining qualification status</div>
           </div>
         </div>
         
@@ -899,19 +941,35 @@ class OpendoorFunnel {
       userType: this.userType,
       timestamp: Date.now()
     }));
+    
+    // Redirect to home page after saving
+    window.location.href = '/';
   }
 
   async submitForm() {
     console.log('Submitting form data:', this.formData);
     
     try {
+      // Get email from input field
+      const emailInput = document.getElementById('email-input');
+      const email = emailInput?.value || this.formData.email || '';
+      
+      if (!email) {
+        console.error('No email provided for form submission');
+        alert('Please enter your email address to continue.');
+        return;
+      }
+      
+      // Store email in formData
+      this.formData.email = email;
+      
       // Prepare data for GHL webhook with contact as div structure
       const contactData = {
         contact: {
           // Basic contact information
           firstName: this.extractFirstName(),
           lastName: this.extractLastName(),
-          email: this.formData.email || document.getElementById('email-input')?.value,
+          email: email,
           phone: this.formData.phone || '',
           
           // Property information
@@ -941,10 +999,13 @@ class OpendoorFunnel {
             property_condition: this.formData['kitchen-quality'] || 'standard',
             hoa_status: this.formData.hasHOA || 'unknown',
             lead_priority: 'Standard - Funnel Completion',
-            contact_method: 'Email Provided'
+            contact_method: 'Email Provided',
+            calculation_status: 'Pending'
           }
         }
       };
+
+      console.log('Submitting to GHL webhook:', contactData);
 
       // Submit to GHL webhook
       const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/46e87a3a-c1d7-4bea-8a70-a022cb1b80ae';
@@ -958,8 +1019,13 @@ class OpendoorFunnel {
         body: JSON.stringify(contactData)
       });
 
+      console.log('GHL webhook response status:', response.status);
+      console.log('GHL webhook response headers:', response.headers);
+
       if (response.ok) {
         console.log('Successfully submitted to GHL webhook');
+        const responseText = await response.text();
+        console.log('GHL webhook response:', responseText);
         
         // Move to qualification step
         this.showStep(this.currentStep + 1);
@@ -967,6 +1033,9 @@ class OpendoorFunnel {
         
       } else {
         console.error('GHL webhook submission failed:', response.status, response.statusText);
+        const errorText = await response.text();
+        console.error('GHL webhook error response:', errorText);
+        
         // Still proceed to qualification but log the error
         this.showStep(this.currentStep + 1);
         setTimeout(() => this.performQualificationCheck(), 500);
