@@ -59,6 +59,79 @@ class LanguageToggle {
         'funnel.step4': 'Contact Info',
         'funnel.step5': 'Get Offer',
         
+        // Funnel Step Titles and Subtitles
+        'step-address-title': 'Enter your home address',
+        'step-property-details-title': "Let's confirm your property details",
+        'step-property-details-subtitle': 'We found this information about your home. Please review and edit if needed.',
+        'step-owner-type-title': 'Are you the owner of this home?',
+        'step-owner-type-subtitle': 'We have additional questions if you\'re an agent.',
+        'step-agent-options-title': 'Great! There are two ways agents can work with us.',
+        'step-agent-options-subtitle': 'You can decide what makes the most sense for you and the homeowner after you receive an estimated offer from HomeMAXX.',
+        'step-timeline-title': 'When do you need to sell your home?',
+        'step-timeline-subtitle': 'This won\'t affect your offer. We\'re here to help with any timeline.',
+        'step-kitchen-countertops-title': 'What are your kitchen countertops made of?',
+        'step-kitchen-countertops-subtitle': 'This tells us a bit about when the kitchen was last updated.',
+        'step-kitchen-quality-title': 'How would you describe your kitchen?',
+        'step-kitchen-quality-subtitle': 'For these questions, just select the closest match.',
+        'step-bathroom-quality-title': 'How would you describe your bathroom?',
+        'step-bathroom-quality-subtitle': 'For these questions, just select the closest match.',
+        'step-living-room-quality-title': 'How would you describe your living room?',
+        'step-living-room-quality-subtitle': 'For these questions, just select the closest match.',
+        'step-hoa-question-title': 'Is your home part of a homeowners association?',
+        'step-hoa-question-subtitle': 'This is often called an HOA. It\'s a group that helps maintain your community for a fee.',
+        'step-hoa-fees-title': 'What are your monthly HOA fees?',
+        'step-hoa-fees-subtitle': '(Optional) This helps us better understand your property\'s monthly expenses.',
+        'step-property-issues-title': 'Do any of these apply to your home?',
+        'step-property-issues-subtitle': 'Select all that apply. We keep an eye out for these things when we\'re making an offer.',
+        'step-contact-info-title': 'Sign in to get your offer',
+        'step-contact-info-subtitle': 'It\'s totally free and there\'s no commitment.',
+        
+        // Owner Type Options
+        'owner-type-owner': 'Yes, I own this home',
+        'owner-type-agent': 'No, I\'m an agent',
+        'owner-type-agent-owner': 'I\'m an agent, and I own this home',
+        'owner-type-other': 'Other',
+        
+        // Timeline Options
+        'timeline-asap': 'ASAP',
+        'timeline-2-4-weeks': '2-4 weeks',
+        'timeline-4-6-weeks': '4-6 weeks',
+        'timeline-6-weeks-plus': '6+ weeks',
+        'timeline-just-browsing': 'Just browsing',
+        
+        // Kitchen Quality Options
+        'kitchen-quality-fixer-upper': 'Fixer Upper',
+        'kitchen-quality-dated': 'Dated',
+        'kitchen-quality-standard': 'Standard',
+        'kitchen-quality-high-end': 'High end',
+        'kitchen-quality-luxury': 'Luxury',
+        
+        // Bathroom Quality Options
+        'bathroom-quality-fixer-upper': 'Fixer Upper',
+        'bathroom-quality-dated': 'Dated',
+        'bathroom-quality-standard': 'Standard',
+        'bathroom-quality-high-end': 'High end',
+        'bathroom-quality-luxury': 'Luxury',
+        
+        // Living Room Quality Options
+        'living-room-quality-fixer-upper': 'Fixer Upper',
+        'living-room-quality-dated': 'Dated',
+        'living-room-quality-standard': 'Standard',
+        'living-room-quality-high-end': 'High end',
+        'living-room-quality-luxury': 'Luxury',
+        
+        // HOA Options
+        'hoa-yes': 'Yes',
+        'hoa-no': 'No',
+        
+        // Contact Form
+        'contact-first-name': 'First Name *',
+        'contact-last-name': 'Last Name *',
+        'contact-email': 'Email *',
+        'contact-phone': 'Mobile Number *',
+        'contact-submit': 'Get My Cash Offer',
+        'contact-terms': 'By clicking "Get My Cash Offer", you agree to HomeMAXX\'s terms of service and Privacy policy.',
+        
         // Property Questions
         'property.owner-type': 'Are you the property owner?',
         'property.owner-yes': 'Yes, I own this property',
@@ -277,6 +350,79 @@ class LanguageToggle {
         'funnel.step3': 'Cronograma',
         'funnel.step4': 'Información de Contacto',
         'funnel.step5': 'Obtener Oferta',
+        
+        // Funnel Step Titles and Subtitles
+        'step-address-title': 'Ingrese la dirección de su casa',
+        'step-property-details-title': "Confirmemos los detalles de su propiedad",
+        'step-property-details-subtitle': 'Encontramos esta información sobre su casa. Por favor revise y edite si es necesario.',
+        'step-owner-type-title': '¿Es usted el propietario de esta casa?',
+        'step-owner-type-subtitle': 'Tenemos preguntas adicionales si es un agente.',
+        'step-agent-options-title': '¡Genial! Hay dos formas en que los agentes pueden trabajar con nosotros.',
+        'step-agent-options-subtitle': 'Puede decidir qué es lo que más sentido tiene para usted y el propietario después de recibir una oferta estimada de HomeMAXX.',
+        'step-timeline-title': '¿Cuándo necesita vender su casa?',
+        'step-timeline-subtitle': 'Esto no afectará su oferta. Estamos aquí para ayudar con cualquier cronograma.',
+        'step-kitchen-countertops-title': '¿De qué están hechas las encimeras de su cocina?',
+        'step-kitchen-countertops-subtitle': 'Esto nos dice un poco sobre cuándo se actualizó la cocina por última vez.',
+        'step-kitchen-quality-title': '¿Cómo describiría su cocina?',
+        'step-kitchen-quality-subtitle': 'Para estas preguntas, simplemente seleccione la opción más cercana.',
+        'step-bathroom-quality-title': '¿Cómo describiría su baño?',
+        'step-bathroom-quality-subtitle': 'Para estas preguntas, simplemente seleccione la opción más cercana.',
+        'step-living-room-quality-title': '¿Cómo describiría su sala de estar?',
+        'step-living-room-quality-subtitle': 'Para estas preguntas, simplemente seleccione la opción más cercana.',
+        'step-hoa-question-title': '¿Su casa es parte de una asociación de propietarios?',
+        'step-hoa-question-subtitle': 'Esto se llama comúnmente HOA. Es un grupo que ayuda a mantener su comunidad por una tarifa.',
+        'step-hoa-fees-title': '¿Cuáles son sus tarifas mensuales de HOA?',
+        'step-hoa-fees-subtitle': '(Opcional) Esto nos ayuda a entender mejor los gastos mensuales de su propiedad.',
+        'step-property-issues-title': '¿Alguna de estas opciones se aplica a su casa?',
+        'step-property-issues-subtitle': 'Seleccione todas las opciones que apliquen. Mantenemos un ojo en estas cosas cuando estamos haciendo una oferta.',
+        'step-contact-info-title': 'Inicie sesión para obtener su oferta',
+        'step-contact-info-subtitle': 'Es completamente gratuito y no hay compromiso.',
+        
+        // Owner Type Options
+        'owner-type-owner': 'Sí, soy dueño de esta casa',
+        'owner-type-agent': 'No, soy un agente',
+        'owner-type-agent-owner': 'Soy un agente y soy dueño de esta casa',
+        'owner-type-other': 'Otro',
+        
+        // Timeline Options
+        'timeline-asap': 'Lo antes posible',
+        'timeline-2-4-weeks': '2-4 semanas',
+        'timeline-4-6-weeks': '4-6 semanas',
+        'timeline-6-weeks-plus': '6+ semanas',
+        'timeline-just-browsing': 'Solo estoy explorando',
+        
+        // Kitchen Quality Options
+        'kitchen-quality-fixer-upper': 'Para arreglar',
+        'kitchen-quality-dated': 'Anticuada',
+        'kitchen-quality-standard': 'Estándar',
+        'kitchen-quality-high-end': 'Alta gama',
+        'kitchen-quality-luxury': 'Lujo',
+        
+        // Bathroom Quality Options
+        'bathroom-quality-fixer-upper': 'Para arreglar',
+        'bathroom-quality-dated': 'Anticuada',
+        'bathroom-quality-standard': 'Estándar',
+        'bathroom-quality-high-end': 'Alta gama',
+        'bathroom-quality-luxury': 'Lujo',
+        
+        // Living Room Quality Options
+        'living-room-quality-fixer-upper': 'Para arreglar',
+        'living-room-quality-dated': 'Anticuada',
+        'living-room-quality-standard': 'Estándar',
+        'living-room-quality-high-end': 'Alta gama',
+        'living-room-quality-luxury': 'Lujo',
+        
+        // HOA Options
+        'hoa-yes': 'Sí',
+        'hoa-no': 'No',
+        
+        // Contact Form
+        'contact-first-name': 'Nombre',
+        'contact-last-name': 'Apellido',
+        'contact-email': 'Correo Electrónico',
+        'contact-phone': 'Número de Teléfono',
+        'contact-submit': 'Obtener Mi Oferta en Efectivo',
+        'contact-terms': 'Al hacer clic en "Obtener Mi Oferta en Efectivo", usted acepta los términos de servicio y la política de privacidad de HomeMAXX.',
         
         // Property Questions
         'property.owner-type': '¿Es usted el propietario de la propiedad?',
