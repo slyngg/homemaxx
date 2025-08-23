@@ -211,21 +211,29 @@ function calculateBasicPriority(propertyData, marketValue, cashOffer) {
   // Condition adjustment
   if (propertyData.kitchenQuality === 'fixer-upper') score += 10;
   
-  let level = 'STANDARD';
-  let color = '#6c757d';
+  let level = 'STANDARD 📋';
+  let color = '#6b7280';
+  let priority = 'STANDARD';
+  let contactTiming = 'Contact within 24-48 hours or allow self-booking';
   
-  if (score >= 70) {
-    level = 'WARM 🔥';
-    color = '#ff9900';
-  } else if (score >= 60) {
-    level = 'LUKEWARM';
-    color = '#ffcc00';
+  if (score >= 75) {
+    level = 'URGENT 🚨🔥🔥🔥';
+    color = '#dc2626';
+    priority = 'HIGHEST';
+    contactTiming = 'Call within 10 minutes';
+  } else if (score >= 50) {
+    level = 'IMPORTANT 🔥🔥';
+    color = '#ea580c';
+    priority = 'HIGH';
+    contactTiming = 'Contact within 24 hours';
   }
   
   return {
     score,
     level,
     color,
+    priority,
+    contactTiming,
     recommendations: ['Manual review - basic scoring used'],
     wholesaleMargin: 'TBD',
     marginPercentage: 'TBD',

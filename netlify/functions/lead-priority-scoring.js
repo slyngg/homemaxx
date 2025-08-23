@@ -21,8 +21,12 @@ exports.handler = async (event, context) => {
         success: true,
         priorityScore: priorityScore.score,
         priorityLevel: priorityScore.level,
+        priority: priorityScore.priority,
+        contactTiming: priorityScore.contactTiming,
         breakdown: priorityScore.breakdown,
-        recommendations: priorityScore.recommendations
+        recommendations: priorityScore.recommendations,
+        wholesaleMargin: priorityScore.wholesaleMargin,
+        marginPercentage: priorityScore.marginPercentage
       })
     };
   } catch (error) {
@@ -165,36 +169,39 @@ function calculateLeadPriority(leadData) {
   score += locationScore;
   breakdown.location = { points: locationScore, market: location };
 
-  // Determine priority level
+  // Determine priority level based on new boss requirements
   let level = '';
   let color = '';
+  let contactTiming = '';
+  let priority = '';
   
-  if (score >= 80) {
-    level = 'ULTRA HOT 🔥🔥🔥';
-    color = '#ff0000';
-    recommendations.unshift("🚨 CALL IMMEDIATELY - Exceptional deal!");
-  } else if (score >= 65) {
-    level = 'HOT 🔥🔥';
-    color = '#ff6600';
-    recommendations.unshift("📞 Call within 1 hour - High priority");
+  if (score >= 75) {
+    level = 'URGENT 🚨🔥🔥🔥';
+    color = '#dc2626'; // Red
+    priority = 'HIGHEST';
+    contactTiming = 'Call within 10 minutes';
+    recommendations.unshift("🚨 URGENT: Call immediately within 10 minutes - Exceptional deal!");
+    recommendations.push("📋 If unavailable, make this first priority when office opens");
   } else if (score >= 50) {
-    level = 'WARM 🔥';
-    color = '#ff9900';
-    recommendations.unshift("📱 Call within 4 hours - Good opportunity");
-  } else if (score >= 35) {
-    level = 'LUKEWARM';
-    color = '#ffcc00';
-    recommendations.unshift("📧 Follow up within 24 hours");
+    level = 'IMPORTANT 🔥🔥';
+    color = '#ea580c'; // Orange
+    priority = 'HIGH';
+    contactTiming = 'Contact within 24 hours';
+    recommendations.unshift("📞 IMPORTANT: Contact within 24 hours - High priority deal");
   } else {
-    level = 'COLD';
-    color = '#cccccc';
-    recommendations.unshift("🗂️ Add to nurture sequence");
+    level = 'STANDARD 📋';
+    color = '#6b7280'; // Gray
+    priority = 'STANDARD';
+    contactTiming = 'Contact within 24-48 hours or allow self-booking';
+    recommendations.unshift("📧 STANDARD: Contact within 24-48 hours or customer can book appointment");
   }
 
   return {
     score: Math.round(score),
     level,
     color,
+    priority,
+    contactTiming,
     breakdown,
     recommendations,
     wholesaleMargin: `$${wholesaleMargin.toLocaleString()}`,

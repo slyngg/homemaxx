@@ -8,8 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="preconnect" href="https://maps.googleapis.com" crossorigin>
-  <link rel="preconnect" href="https://maps.gstatic.com" crossorigin>
   <style>
     /* Reset and base styles */
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -52,6 +50,109 @@
 
     .logo .text-primary { color: #3b82f6; }
 
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Language Toggle Styles */
+    .language-toggle-container {
+      position: relative;
+      z-index: 1100;
+    }
+
+    .language-toggle {
+      position: relative;
+      display: inline-block;
+    }
+
+    .language-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+      transition: all 0.2s;
+    }
+
+    .language-btn:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
+
+    .flag-icon {
+      width: 20px;
+      height: 12px;
+      border-radius: 2px;
+    }
+
+    .language-text {
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .dropdown-icon {
+      color: #6b7280;
+      transition: transform 0.2s;
+    }
+
+    .language-toggle.active .dropdown-icon {
+      transform: rotate(180deg);
+    }
+
+    .language-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 0.25rem;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      min-width: 140px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.2s;
+      z-index: 1000;
+    }
+
+    .language-toggle.active .language-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .language-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      color: #374151;
+      transition: background-color 0.2s;
+    }
+
+    .language-option:hover {
+      background: #f9fafb;
+    }
+
+    .language-option:first-child {
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .language-option:last-child {
+      border-radius: 0 0 0.5rem 0.5rem;
+    }
+
     .save-btn {
       background: none;
       border: none;
@@ -61,7 +162,9 @@
       padding: 0.75rem;
     }
 
-    .save-btn:hover { color: #3b82f6; }
+    .save-btn:hover { 
+      color: #3b82f6; 
+    }
 
     /* Progress bar */
     .progress-container {
@@ -98,118 +201,21 @@
       font-weight: 700;
       margin-bottom: 1rem;
       line-height: 1.2;
-      text-align: center;
+      color: #1f2937;
     }
 
     .step-subtitle {
-      color: #6b7280;
       font-size: 1.125rem;
+      color: #6b7280;
       margin-bottom: 3rem;
-      text-align: center;
       line-height: 1.5;
     }
 
-    /* Form elements */
-    .form-group {
-      margin-bottom: 2rem;
-    }
-
-    .form-label {
-      display: block;
-      font-weight: 500;
-      margin-bottom: 0.75rem;
-      color: #374151;
-      font-size: 1rem;
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 1.25rem 1rem;
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      font-size: 1.125rem;
-      transition: border-color 0.2s ease;
-    }
-
-    .form-input:focus {
-      outline: none;
-      border-color: #3b82f6;
-    }
-
-    /* Option buttons */
-    .option-grid {
-      display: grid;
-      gap: 1.25rem;
-      margin-bottom: 3rem;
-    }
-
-    .option-btn {
-      padding: 1.5rem;
-      border: 2px solid #e5e7eb;
-      border-radius: 16px;
-      background: white;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 1.125rem;
-      line-height: 1.4;
-    }
-
-    .option-btn:hover {
-      border-color: #3b82f6;
-      background: #f8fafc;
-    }
-
-    .option-btn.selected {
-      border-color: #3b82f6;
-      background: #eff6ff;
-    }
-
-    /* Image options */
-    .image-options {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.5rem;
-      margin-bottom: 3rem;
-    }
-
-    .image-option {
-      border: 2px solid #e5e7eb;
-      border-radius: 16px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .image-option:hover {
-      border-color: #3b82f6;
-    }
-
-    .image-option.selected {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-    }
-
-    .image-option img {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-    }
-
-    .image-option-content {
-      padding: 1.25rem;
-    }
-
-    .image-option-title {
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      font-size: 1rem;
-    }
-
-    .image-option-desc {
-      font-size: 0.875rem;
-      color: #6b7280;
-      line-height: 1.4;
+    .step-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     /* Navigation */
@@ -217,52 +223,39 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: auto;
-      padding-top: 3rem;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      width: 100%;
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e5e7eb;
     }
 
     .btn {
-      padding: 1.25rem 2.5rem;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 1.125rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: none;
-    }
-
-    .btn-back {
-      background: none;
-      color: #6b7280;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 0.75rem;
-      padding: 1rem;
+      justify-content: center;
+      padding: 1rem 2rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
     }
-
-    .btn-back:hover { color: #374151; }
 
     .btn-primary {
       background: #3b82f6;
       color: white;
-      min-width: 160px;
     }
 
     .btn-primary:hover {
       background: #2563eb;
+      transform: translateY(-1px);
     }
 
-    .btn-primary:disabled {
-      background: #9ca3af;
-      cursor: not-allowed;
-    }
-
-    /* Skip button */
-    .btn-skip {
+    .btn-back {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       background: none;
       border: none;
       color: #6b7280;
@@ -271,44 +264,7 @@
       padding: 0.75rem;
     }
 
-    .btn-skip:hover { color: #374151; }
-
-    /* Property details grid */
-    .property-details {
-      background: #f8fafc;
-      border-radius: 16px;
-      padding: 2rem;
-      margin-bottom: 3rem;
-    }
-
-    .detail-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 0;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    .detail-row:last-child { border-bottom: none; }
-
-    .detail-label {
-      color: #6b7280;
-      font-size: 1rem;
-    }
-
-    .detail-value {
-      font-weight: 600;
-      font-size: 1rem;
-    }
-
-    .edit-link {
-      color: #3b82f6;
-      font-size: 1rem;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .edit-link:hover { text-decoration: underline; }
+    .btn-back:hover { color: #3b82f6; }
 
     /* Hidden class */
     .hidden { display: none !important; }
@@ -327,15 +283,6 @@
       .step-subtitle {
         font-size: 1.25rem;
       }
-      
-      .image-options {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2rem;
-      }
-      
-      .option-grid {
-        gap: 1.5rem;
-      }
     }
 
     /* Mobile responsive */
@@ -348,506 +295,14 @@
       .step-title {
         font-size: 1.75rem;
       }
-      
+
       .step-subtitle {
         font-size: 1rem;
       }
 
-      .image-options {
-        grid-template-columns: 1fr;
-      }
-      
-      .btn {
-        padding: 1rem 1.5rem;
-        font-size: 1rem;
-      }
-      
-      .option-btn {
-        padding: 1.25rem;
-        font-size: 1rem;
-      }
-    }
-
-    /* Qualification Results Styles */
-    .qualification-container {
-      max-width: 100%;
-      margin: 0 auto;
-    }
-
-    .qualification-loading {
-      text-align: center;
-      padding: 3rem 1rem;
-    }
-
-    .loading-spinner {
-      width: 60px;
-      height: 60px;
-      border: 4px solid #f3f4f6;
-      border-top: 4px solid #3b82f6;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 2rem;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .loading-steps {
-      max-width: 400px;
-      margin: 2rem auto 0;
-      text-align: left;
-    }
-
-    .loading-step {
-      padding: 0.75rem 0;
-      color: #9ca3af;
-      font-size: 0.875rem;
-      opacity: 0.5;
-      transition: all 0.3s ease;
-    }
-
-    .loading-step.active {
-      color: #3b82f6;
-      opacity: 1;
-      font-weight: 600;
-    }
-
-    .loading-step.completed {
-      color: #10b981;
-      opacity: 1;
-    }
-
-    /* Offer Results Styles */
-    .offer-results {
-      max-width: 100%;
-    }
-
-    .qualified-offer, .unqualified-result {
-      padding: 0;
-    }
-
-    .success-header, .result-header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
-
-    .success-icon, .result-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-
-    .success-header h2, .result-header h2 {
-      color: #1f2937;
-      font-size: 1.75rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      line-height: 1.2;
-    }
-
-    .success-subtitle, .result-subtitle {
-      color: #6b7280;
-      font-size: 1rem;
-      margin: 0;
-    }
-
-    /* Offer Breakdown */
-    .offer-breakdown {
-      margin-bottom: 2.5rem;
-    }
-
-    .offer-card {
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      color: white;
-      padding: 2rem;
-      border-radius: 16px;
-      text-align: center;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
-    }
-
-    .offer-card.primary {
-      background: linear-gradient(135deg, #10b981, #059669);
-    }
-
-    .offer-label {
-      font-size: 0.875rem;
-      opacity: 0.9;
-      margin-bottom: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .offer-amount {
-      font-size: 2.25rem;
-      font-weight: 800;
-      margin-bottom: 0.5rem;
-      line-height: 1;
-    }
-
-    .offer-note {
-      font-size: 0.875rem;
-      opacity: 0.8;
-      margin: 0;
-    }
-
-    /* Offer Details Grid */
-    .offer-details-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    .detail-card {
-      background: white;
-      border: 2px solid #f3f4f6;
-      border-radius: 12px;
-      padding: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      transition: all 0.2s ease;
-    }
-
-    .detail-card:hover {
-      border-color: #e5e7eb;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    .detail-card.assignment-fee {
-      border-color: #fbbf24;
-      background: linear-gradient(135deg, #fef3c7, #fef9e7);
-    }
-
-    .detail-card.bonus {
-      border-color: #a855f7;
-      background: linear-gradient(135deg, #f3e8ff, #faf5ff);
-    }
-
-    .detail-icon {
-      font-size: 2rem;
-      flex-shrink: 0;
-    }
-
-    .detail-content {
-      flex: 1;
-    }
-
-    .detail-label {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin-bottom: 0.25rem;
-    }
-
-    .detail-value {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #1f2937;
-      margin-bottom: 0.25rem;
-    }
-
-    .detail-tier {
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 0.25rem 0.5rem;
-      border-radius: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .detail-tier.standard {
-      background: #ddd6fe;
-      color: #7c3aed;
-    }
-
-    .detail-tier.premium {
-      background: #fbbf24;
-      color: #92400e;
-    }
-
-    .detail-note {
-      font-size: 0.75rem;
-      color: #6b7280;
-      margin: 0;
-    }
-
-    /* Market Insights */
-    .market-insights {
-      margin-bottom: 2.5rem;
-    }
-
-    .market-insights h3 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #1f2937;
-      margin-bottom: 1rem;
-    }
-
-    .insights-grid {
-      display: grid;
-      gap: 1rem;
-    }
-
-    .insight-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      padding: 1rem;
-      background: #f9fafb;
-      border-radius: 8px;
-    }
-
-    .insight-icon {
-      font-size: 1.5rem;
-      flex-shrink: 0;
-    }
-
-    .insight-content {
-      flex: 1;
-    }
-
-    .insight-title {
-      font-weight: 600;
-      color: #1f2937;
-      margin-bottom: 0.25rem;
-    }
-
-    .insight-description {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin: 0;
-    }
-
-    /* Next Steps Preview */
-    .next-steps-preview {
-      margin-bottom: 2.5rem;
-    }
-
-    .next-steps-preview h3 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #1f2937;
-      margin-bottom: 1.5rem;
-    }
-
-    .steps-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .step-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-
-    .step-number {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.875rem;
-      flex-shrink: 0;
-    }
-
-    .step-content {
-      flex: 1;
-      padding-top: 0.25rem;
-    }
-
-    .step-title {
-      font-weight: 600;
-      color: #1f2937;
-      margin-bottom: 0.25rem;
-    }
-
-    .step-description {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin: 0;
-    }
-
-    /* CTA Section */
-    .cta-section {
-      text-align: center;
-      padding: 2rem 0;
-      border-top: 1px solid #f3f4f6;
-    }
-
-    .btn-large {
-      font-size: 1.125rem;
-      padding: 1rem 2rem;
-      min-width: 280px;
-    }
-
-    .cta-note {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin: 1rem 0 0;
-    }
-
-    /* Unqualified Result Styles */
-    .offer-summary {
-      margin-bottom: 2.5rem;
-    }
-
-    .qualification-score {
-      background: white;
-      border: 2px solid #f3f4f6;
-      border-radius: 12px;
-      padding: 1.5rem;
-      text-align: center;
-      margin-top: 1rem;
-    }
-
-    .score-label {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin-bottom: 0.5rem;
-    }
-
-    .score-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #1f2937;
-      margin-bottom: 1rem;
-    }
-
-    .score-bar {
-      width: 100%;
-      height: 8px;
-      background: #f3f4f6;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .score-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
-      border-radius: 4px;
-      transition: width 1s ease;
-    }
-
-    /* Alternative Options */
-    .alternative-options {
-      margin-bottom: 2.5rem;
-    }
-
-    .alternative-options h3 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #1f2937;
-      margin-bottom: 1.5rem;
-    }
-
-    .options-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-    }
-
-    .option-card {
-      background: white;
-      border: 2px solid #f3f4f6;
-      border-radius: 12px;
-      padding: 1.5rem;
-      text-align: center;
-      transition: all 0.2s ease;
-    }
-
-    .option-card:hover {
-      border-color: #3b82f6;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-    }
-
-    .option-icon {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .option-title {
-      font-weight: 600;
-      color: #1f2937;
-      margin-bottom: 0.5rem;
-    }
-
-    .option-description {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin: 0;
-    }
-
-    /* Error State */
-    .error-state {
-      text-align: center;
-      padding: 3rem 1rem;
-    }
-
-    .error-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-
-    .error-state h3 {
-      color: #1f2937;
-      margin-bottom: 1rem;
-    }
-
-    .error-state p {
-      color: #6b7280;
-      margin-bottom: 2rem;
-    }
-
-    .error-state .btn {
-      margin: 0.5rem;
-    }
-
-    /* Mobile Responsiveness */
-    @media (max-width: 768px) {
-      .offer-amount {
-        font-size: 1.75rem;
-      }
-
-      .offer-details-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .detail-card {
-        padding: 1rem;
-      }
-
-      .steps-list {
-        gap: 1.5rem;
-      }
-
-      .step-item {
+      .header-right {
         flex-direction: column;
-        text-align: center;
-      }
-
-      .step-number {
-        align-self: center;
-      }
-
-      .options-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .btn-large {
-        min-width: auto;
-        width: 100%;
-      }
-
-      .success-header h2, .result-header h2 {
-        font-size: 1.5rem;
+        gap: 0.5rem;
       }
     }
   </style>
@@ -856,115 +311,93 @@
   <div class="funnel-container">
     <!-- Header -->
     <div class="funnel-header">
-      <div class="logo">Home<span class="text-primary">MAXX</span></div>
-      <button class="save-btn" onclick="saveDraft()" data-translate="btn.save">Save & Exit</button>
+      <div class="logo">
+        Home<span class="text-primary">MAXX</span>
+      </div>
+      
+      <div class="header-right">
+        <!-- Language Toggle -->
+        <div class="language-toggle-container">
+          <div class="language-toggle" id="languageToggle">
+            <button class="language-btn" id="languageBtn">
+              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'%3E%3Crect width='60' height='30' fill='%23B22234'/%3E%3Cpath d='M0,0h60v2.31H0V0z M0,4.62h60v2.31H0V4.62z M0,9.23h60v2.31H0V9.23z M0,13.85h60v2.31H0V13.85z M0,18.46h60v2.31H0V18.46z M0,23.08h60v2.31H0V23.08z M0,27.69h60V30H0V27.69z' fill='%23FFFFFF'/%3E%3Crect width='24' height='16.15' fill='%233C3B6E'/%3E%3C/svg%3E" alt="English" class="flag-icon" id="currentFlag">
+              <span class="language-text" id="currentLanguage">EN</span>
+              <svg class="dropdown-icon" width="12" height="8" viewBox="0 0 12 8" fill="none">
+                <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="language-dropdown" id="languageDropdown">
+              <div class="language-option" data-lang="en">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'%3E%3Crect width='60' height='30' fill='%23B22234'/%3E%3Cpath d='M0,0h60v2.31H0V0z M0,4.62h60v2.31H0V4.62z M0,9.23h60v2.31H0V9.23z M0,13.85h60v2.31H0V13.85z M0,18.46h60v2.31H0V18.46z M0,23.08h60v2.31H0V23.08z M0,27.69h60V30H0V27.69z' fill='%23FFFFFF'/%3E%3Crect width='24' height='16.15' fill='%233C3B6E'/%3E%3C/svg%3E" alt="English" class="flag-icon">
+                <span>English</span>
+              </div>
+              <div class="language-option" data-lang="es">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'%3E%3Crect width='60' height='30' fill='%23AA151B'/%3E%3Crect width='60' height='10' y='10' fill='%23F1BF00'/%3E%3C/svg%3E" alt="Español" class="flag-icon">
+                <span>Español</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="save-btn" onclick="saveDraft()" data-translate="btn.save">Save & Exit</button>
+      </div>
     </div>
 
     <!-- Progress -->
     <div class="progress-container">
       <div class="progress-bar">
-        <div class="progress-fill" id="progressFill" style="width: 12.5%"></div>
+        <div class="progress-fill" id="progress-fill" style="width: 12.5%"></div>
       </div>
     </div>
 
     <!-- Step Content -->
-    <div class="step-content" id="stepContent">
-      <!-- Steps will be dynamically inserted here -->
+    <div class="step-content" id="step-content">
+      <!-- Steps will be dynamically inserted here by OpendoorFunnel -->
     </div>
 
     <!-- Navigation -->
     <div class="step-navigation">
-      <button class="btn-back" id="backBtn" onclick="goBack()" style="display: none;">
+      <button class="btn-back" id="back-btn" onclick="goBack()" style="display: none;">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
           <path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
         </svg>
         Back
       </button>
-      <button class="btn btn-primary" id="nextBtn" onclick="goNext()" data-translate="btn.next">Next</button>
+      <button class="btn btn-primary" id="next-btn" onclick="goNext()" data-translate="btn.next">Next</button>
     </div>
   </div>
 
   <!-- Scripts -->
-  <script src="/website/assets/js/language-toggle.js"></script>
-  <script src="/website/assets/js/opendoor-funnel.js"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHBid-FjKVCrF1E4IL90jD71fTAUcwv4s&libraries=places&v=weekly&loading=async&callback=initGooglePlaces"></script>
+  <script src="../../assets/js/language-toggle.js"></script>
+  <script src="../assets/js/opendoor-funnel.js"></script>
   <script>
-    let currentStep = 1;
-    const totalSteps = 6;
-
-    function updateProgress() {
-      const progress = (currentStep / totalSteps) * 100;
-      document.getElementById('progressFill').style.width = progress + '%';
-    }
-
-    function showStep(step) {
-      // Hide all steps
-      for (let i = 1; i <= totalSteps; i++) {
-        document.getElementById('step' + i).style.display = 'none';
-      }
-      
-      // Show current step
-      document.getElementById('step' + step).style.display = 'block';
-      
-      // Update navigation buttons
-      document.getElementById('backBtn').style.display = step > 1 ? 'block' : 'none';
-      document.getElementById('nextBtn').textContent = step === totalSteps ? 
-        window.languageToggle?.getTranslation('btn.submit') || 'Get My Offer' : 
-        window.languageToggle?.getTranslation('btn.next') || 'Next';
-    }
-
-    function nextStep() {
-      if (currentStep < totalSteps) {
-        currentStep++;
-        showStep(currentStep);
-        updateProgress();
-      } else {
-        // Submit form
-        submitForm();
-      }
-    }
-
-    function previousStep() {
-      if (currentStep > 1) {
-        currentStep--;
-        showStep(currentStep);
-        updateProgress();
-      }
-    }
-
-    function submitForm() {
-      // Show loading state
-      document.getElementById('qualification-loading').style.display = 'block';
-      
-      // Collect form data and submit
-      if (window.funnelInstance && window.funnelInstance.performQualificationCheck) {
-        window.funnelInstance.performQualificationCheck();
-      } else {
-        // Fallback submission
-        setTimeout(() => {
-          document.getElementById('qualification-loading').style.display = 'none';
-          document.getElementById('successMessage').textContent = 
-            window.languageToggle?.getTranslation('success.form-submitted') || 'Form submitted successfully!';
-          document.getElementById('successMessage').style.display = 'block';
-        }, 2000);
-      }
-    }
-
-    // Initialize
+    // Initialize funnel when DOM is ready
     document.addEventListener('DOMContentLoaded', function() {
-      showStep(1);
-      updateProgress();
-      
-      // Listen for language changes to update button text
-      document.addEventListener('languageChanged', function() {
-        const nextBtn = document.getElementById('nextBtn');
-        if (currentStep === totalSteps) {
-          nextBtn.textContent = window.languageToggle?.getTranslation('btn.submit') || 'Get My Offer';
-        } else {
-          nextBtn.textContent = window.languageToggle?.getTranslation('btn.next') || 'Next';
-        }
-      });
+      if (window.OpendoorFunnel) {
+        new OpendoorFunnel();
+      } else {
+        console.error('OpendoorFunnel not found - check script path');
+      }
     });
+
+    // Global functions for funnel navigation
+    window.goNext = function() {
+      if (window.funnelInstance && window.funnelInstance.nextStep) {
+        window.funnelInstance.nextStep();
+      }
+    };
+
+    window.goBack = function() {
+      if (window.funnelInstance && window.funnelInstance.prevStep) {
+        window.funnelInstance.prevStep();
+      }
+    };
+
+    window.saveDraft = function() {
+      if (window.funnelInstance && window.funnelInstance.saveDraft) {
+        window.funnelInstance.saveDraft();
+      }
+    };
   </script>
 </body>
 </html>
