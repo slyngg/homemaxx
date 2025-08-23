@@ -495,9 +495,13 @@ class OpendoorFunnel {
             <div class="image-option-description">Recently renovated</div>
           </div>
         </div>
-      </div>
-      <div style="text-align: center; margin-top: 1rem;">
-        <button class="btn-skip" onclick="goNext()" data-translate="kitchen-quality-skip">Skip</button>
+        <div class="image-option" onclick="selectImageOption('luxury')" data-translate="kitchen-quality-luxury">
+          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Luxury Kitchen">
+          <div class="image-option-content">
+            <div class="image-option-title">Luxury</div>
+            <div class="image-option-description">Premium finishes</div>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -1177,61 +1181,115 @@ class OpendoorFunnel {
     console.log('Submitting form data:', this.formData);
     
     try {
-      // Get email from input field
+      // Get form inputs
+      const firstNameInput = document.getElementById('first-name-input');
+      const lastNameInput = document.getElementById('last-name-input');
       const emailInput = document.getElementById('email-input');
-      const email = emailInput?.value || this.formData.email || '';
+      const phoneInput = document.getElementById('phone-input');
+      const smsConsentCheckbox = document.getElementById('sms-consent-checkbox');
       
-      if (!email) {
-        console.error('No email provided for form submission');
-        alert('Please enter your email address to continue.');
+      // Validate required fields
+      const firstName = firstNameInput?.value?.trim() || '';
+      const lastName = lastNameInput?.value?.trim() || '';
+      const email = emailInput?.value?.trim() || '';
+      const phone = phoneInput?.value?.trim() || '';
+      const smsConsent = smsConsentCheckbox?.checked || false;
+      
+      if (!firstName) {
+        alert('Please enter your first name.');
+        firstNameInput?.focus();
         return;
       }
       
-      // Store email in formData
-      this.formData.email = email;
+      if (!lastName) {
+        alert('Please enter your last name.');
+        lastNameInput?.focus();
+        return;
+      }
       
-      // Prepare data for GHL webhook with contact as div structure
+      if (!email) {
+        alert('Please enter your email address.');
+        emailInput?.focus();
+        return;
+      }
+      
+      if (!phone) {
+        alert('Please enter your phone number.');
+        phoneInput?.focus();
+        return;
+      }
+      
+      if (!smsConsent) {
+        alert('Please agree to receive SMS messages by checking the consent box.');
+        smsConsentCheckbox?.focus();
+        return;
+      }
+      
+      // Store form data
+      this.formData.firstName = firstName;
+      this.formData.lastName = lastName;
+      this.formData.email = email;
+      this.formData.phone = phone;
+      this.formData.smsConsent = smsConsent;
+      
+      // Prepare comprehensive data for GHL webhook
       const contactData = {
         contact: {
           // Basic contact information
-          firstName: this.extractFirstName(),
-          lastName: this.extractLastName(),
+          firstName: firstName,
+          lastName: lastName,
           email: email,
-          phone: this.formData.phone || '',
+          phone: phone,
           
           // Property information
-          address: this.formData.address || this.preconfirmedAddress,
+          address: this.formData.address || this.preconfirmedAddress || '',
           propertyType: 'Single Family Home',
           
-          // Funnel responses
+          // Funnel responses - ALL collected data
           ownerType: this.formData['owner-type'] || 'owner',
-          timeline: this.formData['timeline'] || 'flexible',
-          kitchenCountertops: this.formData['kitchen-countertops'] || 'unknown',
-          kitchenQuality: this.formData['kitchen-quality'] || 'standard',
-          bathroomQuality: this.formData['bathroom-quality'] || 'standard',
-          livingRoomQuality: this.formData['living-room-quality'] || 'standard',
-          hasHOA: this.formData.hasHOA || 'unknown',
+          timeline: this.formData['timeline'] || 'not_specified',
+          kitchenCountertops: this.formData['kitchen-countertops'] || 'not_specified',
+          kitchenQuality: this.formData['kitchen-quality'] || 'not_specified',
+          bathroomQuality: this.formData['bathroom-quality'] || 'not_specified',
+          livingRoomQuality: this.formData['living-room-quality'] || 'not_specified',
+          hasHOA: this.formData.hasHOA || 'not_specified',
           hoaFees: this.formData['hoa-fees'] || 0,
-          propertyIssues: this.formData['property-issues'] || [],
+          propertyIssues: Array.isArray(this.formData['property-issues']) ? this.formData['property-issues'].join(', ') : 'none',
+          
+          // Consent and compliance
+          smsConsent: smsConsent,
+          marketingConsent: true,
+          
+          // Lead source and tracking
           leadSource: 'HomeMAXX Funnel',
           funnelStep: 'Completed',
           submissionDate: new Date().toISOString(),
           userAgent: navigator.userAgent,
+          userType: this.userType,
           
-          // Custom fields for GHL
-          customFields: {
-            funnel_completion_date: new Date().toISOString(),
-            property_address: this.formData.address || this.preconfirmedAddress,
-            seller_timeline: this.formData['timeline'] || 'flexible',
-            property_condition: this.formData['kitchen-quality'] || 'standard',
-            lead_priority: 'Standard - Funnel Completion',
-            contact_method: 'Email Provided',
-            calculation_status: 'Pending'
-          }
+          // Custom fields for GHL (flattened structure)
+          customFields: [
+            { key: 'funnel_completion_date', value: new Date().toISOString() },
+            { key: 'property_address', value: this.formData.address || this.preconfirmedAddress || '' },
+            { key: 'seller_timeline', value: this.formData['timeline'] || 'not_specified' },
+            { key: 'kitchen_quality', value: this.formData['kitchen-quality'] || 'not_specified' },
+            { key: 'bathroom_quality', value: this.formData['bathroom-quality'] || 'not_specified' },
+            { key: 'living_room_quality', value: this.formData['living-room-quality'] || 'not_specified' },
+            { key: 'kitchen_countertops', value: this.formData['kitchen-countertops'] || 'not_specified' },
+            { key: 'hoa_status', value: this.formData.hasHOA || 'not_specified' },
+            { key: 'hoa_monthly_fees', value: this.formData['hoa-fees'] || '0' },
+            { key: 'property_issues', value: Array.isArray(this.formData['property-issues']) ? this.formData['property-issues'].join(', ') : 'none' },
+            { key: 'owner_type', value: this.formData['owner-type'] || 'owner' },
+            { key: 'user_type', value: this.userType },
+            { key: 'sms_consent', value: smsConsent ? 'yes' : 'no' },
+            { key: 'lead_priority', value: 'Standard - Funnel Completion' },
+            { key: 'contact_method', value: 'Email and Phone Provided' },
+            { key: 'calculation_status', value: 'Pending' }
+          ]
         }
       };
 
-      console.log('Submitting to GHL webhook:', contactData);
+      console.log('Submitting comprehensive data to GHL webhook:', contactData);
 
       // Submit to GHL webhook
       const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/46e87a3a-c1d7-4bea-8a70-a022cb1b80ae';
@@ -1246,10 +1304,9 @@ class OpendoorFunnel {
       });
 
       console.log('GHL webhook response status:', response.status);
-      console.log('GHL webhook response headers:', response.headers);
 
       if (response.ok) {
-        console.log('Successfully submitted to GHL webhook');
+        console.log('Successfully submitted comprehensive data to GHL webhook');
         const responseText = await response.text();
         console.log('GHL webhook response:', responseText);
         
