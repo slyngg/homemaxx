@@ -157,6 +157,10 @@ class OpendoorFunnel {
     // CRITICAL: Bind submitForm to global scope for HTML onclick handlers
     window.submitForm = () => this.submitForm();
     
+    // Bind additional functions for error handling
+    window.scheduleConsultation = () => this.scheduleConsultation();
+    window.requestTraditionalOffer = () => this.requestTraditionalOffer();
+    
     // Listen for language changes
     window.addEventListener('languageChanged', (event) => {
       this.handleLanguageChange(event.detail.language);
@@ -240,7 +244,7 @@ class OpendoorFunnel {
     }
     
     // Apply current language translations if language toggle is available
-    if (window.languageToggle) {
+    if (window.languageToggle && typeof window.languageToggle.applyLanguage === 'function') {
       window.languageToggle.applyLanguage(window.languageToggle.currentLanguage);
     }
   }
@@ -706,8 +710,10 @@ class OpendoorFunnel {
     } = offerData;
 
     const isQualified = qualificationScore >= 70;
-    const assignmentTier = assignmentFeeProjection.tier;
-    const assignmentAmount = assignmentFeeProjection.projectedFee;
+    
+    // Safe check for assignmentFeeProjection
+    const assignmentTier = assignmentFeeProjection?.tier || 'standard';
+    const assignmentAmount = assignmentFeeProjection?.projectedFee || 0;
 
     return `
       <div class="offer-results">
@@ -725,36 +731,40 @@ class OpendoorFunnel {
       marketInsights 
     } = offerData;
 
+    // Safe defaults for assignmentFeeProjection
+    const assignmentTier = assignmentFeeProjection?.tier || 'standard';
+    const assignmentAmount = assignmentFeeProjection?.projectedFee || 0;
+
     return `
       <div class="qualified-offer">
         <div class="success-header">
           <div class="success-icon">🎉</div>
-          <h2>Congratulations! You qualify for our $7,500 instant cash offer!</h2>
-          <p class="success-subtitle">Plus, we've calculated your personalized property offer below</p>
+          <h2 data-translate="qualified-offer-congratulations">Congratulations! You qualify for our $7,500 instant cash offer!</h2>
+          <p class="success-subtitle" data-translate="qualified-offer-subtitle">Plus, we've calculated your personalized property offer below</p>
         </div>
 
         <div class="offer-breakdown">
           <div class="offer-card primary">
-            <div class="offer-label">Your Cash Offer Range</div>
+            <div class="offer-label" data-translate="qualified-offer-cash-offer">Your Cash Offer Range</div>
             <div class="offer-amount">$${cashOfferRange.min.toLocaleString()} - $${cashOfferRange.max.toLocaleString()}</div>
-            <div class="offer-note">Based on current market conditions and property analysis</div>
+            <div class="offer-note" data-translate="qualified-offer-note">Based on current market conditions and property analysis</div>
           </div>
 
           <div class="offer-details-grid">
             <div class="detail-card">
               <div class="detail-icon">🏠</div>
               <div class="detail-content">
-                <div class="detail-label">Estimated Market Value</div>
+                <div class="detail-label" data-translate="qualified-offer-market-value">Estimated Market Value</div>
                 <div class="detail-value">$${marketValue.toLocaleString()}</div>
               </div>
             </div>
 
             <div class="detail-card assignment-fee">
-              <div class="detail-icon">${assignmentFeeProjection.tier === 'premium' ? '💎' : '💰'}</div>
+              <div class="detail-icon">${assignmentTier === 'premium' ? '💎' : '💰'}</div>
               <div class="detail-content">
-                <div class="detail-label">Assignment Fee Potential</div>
-                <div class="detail-value">$${assignmentFeeProjection.projectedFee.toLocaleString()}</div>
-                <div class="detail-tier ${assignmentFeeProjection.tier}">${assignmentFeeProjection.tier.toUpperCase()} TIER</div>
+                <div class="detail-label" data-translate="qualified-offer-assignment-fee">Assignment Fee Potential</div>
+                <div class="detail-value">$${assignmentAmount.toLocaleString()}</div>
+                <div class="detail-tier ${assignmentTier}" data-translate="qualified-offer-assignment-tier">${assignmentTier.toUpperCase()} TIER</div>
               </div>
             </div>
 
@@ -762,9 +772,9 @@ class OpendoorFunnel {
               <div class="detail-card bonus">
                 <div class="detail-icon">⭐</div>
                 <div class="detail-content">
-                  <div class="detail-label">Bonus Eligible</div>
+                  <div class="detail-label" data-translate="qualified-offer-bonus">Bonus Eligible</div>
                   <div class="detail-value">Up to $15,000</div>
-                  <div class="detail-note">Exceptional property potential</div>
+                  <div class="detail-note" data-translate="qualified-offer-bonus-note">Exceptional property potential</div>
                 </div>
               </div>
             ` : ''}
@@ -772,14 +782,14 @@ class OpendoorFunnel {
         </div>
 
         <div class="market-insights">
-          <h3>Market Insights</h3>
+          <h3 data-translate="qualified-offer-market-insights">Market Insights</h3>
           <div class="insights-grid">
-            ${marketInsights.map(insight => `
+            ${(marketInsights || []).map(insight => `
               <div class="insight-item">
-                <div class="insight-icon">${insight.icon}</div>
+                <div class="insight-icon">${insight.icon || '📊'}</div>
                 <div class="insight-content">
-                  <div class="insight-title">${insight.title}</div>
-                  <div class="insight-description">${insight.description}</div>
+                  <div class="insight-title" data-translate="qualified-offer-insight-${insight.title}">${insight.title}</div>
+                  <div class="insight-description" data-translate="qualified-offer-insight-${insight.description}">${insight.description}</div>
                 </div>
               </div>
             `).join('')}
@@ -787,62 +797,65 @@ class OpendoorFunnel {
         </div>
 
         <div class="next-steps-preview">
-          <h3>What happens next?</h3>
+          <h3 data-translate="qualified-offer-next-steps">What happens next?</h3>
           <div class="steps-list">
             <div class="step-item">
               <div class="step-number">1</div>
               <div class="step-content">
-                <div class="step-title">Schedule consultation</div>
-                <div class="step-description">30-minute call to discuss your offer and timeline</div>
+                <div class="step-title" data-translate="qualified-offer-step-1">Schedule consultation</div>
+                <div class="step-description" data-translate="qualified-offer-step-1-description">30-minute call to discuss your offer and timeline</div>
               </div>
             </div>
             <div class="step-item">
               <div class="step-number">2</div>
               <div class="step-content">
-                <div class="step-title">Property evaluation</div>
-                <div class="step-description">Quick walkthrough to confirm condition and finalize offer</div>
+                <div class="step-title" data-translate="qualified-offer-step-2">Property evaluation</div>
+                <div class="step-description" data-translate="qualified-offer-step-2-description">Quick walkthrough to confirm condition and finalize offer</div>
               </div>
             </div>
             <div class="step-item">
               <div class="step-number">3</div>
               <div class="step-content">
-                <div class="step-title">Receive $7,500 cash</div>
-                <div class="step-description">Get your instant cash within 48 hours of agreement</div>
+                <div class="step-title" data-translate="qualified-offer-step-3">Receive $7,500 cash</div>
+                <div class="step-description" data-translate="qualified-offer-step-3-description">Get your instant cash within 48 hours of agreement</div>
               </div>
             </div>
           </div>
         </div>
 
         <div class="cta-section">
-          <button class="btn btn-primary" onclick="goNext()">
-            Schedule My Consultation
-          </button>
-          <p class="cta-note">Secure your $7,500 instant cash offer today</p>
+          <button class="btn btn-primary" onclick="goNext()" data-translate="qualified-offer-cta">Schedule My Consultation</button>
+          <p class="cta-note" data-translate="qualified-offer-cta-note">Secure your $7,500 instant cash offer today</p>
         </div>
       </div>
     `;
   }
 
   renderUnqualifiedResult(offerData) {
-    const { marketValue, cashOfferRange, qualificationScore, nextSteps } = offerData;
+    const { 
+      marketValue, 
+      cashOfferRange, 
+      qualificationScore, 
+      marketInsights 
+    } = offerData;
 
     return `
       <div class="unqualified-result">
         <div class="result-header">
           <div class="result-icon">📋</div>
-          <h2>Thank you for your interest!</h2>
-          <p class="result-subtitle">We've analyzed your property and prepared a personalized assessment</p>
+          <h2 data-translate="unqualified-result-header">Thank you for your interest!</h2>
+          <p class="result-subtitle" data-translate="unqualified-result-subtitle">We've analyzed your property and prepared a personalized assessment</p>
         </div>
 
         <div class="offer-summary">
           <div class="offer-card">
-            <div class="offer-label">Estimated Cash Offer Range</div>
+            <div class="offer-label" data-translate="unqualified-offer-label">Estimated Cash Offer Range</div>
             <div class="offer-amount">$${cashOfferRange.min.toLocaleString()} - $${cashOfferRange.max.toLocaleString()}</div>
-            <div class="offer-note">Based on current market analysis</div>
+            <div class="offer-note" data-translate="unqualified-offer-note">Based on current market analysis</div>
           </div>
 
           <div class="qualification-score">
-            <div class="score-label">Property Assessment Score</div>
+            <div class="score-label" data-translate="unqualified-qualification-score">Property Assessment Score</div>
             <div class="score-value">${qualificationScore}/100</div>
             <div class="score-bar">
               <div class="score-fill" style="width: ${qualificationScore}%"></div>
@@ -851,33 +864,29 @@ class OpendoorFunnel {
         </div>
 
         <div class="alternative-options">
-          <h3>How we can still help you</h3>
+          <h3 data-translate="unqualified-alternative-options">How we can still help you</h3>
           <div class="options-grid">
             <div class="option-card">
               <div class="option-icon">🏠</div>
-              <div class="option-title">Traditional Cash Offer</div>
-              <div class="option-description">We can still make a competitive cash offer for your property</div>
+              <div class="option-title" data-translate="unqualified-option-traditional">Traditional Cash Offer</div>
+              <div class="option-description" data-translate="unqualified-option-traditional-description">We can still make a competitive cash offer for your property</div>
             </div>
             <div class="option-card">
               <div class="option-icon">🤝</div>
-              <div class="option-title">Market Analysis</div>
-              <div class="option-description">Get detailed insights about your property's market potential</div>
+              <div class="option-title" data-translate="unqualified-option-market-analysis">Market Analysis</div>
+              <div class="option-description" data-translate="unqualified-option-market-analysis-description">Get detailed insights about your property's market potential</div>
             </div>
             <div class="option-card">
               <div class="option-icon">📞</div>
-              <div class="option-title">Expert Consultation</div>
-              <div class="option-description">Speak with our team about your selling options</div>
+              <div class="option-title" data-translate="unqualified-option-expert-consultation">Expert Consultation</div>
+              <div class="option-description" data-translate="unqualified-option-expert-consultation-description">Speak with our team about your selling options</div>
             </div>
           </div>
         </div>
 
         <div class="cta-section">
-          <button class="btn btn-primary" onclick="scheduleConsultation()">
-            Schedule Free Consultation
-          </button>
-          <button class="btn btn-secondary" onclick="requestTraditionalOffer()">
-            Request Traditional Offer
-          </button>
+          <button class="btn btn-primary" onclick="scheduleConsultation()" data-translate="unqualified-cta-schedule">Schedule Free Consultation</button>
+          <button class="btn btn-secondary" onclick="requestTraditionalOffer()" data-translate="unqualified-cta-traditional">Request Traditional Offer</button>
         </div>
       </div>
     `;
@@ -899,15 +908,122 @@ class OpendoorFunnel {
     document.getElementById('qualification-results').innerHTML = `
       <div class="error-state">
         <div class="error-icon">⚠️</div>
-        <h3>Unable to calculate offer</h3>
-        <p>We're experiencing technical difficulties. Please try again or contact our team directly.</p>
+        <h3 data-translate="qualification-error-header">Unable to calculate offer</h3>
+        <p data-translate="qualification-error-description">We're experiencing technical difficulties. Please try again or contact our team directly.</p>
         <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
-          <button class="btn btn-primary" onclick="window.funnelInstance.performQualificationCheck()">Try Again</button>
-          <button class="btn btn-secondary" onclick="window.funnelInstance.sendOfferAnyway()">Send Offer Anyway</button>
-          <button class="btn btn-secondary" onclick="contactSupport()">Contact Support</button>
+          <button class="btn btn-primary" onclick="window.funnelInstance.performQualificationCheck()" data-translate="qualification-error-try-again">Try Again</button>
+          <button class="btn btn-secondary" onclick="window.funnelInstance.sendOfferAnyway()" data-translate="qualification-error-send-offer">Send Offer Anyway</button>
+          <button class="btn btn-secondary" onclick="contactSupport()" data-translate="qualification-error-contact-support">Contact Support</button>
         </div>
       </div>
     `;
+  }
+
+  // Add missing sendOfferAnyway method
+  sendOfferAnyway() {
+    console.log('Sending offer anyway for manual review');
+    
+    try {
+      // Prepare fallback data for GHL webhook
+      const contactData = {
+        contact: {
+          firstName: this.extractFirstName(),
+          lastName: this.extractLastName(),
+          email: this.formData.email || document.getElementById('email-input')?.value,
+          phone: this.formData.phone || '',
+          address: this.formData.address || this.preconfirmedAddress,
+          propertyType: 'Single Family Home',
+          ownerType: this.formData['owner-type'] || 'owner',
+          timeline: this.formData['timeline'] || 'flexible',
+          kitchenQuality: this.formData['kitchen-quality'] || 'standard',
+          hasHOA: this.formData.hasHOA || 'unknown',
+          propertyIssues: this.formData['property-issues'] || [],
+          leadSource: 'HomeMAXX Funnel - Manual Review',
+          funnelStep: 'Manual Review Required',
+          submissionDate: new Date().toISOString(),
+          customFields: {
+            funnel_completion_date: new Date().toISOString(),
+            property_address: this.formData.address || this.preconfirmedAddress,
+            seller_timeline: this.formData['timeline'] || 'flexible',
+            property_condition: this.formData['kitchen-quality'] || 'standard',
+            lead_priority: 'Manual Review Required',
+            contact_method: 'Email Provided',
+            calculation_status: 'Manual Review'
+          }
+        }
+      };
+
+      // Submit to GHL webhook for manual review
+      const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/46e87a3a-c1d7-4bea-8a70-a022cb1b80ae';
+      
+      fetch(GHL_WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(contactData)
+      }).then(response => {
+        if (response.ok) {
+          console.log('Manual review submission successful');
+        } else {
+          console.error('Manual review submission failed');
+        }
+      }).catch(error => {
+        console.error('Manual review submission error:', error);
+      });
+
+      // Show manual review confirmation
+      document.getElementById('qualification-results').innerHTML = `
+        <div class="manual-review-confirmation">
+          <div class="success-icon">✅</div>
+          <h2>Thank you for your submission!</h2>
+          <p>Our team will manually review your property details and contact you within 24 hours with a personalized offer.</p>
+          <div class="contact-info">
+            <p><strong>Need immediate assistance?</strong></p>
+            <p>Call us at <a href="tel:(725) 772-9847">(725) 772-9847</a></p>
+            <p>Email: <a href="mailto:support@homemaxx.com">support@homemaxx.com</a></p>
+          </div>
+        </div>
+      `;
+
+    } catch (error) {
+      console.error('Send offer anyway error:', error);
+    }
+  }
+
+  // Add missing global function bindings
+  bindEvents() {
+    window.goNext = () => this.nextStep();
+    window.goBack = () => this.prevStep();
+    window.saveDraft = () => this.saveDraft();
+    window.selectOption = (value) => this.selectOption(value);
+    window.selectImageOption = (value) => this.selectImageOption(value);
+    window.toggleMultiSelect = (value) => this.toggleMultiSelect(value);
+    
+    // CRITICAL: Bind submitForm to global scope for HTML onclick handlers
+    window.submitForm = () => this.submitForm();
+    
+    // Bind additional functions for error handling
+    window.scheduleConsultation = () => this.scheduleConsultation();
+    window.requestTraditionalOffer = () => this.requestTraditionalOffer();
+    
+    // Listen for language changes
+    window.addEventListener('languageChanged', (event) => {
+      this.handleLanguageChange(event.detail.language);
+    });
+  }
+
+  // Add missing methods for error handling buttons
+  scheduleConsultation() {
+    console.log('Scheduling consultation');
+    // Redirect to booking page or show booking modal
+    window.location.href = '/pages/consultation-request.html';
+  }
+
+  requestTraditionalOffer() {
+    console.log('Requesting traditional offer');
+    this.sendOfferAnyway(); // Use the same manual review process
   }
 
   renderCalendarBookingStep() {

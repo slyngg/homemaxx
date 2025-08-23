@@ -533,16 +533,19 @@
   </div>
 
   <!-- Scripts -->
-  <script src="../../assets/js/language-toggle.js"></script>
+  <script src="../assets/js/language-toggle.js"></script>
   <script src="../assets/js/opendoor-funnel.js"></script>
   <script>
     // Initialize funnel when DOM is ready
     document.addEventListener('DOMContentLoaded', function() {
-      if (window.OpendoorFunnel) {
-        new OpendoorFunnel();
-      } else {
-        console.error('OpendoorFunnel not found - check script path');
-      }
+      // Wait for scripts to load
+      setTimeout(() => {
+        if (typeof OpendoorFunnel !== 'undefined') {
+          window.funnelInstance = new OpendoorFunnel();
+        } else {
+          console.error('OpendoorFunnel not found - check script path');
+        }
+      }, 100);
 
       // Initialize language toggle functionality
       initializeLanguageToggle();
@@ -554,6 +557,11 @@
       const languageOptions = document.querySelectorAll('.language-option');
       const currentFlag = document.getElementById('currentFlag');
       const currentLanguage = document.getElementById('currentLanguage');
+
+      if (!languageBtn || !languageToggle) {
+        console.log('Language toggle elements not found');
+        return;
+      }
 
       // Toggle dropdown
       languageBtn.addEventListener('click', function(e) {
@@ -574,40 +582,26 @@
           const langText = selectedLang.toUpperCase();
 
           // Update current display
-          currentFlag.src = flagImg;
-          currentLanguage.textContent = langText;
+          if (currentFlag && currentLanguage) {
+            currentFlag.src = flagImg;
+            currentLanguage.textContent = langText;
+          }
 
           // Close dropdown
           languageToggle.classList.remove('active');
 
-          // Trigger language change event
-          if (window.languageToggle && window.languageToggle.setLanguage) {
-            window.languageToggle.setLanguage(selectedLang);
+          // Trigger language change event using the global language toggle
+          if (window.languageToggle && typeof window.languageToggle.switchLanguage === 'function') {
+            window.languageToggle.switchLanguage(selectedLang);
+          } else {
+            console.log('Language toggle not available, setting localStorage');
+            localStorage.setItem('homemaxx_language', selectedLang);
           }
 
           console.log('Language changed to:', selectedLang);
         });
       });
     }
-
-    // Global functions for funnel navigation
-    window.goNext = function() {
-      if (window.funnelInstance && window.funnelInstance.nextStep) {
-        window.funnelInstance.nextStep();
-      }
-    };
-
-    window.goBack = function() {
-      if (window.funnelInstance && window.funnelInstance.prevStep) {
-        window.funnelInstance.prevStep();
-      }
-    };
-
-    window.saveDraft = function() {
-      if (window.funnelInstance && window.funnelInstance.saveDraft) {
-        window.funnelInstance.saveDraft();
-      }
-    };
   </script>
 </body>
 </html>
