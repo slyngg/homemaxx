@@ -12,9 +12,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://maps.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://maps.gstatic.com" crossorigin>
+    <!-- Language Toggle Script -->
+    <script src="/assets/js/language-toggle.js" defer></script>
 </head>
 <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#main-content" class="skip-link" data-translate="nav.skip-to-main">Skip to main content</a>
 
     <!-- Header -->
     <header class="site-header">
@@ -28,21 +30,21 @@
                 <nav class="main-nav" id="main-navigation" aria-label="Main navigation">
                     <ul role="menubar">
                         <li role="none">
-                            <a href="/" role="menuitem">Home</a>
+                            <a href="/" role="menuitem" data-translate="nav.home">Home</a>
                         </li>
                         <li role="none">
-                            <a href="/#how-it-works" role="menuitem">How it works</a>
+                            <a href="/#how-it-works" role="menuitem" data-translate="nav.how-it-works">How it works</a>
                         </li>
                         <li role="none">
-                            <a href="/#browse-homes" role="menuitem">Browse homes</a>
+                            <a href="/#browse-homes" role="menuitem" data-translate="nav.browse-homes">Browse homes</a>
                         </li>
                         <li role="none">
-                            <a href="/#agents" role="menuitem">Agents</a>
+                            <a href="/#agents" role="menuitem" data-translate="nav.agents">Agents</a>
                         </li>
                     </ul>
                 </nav>
                 <div class="header-cta">
-                    <button id="offerPopupBtn" class="btn btn-primary">Get offer</button>
+                    <button id="offerPopupBtn" class="btn btn-primary" data-translate="nav.get-offer">Get offer</button>
                 </div>
                 <button class="mobile-menu-toggle" 
                         aria-label="Toggle mobile menu" 
@@ -64,25 +66,26 @@
         <section class="hero" style="padding: 6rem 0;">
             <div class="container">
                 <div class="hero-content">
-                    <h1>Let's start your offer</h1>
-                    <p class="lead">Enter your address to get started. This helps us find sales data for your home and other homes nearby.</p>
+                    <h1 data-translate="address-entry.title">Let's start your offer</h1>
+                    <p class="lead" data-translate="address-entry.subtitle">Enter your address to get started. This helps us find sales data for your home and other homes nearby.</p>
                     
                     <!-- Address Form -->
                     <form class="hero-address" id="addressEntryForm" aria-label="Enter your property address">
-                        <label for="propertyAddress" class="sr-only">Enter your home address</label>
+                        <label for="propertyAddress" class="sr-only" data-translate="address-entry.label">Enter your home address</label>
                         <input 
                             id="propertyAddress" 
                             name="propertyAddress" 
                             type="text" 
                             inputmode="text" 
                             autocomplete="street-address" 
+                            data-translate="hero.address-placeholder"
                             placeholder="Enter your home address" 
                             required
                             style="background: white; border: 2px solid var(--border);"
                         >
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-search" style="margin-right: 0.5rem;"></i>
-                            Continue
+                            <span data-translate="btn.continue">Continue</span>
                         </button>
                     </form>
                 </div>
