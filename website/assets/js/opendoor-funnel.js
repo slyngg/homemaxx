@@ -772,7 +772,7 @@ class OpendoorFunnel {
         </div>
 
         <div class="cta-section">
-          <button class="btn btn-primary btn-large" onclick="goNext()">
+          <button class="btn btn-primary" onclick="goNext()">
             Schedule My Consultation
           </button>
           <p class="cta-note">Secure your $7,500 instant cash offer today</p>
@@ -859,8 +859,11 @@ class OpendoorFunnel {
         <div class="error-icon">⚠️</div>
         <h3>Unable to calculate offer</h3>
         <p>We're experiencing technical difficulties. Please try again or contact our team directly.</p>
-        <button class="btn btn-primary" onclick="this.performQualificationCheck()">Try Again</button>
-        <button class="btn btn-secondary" onclick="contactSupport()">Contact Support</button>
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="window.funnelInstance.performQualificationCheck()">Try Again</button>
+          <button class="btn btn-secondary" onclick="window.funnelInstance.sendOfferAnyway()">Send Offer Anyway</button>
+          <button class="btn btn-secondary" onclick="contactSupport()">Contact Support</button>
+        </div>
       </div>
     `;
   }
@@ -898,31 +901,127 @@ class OpendoorFunnel {
     }));
   }
 
-  submitForm() {
+  async submitForm() {
     console.log('Submitting form data:', this.formData);
     // Handle form submission
   }
+
+  async sendOfferAnyway() {
+    try {
+      // Show loading state
+      document.getElementById('qualification-results').innerHTML = `
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <h3>Submitting your information...</h3>
+          <p>We'll contact you with a personalized offer within 24 hours.</p>
+        </div>
+      `;
+
+      // Prepare basic lead data without offer calculation
+      const leadData = {
+        // Basic property info
+        address: this.formData.address || this.preconfirmedAddress,
+        
+        // Survey responses
+        ownerType: this.formData['owner-type'] || 'owner',
+        kitchenQuality: this.formData['kitchen-quality'] || 'standard',
+        timeline: this.formData['timeline'] || 'flexible',
+        propertyIssues: this.formData['property-issues'] || [],
+        hasHOA: this.formData.hasHOA === 'yes',
+        hoaFees: this.formData['hoa-fees'] || 0,
+        
+        // Contact info
+        firstName: this.formData.firstName || '',
+        lastName: this.formData.lastName || '',
+        email: this.formData.email || '',
+        phone: this.formData.phone || '',
+        
+        // Lead metadata
+        status: 'Manual Review Required',
+        leadSource: 'Website Funnel - Calculation Failed',
+        submittedAt: new Date().toISOString(),
+        calculationFailed: true,
+        cashOfferClaimed: this.formData.cashOfferClaimed || false,
+        
+        // Default priority data for failed calculations
+        priority_score: 50,
+        priority_level: 'MANUAL REVIEW',
+        priority_color: '#6c757d',
+        wholesale_margin: 'TBD',
+        margin_percentage: 'TBD',
+        priority_recommendations: 'Manual calculation required due to system error'
+      };
+
+      // Submit to GHL webhook directly
+      const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/cad6f75b-e78a-4fb9-8e72-bc9eaf37fe8d';
+      
+      const response = await fetch(GHL_WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(leadData)
+      });
+
+      if (response.ok) {
+        // Show success message
+        document.getElementById('qualification-results').innerHTML = `
+          <div class="success-state">
+            <div class="success-icon">✅</div>
+            <h3>Information Submitted Successfully!</h3>
+            <p>Thank you! We've received your property information and will contact you within 24 hours with a personalized cash offer.</p>
+            <p style="margin-top: 1rem; color: #6b7280;">Our team will manually review your property details to provide the most accurate offer possible.</p>
+            <div style="margin-top: 2rem;">
+              <button class="btn btn-primary" onclick="window.location.href='/'">Return Home</button>
+            </div>
+          </div>
+        `;
+      } else {
+        throw new Error('Failed to submit lead data');
+      }
+
+    } catch (error) {
+      console.error('Send offer anyway failed:', error);
+      document.getElementById('qualification-results').innerHTML = `
+        <div class="error-state">
+          <div class="error-icon">❌</div>
+          <h3>Submission Failed</h3>
+          <p>We're unable to submit your information at this time. Please contact us directly.</p>
+          <div style="margin-top: 1.5rem;">
+            <a href="tel:(725) 772-9847" class="btn btn-primary">Call (725) 772-9847</a>
+            <a href="mailto:ru@homemaxx.llc" class="btn btn-secondary">Email Us</a>
+          </div>
+        </div>
+      `;
+    }
+  }
 }
 
-// Initialize the funnel when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
+// Global functions for onclick handlers
+function goNext() {
+  if (window.funnelInstance) {
+    window.funnelInstance.nextStep();
+  }
+}
+
+function goBack() {
+  if (window.funnelInstance) {
+    window.funnelInstance.prevStep();
+  }
+}
+
+function saveDraft() {
+  if (window.funnelInstance) {
+    window.funnelInstance.saveDraft();
+  }
+}
+
+function contactSupport() {
+  window.open('tel:(725) 772-9847', '_self');
+}
+
+// Make funnel instance globally available
+window.addEventListener('DOMContentLoaded', function() {
   window.funnelInstance = new OpendoorFunnel();
 });
-
-// Google Places API initialization
-window.initGooglePlaces = function() {
-  const addressInput = document.getElementById('address-input');
-  if (addressInput && window.google) {
-    const autocomplete = new google.maps.places.Autocomplete(addressInput, {
-      types: ['address'],
-      componentRestrictions: { country: 'us' }
-    });
-    
-    autocomplete.addListener('place_changed', function() {
-      const place = autocomplete.getPlace();
-      if (place.formatted_address) {
-        window.funnelInstance.formData.address = place.formatted_address;
-      }
-    });
-  }
-};

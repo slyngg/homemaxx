@@ -857,35 +857,114 @@
     <!-- Header -->
     <div class="funnel-header">
       <div class="logo">Home<span class="text-primary">MAXX</span></div>
-      <button class="save-btn" onclick="saveDraft()">Save</button>
+      <button class="save-btn" onclick="saveDraft()" data-translate="btn.save">Save & Exit</button>
     </div>
 
     <!-- Progress -->
     <div class="progress-container">
       <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill" style="width: 12.5%"></div>
+        <div class="progress-fill" id="progressFill" style="width: 12.5%"></div>
       </div>
     </div>
 
     <!-- Step Content -->
-    <div class="step-content" id="step-content">
+    <div class="step-content" id="stepContent">
       <!-- Steps will be dynamically inserted here -->
     </div>
 
     <!-- Navigation -->
     <div class="step-navigation">
-      <button class="btn-back" id="back-btn" onclick="goBack()" style="display: none;">
+      <button class="btn-back" id="backBtn" onclick="goBack()" style="display: none;">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
           <path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
         </svg>
         Back
       </button>
-      <button class="btn btn-primary" id="next-btn" onclick="goNext()">Next</button>
+      <button class="btn btn-primary" id="nextBtn" onclick="goNext()" data-translate="btn.next">Next</button>
     </div>
   </div>
 
   <!-- Scripts -->
-  <script src="../assets/js/opendoor-funnel.js"></script>
+  <script src="/website/assets/js/language-toggle.js"></script>
+  <script src="/website/assets/js/opendoor-funnel.js"></script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHBid-FjKVCrF1E4IL90jD71fTAUcwv4s&libraries=places&v=weekly&loading=async&callback=initGooglePlaces"></script>
+  <script>
+    let currentStep = 1;
+    const totalSteps = 6;
+
+    function updateProgress() {
+      const progress = (currentStep / totalSteps) * 100;
+      document.getElementById('progressFill').style.width = progress + '%';
+    }
+
+    function showStep(step) {
+      // Hide all steps
+      for (let i = 1; i <= totalSteps; i++) {
+        document.getElementById('step' + i).style.display = 'none';
+      }
+      
+      // Show current step
+      document.getElementById('step' + step).style.display = 'block';
+      
+      // Update navigation buttons
+      document.getElementById('backBtn').style.display = step > 1 ? 'block' : 'none';
+      document.getElementById('nextBtn').textContent = step === totalSteps ? 
+        window.languageToggle?.getTranslation('btn.submit') || 'Get My Offer' : 
+        window.languageToggle?.getTranslation('btn.next') || 'Next';
+    }
+
+    function nextStep() {
+      if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+        updateProgress();
+      } else {
+        // Submit form
+        submitForm();
+      }
+    }
+
+    function previousStep() {
+      if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+        updateProgress();
+      }
+    }
+
+    function submitForm() {
+      // Show loading state
+      document.getElementById('qualification-loading').style.display = 'block';
+      
+      // Collect form data and submit
+      if (window.funnelInstance && window.funnelInstance.performQualificationCheck) {
+        window.funnelInstance.performQualificationCheck();
+      } else {
+        // Fallback submission
+        setTimeout(() => {
+          document.getElementById('qualification-loading').style.display = 'none';
+          document.getElementById('successMessage').textContent = 
+            window.languageToggle?.getTranslation('success.form-submitted') || 'Form submitted successfully!';
+          document.getElementById('successMessage').style.display = 'block';
+        }, 2000);
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      showStep(1);
+      updateProgress();
+      
+      // Listen for language changes to update button text
+      document.addEventListener('languageChanged', function() {
+        const nextBtn = document.getElementById('nextBtn');
+        if (currentStep === totalSteps) {
+          nextBtn.textContent = window.languageToggle?.getTranslation('btn.submit') || 'Get My Offer';
+        } else {
+          nextBtn.textContent = window.languageToggle?.getTranslation('btn.next') || 'Next';
+        }
+      });
+    });
+  </script>
 </body>
 </html>

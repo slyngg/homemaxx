@@ -61,30 +61,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Language Toggle Script -->
+    <script src="/assets/js/language-toggle.js"></script>
 </head>
 <body>
     <!-- Skip to main content -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#main-content" class="skip-link" data-translate="nav.skip-to-main">Skip to main content</a>
 
     <!-- Header -->
     <header id="header" class="site-header">
         <div class="container">
             <div class="header-inner">
-                <div class="logo">
-                    <a href="/">
-                        <span class="logo-text">HomeMAXX</span>
-                    </a>
-                </div>
+                <div class="logo" data-translate="nav.home">HomeMAXX</div>
                 <nav class="main-nav">
                     <ul>
-                        <li><a href="/" class="active">Home</a></li>
-                        <li><a href="/about.html">About Us</a></li>
-                        <li><a href="/properties.html">Properties</a></li>
-                        <li><a href="/contact.html">Contact</a></li>
+                        <li><a href="/" class="active" data-translate="nav.home">Home</a></li>
+                        <li><a href="/about.html" data-translate="nav.about">About Us</a></li>
+                        <li><a href="/properties.html" data-translate="nav.properties">Properties</a></li>
+                        <li><a href="/contact.html" data-translate="nav.contact">Contact</a></li>
                     </ul>
                 </nav>
                 <div class="header-cta">
-                    <a href="#contact" class="btn btn-primary">Get Offer</a>
+                    <a href="#contact" class="btn btn-primary" data-translate="nav.get-offer">Get Offer</a>
                 </div>
                 <button class="mobile-menu-toggle" aria-label="Toggle mobile menu">
                     <span></span>
@@ -101,16 +99,16 @@
         <section class="hero">
             <div class="container">
                 <div class="hero-content">
-                    <h1 class="hero-title">Sell Your Home, <span class="text-gradient">Stress-Free.</span></h1>
-                    <p class="hero-subtitle">No repairs, no commissions, no showings. Get a fair, no-obligation cash offer for your home in any condition. We make selling simple.</p>
+                    <h1 class="hero-title" data-translate="hero.title">Sell Your Home, <span class="text-gradient">Stress-Free.</span></h1>
+                    <p class="hero-subtitle" data-translate="hero.subtitle">No repairs, no commissions, no showings. Get a fair, no-obligation cash offer for your home in any condition. We make selling simple.</p>
                     <div class="hero-cta">
-                        <a href="#contact" class="btn btn-primary btn-lg">Get My Cash Offer</a>
-                        <a href="#deals" class="btn btn-outline btn-lg">View Current Deals</a>
+                        <a href="#contact" class="btn btn-primary btn-lg" data-translate="hero.get-offer">Get My Cash Offer</a>
+                        <a href="#deals" class="btn btn-outline btn-lg" data-translate="hero.view-deals">View Current Deals</a>
                     </div>
                 </div>
             </div>
             <div class="hero-scroll-indicator">
-                <span>Scroll to explore</span>
+                <span data-translate="hero.scroll-to-explore">Scroll to explore</span>
                 <i class="fas fa-chevron-down"></i>
             </div>
         </section>
@@ -119,8 +117,8 @@
         <section id="deals" class="section section-deals">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">Current Deals & Offers</h2>
-                    <p class="section-subtitle">Explore properties available now. Place a bid or accept the offer to secure your next investment.</p>
+                    <h2 class="section-title" data-translate="deals.title">Current Deals & Offers</h2>
+                    <p class="section-subtitle" data-translate="deals.subtitle">Explore properties available now. Place a bid or accept the offer to secure your next investment.</p>
                 </div>
                 <div id="deals-grid" class="deals-grid">
                     <!-- Properties will be loaded dynamically via JavaScript -->
@@ -132,24 +130,24 @@
         <section id="process" class="section section-process">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">Our 3-Step Process</h2>
-                    <p class="section-subtitle">We've simplified the home selling experience from start to finish.</p>
+                    <h2 class="section-title" data-translate="process.title">Our 3-Step Process</h2>
+                    <p class="section-subtitle" data-translate="process.subtitle">We've simplified the home selling experience from start to finish.</p>
                 </div>
                 <div class="process-steps">
                     <div class="process-step">
                         <div class="step-number">1</div>
-                        <h3 class="step-title">Submit Your Info</h3>
-                        <p class="step-description">Fill out our simple form with your property address and basic details. It takes less than a minute.</p>
+                        <h3 class="step-title" data-translate="process.step1.title">Submit Your Info</h3>
+                        <p class="step-description" data-translate="process.step1.desc">Fill out our simple form with your property address and basic details. It takes less than a minute.</p>
                     </div>
                     <div class="process-step">
                         <div class="step-number">2</div>
-                        <h3 class="step-title">Get Your Offer</h3>
-                        <p class="step-description">Our team analyzes your property and sends a competitive, no-obligation cash offer within 24 hours.</p>
+                        <h3 class="step-title" data-translate="process.step2.title">Get Your Offer</h3>
+                        <p class="step-description" data-translate="process.step2.desc">Our team analyzes your property and sends a competitive, no-obligation cash offer within 24 hours.</p>
                     </div>
                     <div class="process-step">
                         <div class="step-number">3</div>
-                        <h3 class="step-title">Close & Get Paid</h3>
-                        <p class="step-description">If you accept, we handle the paperwork and you choose the closing date. Get your cash in as little as 7 days.</p>
+                        <h3 class="step-title" data-translate="process.step3.title">Close & Get Paid</h3>
+                        <p class="step-description" data-translate="process.step3.desc">If you accept, we handle the paperwork and you choose the closing date. Get your cash in as little as 7 days.</p>
                     </div>
                 </div>
             </div>
@@ -159,29 +157,29 @@
         <section id="why-us" class="section section-why-us">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">The HomeMAXX Advantage</h2>
-                    <p class="section-subtitle">Experience the modern way to sell your property.</p>
+                    <h2 class="section-title" data-translate="why-us.title">The HomeMAXX Advantage</h2>
+                    <p class="section-subtitle" data-translate="why-us.subtitle">Experience the modern way to sell your property.</p>
                 </div>
                 <div class="features-grid">
                     <div class="feature-card">
                         <div class="feature-icon">🏠</div>
-                        <h3 class="feature-title">Sell As-Is</h3>
-                        <p class="feature-description">No repairs, no cleaning, no hassle. We buy properties in any condition.</p>
+                        <h3 class="feature-title" data-translate="why-us.feature1.title">Sell As-Is</h3>
+                        <p class="feature-description" data-translate="why-us.feature1.desc">No repairs, no cleaning, no hassle. We buy properties in any condition.</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">💰</div>
-                        <h3 class="feature-title">No Fees</h3>
-                        <p class="feature-description">No commissions, no closing costs, no hidden fees. The offer we make is what you get.</p>
+                        <h3 class="feature-title" data-translate="why-us.feature2.title">No Fees</h3>
+                        <p class="feature-description" data-translate="why-us.feature2.desc">No commissions, no closing costs, no hidden fees. The offer we make is what you get.</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">⚡</div>
-                        <h3 class="feature-title">Fast Closing</h3>
-                        <p class="feature-description">Close on your timeline, in as little as 7 days. We work around your schedule.</p>
+                        <h3 class="feature-title" data-translate="why-us.feature3.title">Fast Closing</h3>
+                        <p class="feature-description" data-translate="why-us.feature3.desc">Close on your timeline, in as little as 7 days. We work around your schedule.</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">👨‍💼</div>
-                        <h3 class="feature-title">Expert Team</h3>
-                        <p class="feature-description">Our experienced team guides you through every step, ensuring a smooth process.</p>
+                        <h3 class="feature-title" data-translate="why-us.feature4.title">Expert Team</h3>
+                        <p class="feature-description" data-translate="why-us.feature4.desc">Our experienced team guides you through every step, ensuring a smooth process.</p>
                     </div>
                 </div>
             </div>
@@ -191,8 +189,8 @@
         <section class="section section-testimonials">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">What Our Clients Say</h2>
-                    <p class="section-subtitle">Don't just take our word for it. Here's what our clients have to say about working with us.</p>
+                    <h2 class="section-title" data-translate="testimonials.title">What Our Clients Say</h2>
+                    <p class="section-subtitle" data-translate="testimonials.subtitle">Don't just take our word for it. Here's what our clients have to say about working with us.</p>
                 </div>
                 <div class="testimonials-slider">
                     <!-- Testimonials will be loaded dynamically via JavaScript -->
@@ -205,8 +203,8 @@
             <div class="container">
                 <div class="cta-card">
                     <div class="cta-content">
-                        <h2 class="cta-title">Ready for Your Fair Cash Offer?</h2>
-                        <p class="cta-subtitle">It's free, fast, and there's zero obligation. Find out what your home is worth today.</p>
+                        <h2 class="cta-title" data-translate="cta.title">Ready for Your Fair Cash Offer?</h2>
+                        <p class="cta-subtitle" data-translate="cta.subtitle">It's free, fast, and there's zero obligation. Find out what your home is worth today.</p>
                         
                         <!-- Contact Form -->
                         <form id="contact-form" class="contact-form">
@@ -226,9 +224,9 @@
                                 <textarea id="message" name="message" placeholder="Tell us about your property" rows="3"></textarea>
                             </div>
                             <div class="form-submit">
-                                <button type="submit" class="btn btn-primary btn-block">Get My Cash Offer</button>
+                                <button type="submit" class="btn btn-primary btn-block" data-translate="cta.get-offer">Get My Cash Offer</button>
                             </div>
-                            <p class="form-disclaimer">By submitting this form, you agree to our <a href="/privacy.html">Privacy Policy</a> and consent to be contacted by HomeMAXX.</p>
+                            <p class="form-disclaimer" data-translate="cta.disclaimer">By submitting this form, you agree to our <a href="/privacy.html">Privacy Policy</a> and consent to be contacted by HomeMAXX.</p>
                         </form>
                     </div>
                     <div class="cta-image">
@@ -244,8 +242,10 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-widget">
-                    <h3 class="footer-widget-title">HomeMAXX</h3>
-                    <p>Making real estate transactions simple, fast, and stress-free for homeowners and investors alike.</p>
+                    <h3 class="footer-widget-title" data-translate="footer.company">HomeMAXX</h3>
+                    <p data-translate="footer.address">6628 Sky Pointe Dr. Ste.129-1378, Las Vegas, NV 89131</p>
+                    <p data-translate="footer.phone">(725) 772-9847</p>
+                    <p data-translate="footer.hours">Support Hours: 8am-8pm PST</p>
                     <div class="social-links">
                         <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                         <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
@@ -254,17 +254,17 @@
                     </div>
                 </div>
                 <div class="footer-widget">
-                    <h3 class="footer-widget-title">Quick Links</h3>
+                    <h3 class="footer-widget-title" data-translate="footer.quick-links">Quick Links</h3>
                     <ul>
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/about.html">About Us</a></li>
-                        <li><a href="/properties.html">Properties</a></li>
-                        <li><a href="/contact.html">Contact</a></li>
-                        <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="/" data-translate="footer.home">Home</a></li>
+                        <li><a href="/about.html" data-translate="footer.about">About Us</a></li>
+                        <li><a href="/properties.html" data-translate="footer.properties">Properties</a></li>
+                        <li><a href="/contact.html" data-translate="footer.contact">Contact</a></li>
+                        <li><a href="/blog.html" data-translate="footer.blog">Blog</a></li>
                     </ul>
                 </div>
                 <div class="footer-widget">
-                    <h3 class="footer-widget-title">Contact Info</h3>
+                    <h3 class="footer-widget-title" data-translate="footer.contact-info">Contact Info</h3>
                     <ul class="contact-info">
                         <li><i class="fas fa-map-marker-alt"></i> 123 Main St, Las Vegas, NV 89101</li>
                         <li><i class="fas fa-phone"></i> (702) 555-1234</li>
@@ -272,8 +272,8 @@
                     </ul>
                 </div>
                 <div class="footer-widget">
-                    <h3 class="footer-widget-title">Newsletter</h3>
-                    <p>Subscribe to our newsletter for the latest property updates and investment opportunities.</p>
+                    <h3 class="footer-widget-title" data-translate="footer.newsletter">Newsletter</h3>
+                    <p data-translate="footer.newsletter-desc">Subscribe to our newsletter for the latest property updates and investment opportunities.</p>
                     <form class="newsletter-form">
                         <div class="form-group">
                             <input type="email" placeholder="Your Email" required>
@@ -283,7 +283,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 HomeMAXX LLC. All Rights Reserved. | <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Service</a></p>
+                <p data-translate="footer.copyright">&copy; 2025 HomeMAXX LLC. All Rights Reserved. | <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Service</a></p>
             </div>
         </div>
     </footer>

@@ -1,6 +1,7 @@
 /**
  * GoHighLevel CRM Integration
  * Handles form submissions and integrates with GoHighLevel's webhook
+ * Now includes lead priority scoring data
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -12,22 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update the form action URL
     contactForm.action = GHL_WEBHOOK_URL;
-
-    // Add hidden fields for GHL
-    const hiddenFields = [
-        { name: 'status', value: 'New Lead' },
-        { name: 'leadSource', value: 'Website Form' },
-        { name: 'website', value: window.location.href }
-    ];
-
-    // Add hidden fields to the form
-    hiddenFields.forEach(field => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = field.name;
-        input.value = field.value;
-        contactForm.appendChild(input);
-    });
 
     // Form submission handler
     contactForm.addEventListener('submit', async function(e) {
@@ -43,20 +28,47 @@ document.addEventListener('DOMContentLoaded', function() {
         spinner.classList.remove('d-none');
 
         try {
-            // Submit the form data to GHL
+            // Get form data
             const formData = new FormData(this);
-            
-            // Convert FormData to JSON for better GHL compatibility
             const jsonData = {};
             for (let [key, value] of formData.entries()) {
                 jsonData[key] = value;
             }
+
+            // Calculate priority score before sending to GHL
+            const priorityData = await calculateLeadPriority(jsonData);
             
-            console.log('Submitting to GHL:', jsonData);
+            // Add priority scoring data as custom fields for GHL
+            const ghlData = {
+                ...jsonData,
+                // Standard fields
+                status: 'New Lead',
+                leadSource: 'Website Funnel',
+                website: window.location.href,
+                submittedAt: new Date().toISOString(),
+                
+                // Priority scoring custom fields
+                priority_score: priorityData.score,
+                priority_level: priorityData.level,
+                priority_color: priorityData.color,
+                wholesale_margin: priorityData.wholesaleMargin,
+                margin_percentage: priorityData.marginPercentage,
+                priority_recommendations: priorityData.recommendations.join(' | '),
+                
+                // Breakdown for detailed analysis
+                margin_score: priorityData.breakdown?.marginScore || 0,
+                deal_size_score: priorityData.breakdown?.dealSizeScore || 0,
+                timeline_score: priorityData.breakdown?.timelineScore || 0,
+                cash_offer_score: priorityData.breakdown?.cashOfferScore || 0,
+                condition_score: priorityData.breakdown?.conditionScore || 0,
+                location_score: priorityData.breakdown?.locationScore || 0
+            };
+            
+            console.log('Submitting to GHL with priority data:', ghlData);
             
             const response = await fetch(GHL_WEBHOOK_URL, {
                 method: 'POST',
-                body: JSON.stringify(jsonData),
+                body: JSON.stringify(ghlData),
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
@@ -67,20 +79,27 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.ok) {
                 showAlert('success', 'Thank you! Your information has been submitted successfully. We\'ll be in touch soon!');
                 contactForm.reset();
+                
+                // Show priority-based message to user
+                if (priorityData.score >= 80) {
+                    showAlert('info', ' High-priority lead detected! Expect a call within 1 hour.');
+                } else if (priorityData.score >= 65) {
+                    showAlert('info', ' Great opportunity! We\'ll contact you within 4 hours.');
+                }
+                
                 // Emit success event for funnel controller
-                try {
-                    document.dispatchEvent(new CustomEvent('ghl:submit:success', { detail: { status: 'ok' } }));
-                } catch (_) {}
+                document.dispatchEvent(new CustomEvent('ghl:submit:success', { 
+                    detail: { status: 'ok', priorityData } 
+                }));
             } else {
                 throw new Error('Failed to submit form');
             }
         } catch (error) {
             console.error('Error submitting form:', error);
             showAlert('danger', 'There was an error submitting your form. Please try again or contact us directly at info@homemaxx.llc');
-            // Emit error event
-            try {
-                document.dispatchEvent(new CustomEvent('ghl:submit:error', { detail: { error: String(error) } }));
-            } catch (_) {}
+            document.dispatchEvent(new CustomEvent('ghl:submit:error', { 
+                detail: { error: String(error) } 
+            }));
         } finally {
             // Reset button state
             submitButton.disabled = false;
@@ -88,6 +107,48 @@ document.addEventListener('DOMContentLoaded', function() {
             spinner.classList.add('d-none');
         }
     });
+    
+    // Calculate lead priority using the same logic as the backend
+    async function calculateLeadPriority(formData) {
+        try {
+            // Call the calculate-offer function to get priority data
+            const response = await fetch('/.netlify/functions/calculate-offer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            
+            if (response.ok) {
+                const offerData = await response.json();
+                return offerData.leadPriorityScore || getDefaultPriority();
+            } else {
+                return getDefaultPriority();
+            }
+        } catch (error) {
+            console.error('Priority calculation error:', error);
+            return getDefaultPriority();
+        }
+    }
+    
+    // Fallback priority data
+    function getDefaultPriority() {
+        return {
+            score: 50,
+            level: 'STANDARD',
+            color: '#6c757d',
+            wholesaleMargin: '$0',
+            marginPercentage: '0.0%',
+            recommendations: ['Manual review required'],
+            breakdown: {
+                marginScore: 0,
+                dealSizeScore: 0,
+                timelineScore: 0,
+                cashOfferScore: 0,
+                conditionScore: 0,
+                locationScore: 0
+            }
+        };
+    }
     
     // Show alert message
     function showAlert(type, message) {
