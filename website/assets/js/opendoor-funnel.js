@@ -97,6 +97,18 @@ class OpendoorFunnel {
         render: () => this.renderKitchenQualityStep()
       },
       {
+        id: 'bathroom-quality',
+        title: this.userType === 'agent' ? 'How would you describe your client\'s bathroom?' : 'How would you describe your bathroom?',
+        subtitle: 'For these questions, just select the closest match.',
+        render: () => this.renderBathroomQualityStep()
+      },
+      {
+        id: 'living-room-quality',
+        title: this.userType === 'agent' ? 'How would you describe your client\'s living room?' : 'How would you describe your living room?',
+        subtitle: 'For these questions, just select the closest match.',
+        render: () => this.renderLivingRoomQualityStep()
+      },
+      {
         id: 'hoa-question',
         title: this.userType === 'agent' ? 'Is your client\'s home part of a homeowners association?' : 'Is your home part of a homeowners association?',
         subtitle: 'This is often called an HOA. It\'s a group that helps maintain your community for a fee.',
@@ -490,6 +502,90 @@ class OpendoorFunnel {
     `;
   }
 
+  renderBathroomQualityStep() {
+    return `
+      <div class="image-options">
+        <div class="image-option" onclick="selectImageOption('fixer-upper')" data-translate="bathroom-quality-fixer-upper">
+          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Fixer Upper Bathroom">
+          <div class="image-option-content">
+            <div class="image-option-title">Fixer Upper</div>
+            <div class="image-option-description">Needs major work</div>
+          </div>
+        </div>
+        <div class="image-option" onclick="selectImageOption('dated')" data-translate="bathroom-quality-dated">
+          <img src="https://images.unsplash.com/photo-1556909114-4f5f9e8b8c8c?w=300&h=120&fit=crop" alt="Dated Bathroom">
+          <div class="image-option-content">
+            <div class="image-option-title">Dated</div>
+            <div class="image-option-description">Needs updating</div>
+          </div>
+        </div>
+        <div class="image-option" onclick="selectImageOption('standard')" data-translate="bathroom-quality-standard">
+          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Standard Bathroom">
+          <div class="image-option-content">
+            <div class="image-option-title">Standard</div>
+            <div class="image-option-description">Move-in ready</div>
+          </div>
+        </div>
+        <div class="image-option" onclick="selectImageOption('high-end')" data-translate="bathroom-quality-high-end">
+          <img src="https://images.unsplash.com/photo-1556909114-4f5f9e8b8c8c?w=300&h=120&fit=crop" alt="High End Bathroom">
+          <div class="image-option-content">
+            <div class="image-option-title">High end</div>
+            <div class="image-option-description">Recently renovated</div>
+          </div>
+        </div>
+        <div class="image-option" onclick="selectImageOption('luxury')" data-translate="bathroom-quality-luxury">
+          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Luxury Bathroom">
+          <div class="image-option-content">
+            <div class="image-option-title">Luxury</div>
+            <div class="image-option-description">Premium finishes</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  renderLivingRoomQualityStep() {
+    return `
+      <div class="image-options">
+        <div class="image-option" onclick="selectImageOption('fixer-upper')" data-translate="living-room-quality-fixer-upper">
+          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Fixer Upper Living Room">
+          <div class="image-option-content">
+            <div class="image-option-title">Fixer Upper</div>
+            <div class="image-option-description">Needs major work</div>
+          </div>
+        </div>
+        <div class="image-option" onclick="selectImageOption('dated')" data-translate="living-room-quality-dated">
+          <img src="https://images.unsplash.com/photo-1556909114-4f5f9e8b8c8c?w=300&h=120&fit=crop" alt="Dated Living Room">
+          <div class="image-option-content">
+            <div class="image-option-title">Dated</div>
+            <div class="image-option-description">Needs updating</div>
+          </div>
+        </div>
+        <div class="image-option" onclick="selectImageOption('standard')" data-translate="living-room-quality-standard">
+          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Standard Living Room">
+          <div class="image-option-content">
+            <div class="image-option-title">Standard</div>
+            <div class="image-option-description">Move-in ready</div>
+          </div>
+        </div>
+        <div class="image-option" onclick="selectImageOption('high-end')" data-translate="living-room-quality-high-end">
+          <img src="https://images.unsplash.com/photo-1556909114-4f5f9e8b8c8c?w=300&h=120&fit=crop" alt="High End Living Room">
+          <div class="image-option-content">
+            <div class="image-option-title">High end</div>
+            <div class="image-option-description">Recently renovated</div>
+          </div>
+        </div>
+        <div class="image-option" onclick="selectImageOption('luxury')" data-translate="living-room-quality-luxury">
+          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Luxury Living Room">
+          <div class="image-option-content">
+            <div class="image-option-title">Luxury</div>
+            <div class="image-option-description">Premium finishes</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   renderHOAStep() {
     return `
       <div class="option-grid">
@@ -668,6 +764,8 @@ class OpendoorFunnel {
       yearBuilt: this.extractYearBuiltFromDetails(),
       lotSize: this.extractLotSizeFromDetails(),
       kitchenQuality: this.formData['kitchen-quality'] || 'average',
+      bathroomQuality: this.formData['bathroom-quality'] || 'average',
+      livingRoomQuality: this.formData['living-room-quality'] || 'average',
       timeline: this.formData['timeline'] || 'flexible',
       propertyIssues: this.formData['property-issues'] || [],
       hasHOA: this.formData.hasHOA === 'yes',
@@ -927,25 +1025,38 @@ class OpendoorFunnel {
       // Prepare fallback data for GHL webhook
       const contactData = {
         contact: {
+          // Basic contact information
           firstName: this.extractFirstName(),
           lastName: this.extractLastName(),
           email: this.formData.email || document.getElementById('email-input')?.value,
           phone: this.formData.phone || '',
+          
+          // Property information
           address: this.formData.address || this.preconfirmedAddress,
           propertyType: 'Single Family Home',
+          
+          // Funnel responses
           ownerType: this.formData['owner-type'] || 'owner',
           timeline: this.formData['timeline'] || 'flexible',
+          kitchenCountertops: this.formData['kitchen-countertops'] || 'unknown',
           kitchenQuality: this.formData['kitchen-quality'] || 'standard',
+          bathroomQuality: this.formData['bathroom-quality'] || 'standard',
+          livingRoomQuality: this.formData['living-room-quality'] || 'standard',
           hasHOA: this.formData.hasHOA || 'unknown',
+          hoaFees: this.formData['hoa-fees'] || 0,
           propertyIssues: this.formData['property-issues'] || [],
           leadSource: 'HomeMAXX Funnel - Manual Review',
           funnelStep: 'Manual Review Required',
           submissionDate: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          
+          // Custom fields for GHL
           customFields: {
             funnel_completion_date: new Date().toISOString(),
             property_address: this.formData.address || this.preconfirmedAddress,
             seller_timeline: this.formData['timeline'] || 'flexible',
             property_condition: this.formData['kitchen-quality'] || 'standard',
+            hoa_status: this.formData.hasHOA || 'unknown',
             lead_priority: 'Manual Review Required',
             contact_method: 'Email Provided',
             calculation_status: 'Manual Review'
@@ -1097,11 +1208,11 @@ class OpendoorFunnel {
           timeline: this.formData['timeline'] || 'flexible',
           kitchenCountertops: this.formData['kitchen-countertops'] || 'unknown',
           kitchenQuality: this.formData['kitchen-quality'] || 'standard',
+          bathroomQuality: this.formData['bathroom-quality'] || 'standard',
+          livingRoomQuality: this.formData['living-room-quality'] || 'standard',
           hasHOA: this.formData.hasHOA || 'unknown',
           hoaFees: this.formData['hoa-fees'] || 0,
           propertyIssues: this.formData['property-issues'] || [],
-          
-          // Lead source and tracking
           leadSource: 'HomeMAXX Funnel',
           funnelStep: 'Completed',
           submissionDate: new Date().toISOString(),
@@ -1113,7 +1224,6 @@ class OpendoorFunnel {
             property_address: this.formData.address || this.preconfirmedAddress,
             seller_timeline: this.formData['timeline'] || 'flexible',
             property_condition: this.formData['kitchen-quality'] || 'standard',
-            hoa_status: this.formData.hasHOA || 'unknown',
             lead_priority: 'Standard - Funnel Completion',
             contact_method: 'Email Provided',
             calculation_status: 'Pending'

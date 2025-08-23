@@ -198,6 +198,42 @@ function calculateBasicCashOffer(marketValue, propertyData) {
 }
 
 function calculateBasicPriority(propertyData, marketValue, cashOffer) {
+  // Property condition scoring (30 points total - 10 points each room)
+  let conditionScore = 0;
+  
+  // Kitchen quality scoring (10 points)
+  const kitchenQuality = propertyData.kitchenQuality || 'standard';
+  switch (kitchenQuality.toLowerCase()) {
+    case 'luxury': conditionScore += 10; break;
+    case 'high-end': conditionScore += 8; break;
+    case 'standard': conditionScore += 6; break;
+    case 'dated': conditionScore += 4; break;
+    case 'fixer-upper': conditionScore += 2; break;
+    default: conditionScore += 6;
+  }
+  
+  // Bathroom quality scoring (10 points)
+  const bathroomQuality = propertyData.bathroomQuality || 'standard';
+  switch (bathroomQuality.toLowerCase()) {
+    case 'luxury': conditionScore += 10; break;
+    case 'high-end': conditionScore += 8; break;
+    case 'standard': conditionScore += 6; break;
+    case 'dated': conditionScore += 4; break;
+    case 'fixer-upper': conditionScore += 2; break;
+    default: conditionScore += 6;
+  }
+  
+  // Living room quality scoring (10 points)
+  const livingRoomQuality = propertyData.livingRoomQuality || 'standard';
+  switch (livingRoomQuality.toLowerCase()) {
+    case 'luxury': conditionScore += 10; break;
+    case 'high-end': conditionScore += 8; break;
+    case 'standard': conditionScore += 6; break;
+    case 'dated': conditionScore += 4; break;
+    case 'fixer-upper': conditionScore += 2; break;
+    default: conditionScore += 6;
+  }
+  
   // Basic priority calculation for fallback
   let score = 40; // Base score
   
@@ -209,20 +245,20 @@ function calculateBasicPriority(propertyData, marketValue, cashOffer) {
   if (propertyData.cashOfferClaimed) score += 10;
   
   // Condition adjustment
-  if (propertyData.kitchenQuality === 'fixer-upper') score += 10;
+  score += conditionScore;
   
-  let level = 'STANDARD 📋';
+  let level = 'STANDARD ';
   let color = '#6b7280';
   let priority = 'STANDARD';
   let contactTiming = 'Contact within 24-48 hours or allow self-booking';
   
   if (score >= 75) {
-    level = 'URGENT 🚨🔥🔥🔥';
+    level = 'URGENT ';
     color = '#dc2626';
     priority = 'HIGHEST';
     contactTiming = 'Call within 10 minutes';
   } else if (score >= 50) {
-    level = 'IMPORTANT 🔥🔥';
+    level = 'IMPORTANT ';
     color = '#ea580c';
     priority = 'HIGH';
     contactTiming = 'Contact within 24 hours';
