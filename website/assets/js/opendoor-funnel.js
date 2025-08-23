@@ -303,13 +303,22 @@ class OpendoorFunnel {
     
     // Handle special cases
     if (currentStepId === 'owner-type') {
-      this.userType = value === 'agent' ? 'agent' : 'owner';
+      this.userType = value === 'agent' || value === 'agent-owner' ? 'agent' : 'owner';
       this.updateStepTitles();
+      // Recreate steps to update conditions and titles
+      this.createSteps();
     }
     
     if (currentStepId === 'hoa-question') {
       this.formData.hasHOA = value;
+      // Recreate steps to update HOA condition
+      this.createSteps();
     }
+    
+    // Auto-advance to next step after brief delay
+    setTimeout(() => {
+      this.nextStep();
+    }, 800);
   }
 
   selectImageOption(value) {
