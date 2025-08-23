@@ -202,6 +202,7 @@
       margin-bottom: 1rem;
       line-height: 1.2;
       color: #1f2937;
+      text-align: center;
     }
 
     .step-subtitle {
@@ -209,6 +210,7 @@
       color: #6b7280;
       margin-bottom: 3rem;
       line-height: 1.5;
+      text-align: center;
     }
 
     .step-body {
@@ -217,6 +219,146 @@
       flex-direction: column;
       justify-content: center;
     }
+
+    /* Form elements */
+    .form-group {
+      margin-bottom: 2rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+      color: #374151;
+      font-size: 1rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 1.25rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1.125rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    /* Option buttons */
+    .option-grid {
+      display: grid;
+      gap: 1.25rem;
+      margin-bottom: 3rem;
+    }
+
+    .option-btn {
+      padding: 1.5rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 16px;
+      background: white;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 1.125rem;
+      line-height: 1.4;
+    }
+
+    .option-btn:hover {
+      border-color: #3b82f6;
+      background: #f8fafc;
+    }
+
+    .option-btn.selected {
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+
+    /* Image options */
+    .image-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .image-option {
+      border: 2px solid #e5e7eb;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .image-option:hover {
+      border-color: #3b82f6;
+    }
+
+    .image-option.selected {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .image-option img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+    }
+
+    .image-option-content {
+      padding: 1.25rem;
+    }
+
+    .image-option-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .image-option-desc {
+      font-size: 0.875rem;
+      color: #6b7280;
+      line-height: 1.4;
+    }
+
+    /* Property details */
+    .property-details {
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .detail-row:last-child { border-bottom: none; }
+
+    .detail-label {
+      color: #6b7280;
+      font-size: 1rem;
+    }
+
+    .detail-value {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .edit-link {
+      color: #3b82f6;
+      font-size: 1rem;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .edit-link:hover { text-decoration: underline; }
 
     /* Navigation */
     .step-navigation {
@@ -283,6 +425,15 @@
       .step-subtitle {
         font-size: 1.25rem;
       }
+
+      .image-options {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+      }
+      
+      .option-grid {
+        gap: 1.5rem;
+      }
     }
 
     /* Mobile responsive */
@@ -303,6 +454,20 @@
       .header-right {
         flex-direction: column;
         gap: 0.5rem;
+      }
+
+      .image-options {
+        grid-template-columns: 1fr;
+      }
+      
+      .btn {
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+      }
+      
+      .option-btn {
+        padding: 1.25rem;
+        font-size: 1rem;
       }
     }
   </style>
@@ -378,7 +543,52 @@
       } else {
         console.error('OpendoorFunnel not found - check script path');
       }
+
+      // Initialize language toggle functionality
+      initializeLanguageToggle();
     });
+
+    function initializeLanguageToggle() {
+      const languageBtn = document.getElementById('languageBtn');
+      const languageToggle = document.getElementById('languageToggle');
+      const languageOptions = document.querySelectorAll('.language-option');
+      const currentFlag = document.getElementById('currentFlag');
+      const currentLanguage = document.getElementById('currentLanguage');
+
+      // Toggle dropdown
+      languageBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        languageToggle.classList.toggle('active');
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function() {
+        languageToggle.classList.remove('active');
+      });
+
+      // Handle language selection
+      languageOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          const selectedLang = this.dataset.lang;
+          const flagImg = this.querySelector('.flag-icon').src;
+          const langText = selectedLang.toUpperCase();
+
+          // Update current display
+          currentFlag.src = flagImg;
+          currentLanguage.textContent = langText;
+
+          // Close dropdown
+          languageToggle.classList.remove('active');
+
+          // Trigger language change event
+          if (window.languageToggle && window.languageToggle.setLanguage) {
+            window.languageToggle.setLanguage(selectedLang);
+          }
+
+          console.log('Language changed to:', selectedLang);
+        });
+      });
+    }
 
     // Global functions for funnel navigation
     window.goNext = function() {

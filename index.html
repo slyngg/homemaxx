@@ -35,6 +35,110 @@
         font-weight: 800;
         color: #2563eb;
       }
+
+      /* Language Toggle Styles */
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .language-toggle-container {
+        position: relative;
+        z-index: 1100;
+      }
+
+      .language-toggle {
+        position: relative;
+        display: inline-block;
+      }
+
+      .language-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+        transition: all 0.2s;
+      }
+
+      .language-btn:hover {
+        background: #f9fafb;
+        border-color: #d1d5db;
+      }
+
+      .flag-icon {
+        width: 20px;
+        height: 12px;
+        border-radius: 2px;
+      }
+
+      .language-text {
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .dropdown-icon {
+        color: #6b7280;
+        transition: transform 0.2s;
+      }
+
+      .language-toggle.active .dropdown-icon {
+        transform: rotate(180deg);
+      }
+
+      .language-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        margin-top: 0.25rem;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        min-width: 140px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.2s;
+        z-index: 1000;
+      }
+
+      .language-toggle.active .language-dropdown {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .language-option {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        cursor: pointer;
+        font-size: 0.875rem;
+        color: #374151;
+        transition: background-color 0.2s;
+      }
+
+      .language-option:hover {
+        background: #f9fafb;
+      }
+
+      .language-option:first-child {
+        border-radius: 0.5rem 0.5rem 0 0;
+      }
+
+      .language-option:last-child {
+        border-radius: 0 0 0.5rem 0.5rem;
+      }
+
       .btn {
         display: inline-block;
         padding: 0.75rem 1.5rem;
@@ -51,8 +155,41 @@
       }
       .hero h1 {
         font-size: 3rem;
-        line-height: 1.2;
-        margin-bottom: 1.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+      .hero p {
+        font-size: 1.25rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #6b7280;
+      }
+      .hero .btn {
+        display: block;
+        margin: 0 auto;
+        width: fit-content;
+      }
+
+      /* Mobile responsive */
+      @media (max-width: 768px) {
+        .header-inner {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .header-right {
+          flex-direction: row;
+          gap: 1rem;
+        }
+
+        .hero h1 {
+          font-size: 2rem;
+        }
+
+        .hero p {
+          font-size: 1rem;
+        }
       }
     </style>
     <!-- Fonts -->
@@ -73,22 +210,48 @@
         <div class="container">
             <div class="header-inner">
                 <div class="logo" data-translate="nav.home">HomeMAXX</div>
-                <nav class="main-nav">
-                    <ul>
-                        <li><a href="/" class="active" data-translate="nav.home">Home</a></li>
-                        <li><a href="/about.html" data-translate="nav.about">About Us</a></li>
-                        <li><a href="/properties.html" data-translate="nav.properties">Properties</a></li>
-                        <li><a href="/contact.html" data-translate="nav.contact">Contact</a></li>
-                    </ul>
-                </nav>
-                <div class="header-cta">
-                    <a href="#contact" class="btn btn-primary" data-translate="nav.get-offer">Get Offer</a>
+                
+                <div class="header-right">
+                    <!-- Language Toggle -->
+                    <div class="language-toggle-container">
+                        <div class="language-toggle" id="languageToggle">
+                            <button class="language-btn" id="languageBtn">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'%3E%3Crect width='60' height='30' fill='%23B22234'/%3E%3Cpath d='M0,0h60v2.31H0V0z M0,4.62h60v2.31H0V4.62z M0,9.23h60v2.31H0V9.23z M0,13.85h60v2.31H0V13.85z M0,18.46h60v2.31H0V18.46z M0,23.08h60v2.31H0V23.08z M0,27.69h60V30H0V27.69z' fill='%23FFFFFF'/%3E%3Crect width='24' height='16.15' fill='%233C3B6E'/%3E%3C/svg%3E" alt="English" class="flag-icon" id="currentFlag">
+                                <span class="language-text" id="currentLanguage">EN</span>
+                                <svg class="dropdown-icon" width="12" height="8" viewBox="0 0 12 8" fill="none">
+                                    <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <div class="language-dropdown" id="languageDropdown">
+                                <div class="language-option" data-lang="en">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'%3E%3Crect width='60' height='30' fill='%23B22234'/%3E%3Cpath d='M0,0h60v2.31H0V0z M0,4.62h60v2.31H0V4.62z M0,9.23h60v2.31H0V9.23z M0,13.85h60v2.31H0V13.85z M0,18.46h60v2.31H0V18.46z M0,23.08h60v2.31H0V23.08z M0,27.69h60V30H0V27.69z' fill='%23FFFFFF'/%3E%3Crect width='24' height='16.15' fill='%233C3B6E'/%3E%3C/svg%3E" alt="English" class="flag-icon">
+                                    <span>English</span>
+                                </div>
+                                <div class="language-option" data-lang="es">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'%3E%3Crect width='60' height='30' fill='%23AA151B'/%3E%3Crect width='60' height='10' y='10' fill='%23F1BF00'/%3E%3C/svg%3E" alt="Español" class="flag-icon">
+                                    <span>Español</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <nav class="main-nav">
+                        <ul>
+                            <li><a href="/" class="active" data-translate="nav.home">Home</a></li>
+                            <li><a href="/about.html" data-translate="nav.about">About Us</a></li>
+                            <li><a href="/properties.html" data-translate="nav.properties">Properties</a></li>
+                            <li><a href="/contact.html" data-translate="nav.contact">Contact</a></li>
+                        </ul>
+                    </nav>
+                    <div class="header-cta">
+                        <a href="#contact" class="btn btn-primary" data-translate="nav.get-offer">Get Offer</a>
+                    </div>
+                    <button class="mobile-menu-toggle" aria-label="Toggle mobile menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
                 </div>
-                <button class="mobile-menu-toggle" aria-label="Toggle mobile menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
             </div>
         </div>
     </header>
@@ -302,16 +465,53 @@
 
     <!-- JavaScript -->
     <script src="/assets/js/main.js" defer></script>
-    <!-- GoHighLevel Script -->
-    <script src="https://cdn.jsdelivr.net/gh/ampproject/amphtml@2105072137000/third_party/custom-element-internal.js"></script>
     <script>
-        // This will be replaced with the actual GoHighLevel script after account setup
+        // Initialize language toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize the application
-            if (typeof HomeMAXXApp !== 'undefined') {
-                HomeMAXXApp.init();
-            }
+            initializeLanguageToggle();
         });
+
+        function initializeLanguageToggle() {
+            const languageBtn = document.getElementById('languageBtn');
+            const languageToggle = document.getElementById('languageToggle');
+            const languageOptions = document.querySelectorAll('.language-option');
+            const currentFlag = document.getElementById('currentFlag');
+            const currentLanguage = document.getElementById('currentLanguage');
+
+            // Toggle dropdown
+            languageBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                languageToggle.classList.toggle('active');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function() {
+                languageToggle.classList.remove('active');
+            });
+
+            // Handle language selection
+            languageOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const selectedLang = this.dataset.lang;
+                    const flagImg = this.querySelector('.flag-icon').src;
+                    const langText = selectedLang.toUpperCase();
+
+                    // Update current display
+                    currentFlag.src = flagImg;
+                    currentLanguage.textContent = langText;
+
+                    // Close dropdown
+                    languageToggle.classList.remove('active');
+
+                    // Trigger language change event
+                    if (window.languageToggle && window.languageToggle.setLanguage) {
+                        window.languageToggle.setLanguage(selectedLang);
+                    }
+
+                    console.log('Language changed to:', selectedLang);
+                });
+            });
+        }
     </script>
 </body>
 </html>

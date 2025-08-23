@@ -903,57 +903,51 @@ class OpendoorFunnel {
 
   async submitForm() {
     console.log('Submitting form data:', this.formData);
-    // Handle form submission
-  }
-
-  async sendOfferAnyway() {
+    
     try {
-      // Show loading state
-      document.getElementById('qualification-results').innerHTML = `
-        <div class="loading-state">
-          <div class="spinner"></div>
-          <h3>Submitting your information...</h3>
-          <p>We'll contact you with a personalized offer within 24 hours.</p>
-        </div>
-      `;
-
-      // Prepare basic lead data without offer calculation
-      const leadData = {
-        // Basic property info
-        address: this.formData.address || this.preconfirmedAddress,
-        
-        // Survey responses
-        ownerType: this.formData['owner-type'] || 'owner',
-        kitchenQuality: this.formData['kitchen-quality'] || 'standard',
-        timeline: this.formData['timeline'] || 'flexible',
-        propertyIssues: this.formData['property-issues'] || [],
-        hasHOA: this.formData.hasHOA === 'yes',
-        hoaFees: this.formData['hoa-fees'] || 0,
-        
-        // Contact info
-        firstName: this.formData.firstName || '',
-        lastName: this.formData.lastName || '',
-        email: this.formData.email || '',
-        phone: this.formData.phone || '',
-        
-        // Lead metadata
-        status: 'Manual Review Required',
-        leadSource: 'Website Funnel - Calculation Failed',
-        submittedAt: new Date().toISOString(),
-        calculationFailed: true,
-        cashOfferClaimed: this.formData.cashOfferClaimed || false,
-        
-        // Default priority data for failed calculations
-        priority_score: 50,
-        priority_level: 'MANUAL REVIEW',
-        priority_color: '#6c757d',
-        wholesale_margin: 'TBD',
-        margin_percentage: 'TBD',
-        priority_recommendations: 'Manual calculation required due to system error'
+      // Prepare data for GHL webhook with contact as div structure
+      const contactData = {
+        contact: {
+          // Basic contact information
+          firstName: this.extractFirstName(),
+          lastName: this.extractLastName(),
+          email: this.formData.email || document.getElementById('email-input')?.value,
+          phone: this.formData.phone || '',
+          
+          // Property information
+          address: this.formData.address || this.preconfirmedAddress,
+          propertyType: 'Single Family Home',
+          
+          // Funnel responses
+          ownerType: this.formData['owner-type'] || 'owner',
+          timeline: this.formData['timeline'] || 'flexible',
+          kitchenCountertops: this.formData['kitchen-countertops'] || 'unknown',
+          kitchenQuality: this.formData['kitchen-quality'] || 'standard',
+          hasHOA: this.formData.hasHOA || 'unknown',
+          hoaFees: this.formData['hoa-fees'] || 0,
+          propertyIssues: this.formData['property-issues'] || [],
+          
+          // Lead source and tracking
+          leadSource: 'HomeMAXX Funnel',
+          funnelStep: 'Completed',
+          submissionDate: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          
+          // Custom fields for GHL
+          customFields: {
+            funnel_completion_date: new Date().toISOString(),
+            property_address: this.formData.address || this.preconfirmedAddress,
+            seller_timeline: this.formData['timeline'] || 'flexible',
+            property_condition: this.formData['kitchen-quality'] || 'standard',
+            hoa_status: this.formData.hasHOA || 'unknown',
+            lead_priority: 'Standard - Funnel Completion',
+            contact_method: 'Email Provided'
+          }
+        }
       };
 
-      // Submit to GHL webhook directly
-      const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/cad6f75b-e78a-4fb9-8e72-bc9eaf37fe8d';
+      // Submit to GHL webhook
+      const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/46e87a3a-c1d7-4bea-8a70-a022cb1b80ae';
       
       const response = await fetch(GHL_WEBHOOK_URL, {
         method: 'POST',
@@ -961,39 +955,58 @@ class OpendoorFunnel {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify(leadData)
+        body: JSON.stringify(contactData)
       });
 
       if (response.ok) {
-        // Show success message
-        document.getElementById('qualification-results').innerHTML = `
-          <div class="success-state">
-            <div class="success-icon">✅</div>
-            <h3>Information Submitted Successfully!</h3>
-            <p>Thank you! We've received your property information and will contact you within 24 hours with a personalized cash offer.</p>
-            <p style="margin-top: 1rem; color: #6b7280;">Our team will manually review your property details to provide the most accurate offer possible.</p>
-            <div style="margin-top: 2rem;">
-              <button class="btn btn-primary" onclick="window.location.href='/'">Return Home</button>
-            </div>
-          </div>
-        `;
+        console.log('Successfully submitted to GHL webhook');
+        
+        // Move to qualification step
+        this.showStep(this.currentStep + 1);
+        setTimeout(() => this.performQualificationCheck(), 500);
+        
       } else {
-        throw new Error('Failed to submit lead data');
+        console.error('GHL webhook submission failed:', response.status, response.statusText);
+        // Still proceed to qualification but log the error
+        this.showStep(this.currentStep + 1);
+        setTimeout(() => this.performQualificationCheck(), 500);
       }
 
     } catch (error) {
-      console.error('Send offer anyway failed:', error);
-      document.getElementById('qualification-results').innerHTML = `
-        <div class="error-state">
-          <div class="error-icon">❌</div>
-          <h3>Submission Failed</h3>
-          <p>We're unable to submit your information at this time. Please contact us directly.</p>
-          <div style="margin-top: 1.5rem;">
-            <a href="tel:(725) 772-9847" class="btn btn-primary">Call (725) 772-9847</a>
-            <a href="mailto:ru@homemaxx.llc" class="btn btn-secondary">Email Us</a>
-          </div>
-        </div>
-      `;
+      console.error('Form submission error:', error);
+      // Still proceed to qualification step even if webhook fails
+      this.showStep(this.currentStep + 1);
+      setTimeout(() => this.performQualificationCheck(), 500);
+    }
+  }
+
+  extractFirstName() {
+    const email = this.formData.email || document.getElementById('email-input')?.value || '';
+    const emailPrefix = email.split('@')[0];
+    
+    // Try to extract first name from email prefix
+    if (emailPrefix.includes('.')) {
+      return emailPrefix.split('.')[0];
+    } else if (emailPrefix.includes('_')) {
+      return emailPrefix.split('_')[0];
+    } else {
+      return emailPrefix || 'Unknown';
+    }
+  }
+
+  extractLastName() {
+    const email = this.formData.email || document.getElementById('email-input')?.value || '';
+    const emailPrefix = email.split('@')[0];
+    
+    // Try to extract last name from email prefix
+    if (emailPrefix.includes('.')) {
+      const parts = emailPrefix.split('.');
+      return parts.length > 1 ? parts[1] : 'Unknown';
+    } else if (emailPrefix.includes('_')) {
+      const parts = emailPrefix.split('_');
+      return parts.length > 1 ? parts[1] : 'Unknown';
+    } else {
+      return 'Unknown';
     }
   }
 }
