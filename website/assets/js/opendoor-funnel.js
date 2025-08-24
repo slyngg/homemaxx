@@ -1030,7 +1030,6 @@ class OpendoorFunnel {
     `;
   }
 
-  // Add missing sendOfferAnyway method
   sendOfferAnyway() {
     console.log('Sending offer anyway for manual review');
     
@@ -1116,29 +1115,6 @@ class OpendoorFunnel {
     }
   }
 
-  // Add missing global function bindings
-  bindEvents() {
-    window.goNext = () => this.nextStep();
-    window.goBack = () => this.prevStep();
-    window.saveDraft = () => this.saveDraft();
-    window.selectOption = (value) => this.selectOption(value);
-    window.selectImageOption = (value) => this.selectImageOption(value);
-    window.toggleMultiSelect = (value) => this.toggleMultiSelect(value);
-    
-    // CRITICAL: Bind submitForm to global scope for HTML onclick handlers
-    window.submitForm = () => this.submitForm();
-    
-    // Bind additional functions for error handling
-    window.scheduleConsultation = () => this.scheduleConsultation();
-    window.requestTraditionalOffer = () => this.requestTraditionalOffer();
-    
-    // Listen for language changes
-    window.addEventListener('languageChanged', (event) => {
-      this.handleLanguageChange(event.detail.language);
-    });
-  }
-
-  // Add missing methods for error handling buttons
   scheduleConsultation() {
     console.log('Scheduling consultation');
     // Redirect to booking page or show booking modal

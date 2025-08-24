@@ -9,11 +9,39 @@
   # Directory with serverless functions
   functions = "netlify/functions"
 
-# Redirects configuration for SPA routing
+# Force HTTPS redirects
+[[redirects]]
+  from = "http://homemaxx.llc/*"
+  to = "https://homemaxx.llc/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.homemaxx.llc/*"
+  to = "https://homemaxx.llc/:splat"
+  status = 301
+  force = true
+
+# Handle SPA routing for funnel pages
+[[redirects]]
+  from = "/pages/*"
+  to = "/pages/:splat"
+  status = 200
+
+# Catch-all redirect for SPA routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Headers for security and SSL
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
 
 # Basic build settings
 [build.environment]
