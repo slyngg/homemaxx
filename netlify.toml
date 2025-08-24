@@ -1,6 +1,6 @@
 # Netlify configuration
 [build]
-  publish = "website"
+  publish = "."
   command = ""
   functions = "netlify/functions"
 
@@ -17,12 +17,12 @@
 # Context settings
 [context.production]
   command = ""
-  publish = "website"
+  publish = "."
 
 [context.deploy-preview]
   command = ""
-  publish = "website"
+  publish = "."
 
 [context.branch-deploy]
   command = ""
-  publish = "website"
+  publish = "."
