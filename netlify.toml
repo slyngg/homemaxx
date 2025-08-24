@@ -1,53 +1,20 @@
-# example netlify.toml
+# Netlify configuration
 [build]
-  # The directory to publish (relative to root of your repo)
   publish = "website"
-  
-  # Explicitly disable build command for static site
   command = ""
-  
-  # Directory with serverless functions
   functions = "netlify/functions"
 
-# Force HTTPS redirects
-[[redirects]]
-  from = "http://homemaxx.llc/*"
-  to = "https://homemaxx.llc/:splat"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "http://www.homemaxx.llc/*"
-  to = "https://homemaxx.llc/:splat"
-  status = 301
-  force = true
-
-# Handle SPA routing for funnel pages
-[[redirects]]
-  from = "/pages/*"
-  to = "/pages/:splat"
-  status = 200
-
-# Catch-all redirect for SPA routing
+# Simple SPA routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Headers for security and SSL
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-
-# Basic build settings
+# Build settings
 [build.environment]
   NODE_VERSION = "18"
 
-# Disable build command in all contexts
+# Context settings
 [context.production]
   command = ""
   publish = "website"
@@ -59,16 +26,3 @@
 [context.branch-deploy]
   command = ""
   publish = "website"
-
-# Explicitly set dev settings
-[dev]
-  command = ""
-  port = 8888
-  publish = "website"
-  targetPort = 8000
-
-# Force override any UI settings
-[build.processing]
-  skip_processing = true
-
-## more info on configuring this file: https://ntl.fyi/file-based-build-config

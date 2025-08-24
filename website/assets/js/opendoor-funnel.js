@@ -1044,35 +1044,32 @@ class OpendoorFunnel {
           phone: this.formData.phone || '',
           
           // Property information
-          address: this.formData.address || this.preconfirmedAddress,
-          propertyType: 'Single Family Home',
+          address: this.formData.address || this.preconfirmedAddress || '',
           
-          // Funnel responses
-          ownerType: this.formData['owner-type'] || 'owner',
-          timeline: this.formData['timeline'] || 'flexible',
-          kitchenCountertops: this.formData['kitchen-countertops'] || 'unknown',
-          kitchenQuality: this.formData['kitchen-quality'] || 'standard',
-          bathroomQuality: this.formData['bathroom-quality'] || 'standard',
-          livingRoomQuality: this.formData['living-room-quality'] || 'standard',
-          hasHOA: this.formData.hasHOA || 'unknown',
-          hoaFees: this.formData['hoa-fees'] || 0,
-          propertyIssues: this.formData['property-issues'] || [],
-          leadSource: 'HomeMAXX Funnel - Manual Review',
-          funnelStep: 'Manual Review Required',
+          // Survey responses mapped to GHL custom fields
+          property_address: this.formData.address || this.preconfirmedAddress || '',
+          seller_timeline: this.formData['timeline'] || 'not_specified',
+          property_condition: this.formData['kitchen-quality'] || 'not_specified',
+          kitchen_countertops: this.formData['kitchen-countertops'] || 'not_specified',
+          kitchen_quality: this.formData['kitchen-quality'] || 'not_specified',
+          bathroom_quality: this.formData['bathroom-quality'] || 'not_specified',
+          living_room_quality: this.formData['living-room-quality'] || 'not_specified',
+          hoa_status: this.formData.hasHOA || 'not_specified',
+          hoa_monthly_fees: this.formData['hoa-fees'] || '0',
+          property_issues: Array.isArray(this.formData['property-issues']) ? this.formData['property-issues'].join(', ') : 'none',
+          owner_type: this.formData['owner-type'] || 'owner',
+          user_type: this.userType,
+          sms_consent: this.formData.smsConsent ? 'yes' : 'no',
+          lead_priority: 'Manual Review Required',
+          contact_method: 'Email and Phone Provided',
+          calculation_status: 'Manual Review',
+          funnel_completion_date: new Date().toISOString(),
+          
+          // Lead source and tracking
+          leadSource: 'HomeMAXX Funnel',
+          funnelStep: 'Completed',
           submissionDate: new Date().toISOString(),
-          userAgent: navigator.userAgent,
-          
-          // Custom fields for GHL
-          customFields: {
-            funnel_completion_date: new Date().toISOString(),
-            property_address: this.formData.address || this.preconfirmedAddress,
-            seller_timeline: this.formData['timeline'] || 'flexible',
-            property_condition: this.formData['kitchen-quality'] || 'standard',
-            hoa_status: this.formData.hasHOA || 'unknown',
-            lead_priority: 'Manual Review Required',
-            contact_method: 'Email Provided',
-            calculation_status: 'Manual Review'
-          }
+          userAgent: navigator.userAgent
         }
       };
 
@@ -1228,49 +1225,31 @@ class OpendoorFunnel {
           
           // Property information
           address: this.formData.address || this.preconfirmedAddress || '',
-          propertyType: 'Single Family Home',
           
-          // Funnel responses - ALL collected data
-          ownerType: this.formData['owner-type'] || 'owner',
-          timeline: this.formData['timeline'] || 'not_specified',
-          kitchenCountertops: this.formData['kitchen-countertops'] || 'not_specified',
-          kitchenQuality: this.formData['kitchen-quality'] || 'not_specified',
-          bathroomQuality: this.formData['bathroom-quality'] || 'not_specified',
-          livingRoomQuality: this.formData['living-room-quality'] || 'not_specified',
-          hasHOA: this.formData.hasHOA || 'not_specified',
-          hoaFees: this.formData['hoa-fees'] || 0,
-          propertyIssues: Array.isArray(this.formData['property-issues']) ? this.formData['property-issues'].join(', ') : 'none',
-          
-          // Consent and compliance
-          smsConsent: smsConsent,
-          marketingConsent: true,
+          // Survey responses mapped to GHL custom fields
+          property_address: this.formData.address || this.preconfirmedAddress || '',
+          seller_timeline: this.formData['timeline'] || 'not_specified',
+          property_condition: this.formData['kitchen-quality'] || 'not_specified',
+          kitchen_countertops: this.formData['kitchen-countertops'] || 'not_specified',
+          kitchen_quality: this.formData['kitchen-quality'] || 'not_specified',
+          bathroom_quality: this.formData['bathroom-quality'] || 'not_specified',
+          living_room_quality: this.formData['living-room-quality'] || 'not_specified',
+          hoa_status: this.formData.hasHOA || 'not_specified',
+          hoa_monthly_fees: this.formData['hoa-fees'] || '0',
+          property_issues: Array.isArray(this.formData['property-issues']) ? this.formData['property-issues'].join(', ') : 'none',
+          owner_type: this.formData['owner-type'] || 'owner',
+          user_type: this.userType,
+          sms_consent: smsConsent ? 'yes' : 'no',
+          lead_priority: 'Standard - Funnel Completion',
+          contact_method: 'Email and Phone Provided',
+          calculation_status: 'Pending',
+          funnel_completion_date: new Date().toISOString(),
           
           // Lead source and tracking
           leadSource: 'HomeMAXX Funnel',
           funnelStep: 'Completed',
           submissionDate: new Date().toISOString(),
-          userAgent: navigator.userAgent,
-          userType: this.userType,
-          
-          // Custom fields for GHL (flattened structure)
-          customFields: [
-            { key: 'funnel_completion_date', value: new Date().toISOString() },
-            { key: 'property_address', value: this.formData.address || this.preconfirmedAddress || '' },
-            { key: 'seller_timeline', value: this.formData['timeline'] || 'not_specified' },
-            { key: 'kitchen_quality', value: this.formData['kitchen-quality'] || 'not_specified' },
-            { key: 'bathroom_quality', value: this.formData['bathroom-quality'] || 'not_specified' },
-            { key: 'living_room_quality', value: this.formData['living-room-quality'] || 'not_specified' },
-            { key: 'kitchen_countertops', value: this.formData['kitchen-countertops'] || 'not_specified' },
-            { key: 'hoa_status', value: this.formData.hasHOA || 'not_specified' },
-            { key: 'hoa_monthly_fees', value: this.formData['hoa-fees'] || '0' },
-            { key: 'property_issues', value: Array.isArray(this.formData['property-issues']) ? this.formData['property-issues'].join(', ') : 'none' },
-            { key: 'owner_type', value: this.formData['owner-type'] || 'owner' },
-            { key: 'user_type', value: this.userType },
-            { key: 'sms_consent', value: smsConsent ? 'yes' : 'no' },
-            { key: 'lead_priority', value: 'Standard - Funnel Completion' },
-            { key: 'contact_method', value: 'Email and Phone Provided' },
-            { key: 'calculation_status', value: 'Pending' }
-          ]
+          userAgent: navigator.userAgent
         }
       };
 

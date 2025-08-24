@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <title>Get Your Cash Offer | HomeMAXX</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -470,6 +469,92 @@
         padding: 1.25rem;
         font-size: 1rem;
       }
+    }
+
+    /* Form styles */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      transition: all 0.2s;
+      background: white;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: #9ca3af;
+    }
+
+    /* Checkbox styles */
+    .checkbox-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      line-height: 1.4;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      display: none;
+    }
+
+    .checkmark {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #d1d5db;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .checkbox-container input[type="checkbox"]:checked + .checkmark {
+      background: #3b82f6;
+      border-color: #3b82f6;
+    }
+
+    .checkbox-container input[type="checkbox"]:checked + .checkmark::after {
+      content: '✓';
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .checkbox-text {
+      color: #6b7280;
+      flex: 1;
+    }
+
+    .checkbox-text a {
+      color: #3b82f6;
+      text-decoration: none;
+    }
+
+    .checkbox-text a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
