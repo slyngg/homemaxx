@@ -330,6 +330,11 @@ class OpendoorFunnel {
       option.classList.remove('selected');
     });
     event.target.closest('.image-option').classList.add('selected');
+    
+    // Auto-advance to next step after brief delay
+    setTimeout(() => {
+      this.nextStep();
+    }, 800);
   }
 
   toggleMultiSelect(value) {
@@ -670,20 +675,20 @@ class OpendoorFunnel {
       </div>
       
       <div class="form-group">
+        <label class="form-label" data-translate="contact-full-name">Full Name *</label>
+        <input type="text" 
+               class="form-input" 
+               placeholder="Enter your full name"
+               id="full-name-input"
+               required>
+      </div>
+      
+      <div class="form-group">
         <label class="form-label" data-translate="contact-email">Email *</label>
         <input type="email" 
                class="form-input" 
                placeholder="Enter your email"
                id="email-input"
-               required>
-      </div>
-      
-      <div class="form-group">
-        <label class="form-label" data-translate="contact-name">Full Name *</label>
-        <input type="text" 
-               class="form-input" 
-               placeholder="Enter your full name"
-               id="full-name-input"
                required>
       </div>
       
@@ -1190,53 +1195,48 @@ class OpendoorFunnel {
     
     try {
       // Get form inputs
-      const firstNameInput = document.getElementById('first-name-input');
-      const lastNameInput = document.getElementById('last-name-input');
+      const fullNameInput = document.getElementById('full-name-input');
       const emailInput = document.getElementById('email-input');
       const phoneInput = document.getElementById('phone-input');
       const smsConsentCheckbox = document.getElementById('sms-consent-checkbox');
       
-      // Validate required fields
-      const firstName = firstNameInput?.value?.trim() || '';
-      const lastName = lastNameInput?.value?.trim() || '';
+      // Extract required and optional data
       const email = emailInput?.value?.trim() || '';
+      const fullName = fullNameInput?.value?.trim() || '';
       const phone = phoneInput?.value?.trim() || '';
       const smsConsent = smsConsentCheckbox?.checked || false;
       
-      if (!firstName) {
-        alert('Please enter your first name.');
-        firstNameInput?.focus();
-        return;
-      }
-      
-      if (!lastName) {
-        alert('Please enter your last name.');
-        lastNameInput?.focus();
-        return;
-      }
-      
+      // Validate required fields
       if (!email) {
         alert('Please enter your email address.');
-        emailInput?.focus();
+        return;
+      }
+      
+      if (!fullName) {
+        alert('Please enter your full name.');
         return;
       }
       
       if (!phone) {
         alert('Please enter your phone number.');
-        phoneInput?.focus();
         return;
       }
       
       if (!smsConsent) {
-        alert('Please agree to receive SMS messages by checking the consent box.');
-        smsConsentCheckbox?.focus();
+        alert('Please agree to receive SMS messages to continue.');
         return;
       }
       
-      // Store form data
+      // Split full name into first and last name
+      const nameParts = fullName.split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+      
+      // Store in form data
+      this.formData.email = email;
+      this.formData.fullName = fullName;
       this.formData.firstName = firstName;
       this.formData.lastName = lastName;
-      this.formData.email = email;
       this.formData.phone = phone;
       this.formData.smsConsent = smsConsent;
       
