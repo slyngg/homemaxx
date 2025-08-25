@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Priority Dashboard - HomeMAXX</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .filters-section {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .filter-group select, .filter-group input {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .ultra-hot { color: #dc3545; }
+        .hot { color: #fd7e14; }
+        .warm { color: #ffc107; }
+        .lukewarm { color: #6c757d; }
+
+        .leads-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+
+        .leads-table th {
+            background: #495057;
+            color: white;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .leads-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: top;
+        }
+
+        .leads-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .priority-ultra-hot {
+            background: #dc3545;
+            color: white;
+        }
+
+        .priority-hot {
+            background: #fd7e14;
+            color: white;
+        }
+
+        .priority-warm {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .priority-lukewarm {
+            background: #6c757d;
+            color: white;
+        }
+
+        .priority-cold {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .margin-highlight {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .contact-info {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .recommendations {
+            font-size: 0.85rem;
+            color: #495057;
+            margin-top: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .no-leads {
+            text-align: center;
+            padding: 60px;
+            color: #6c757d;
+        }
+
+        @media (max-width: 768px) {
+            .filters-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .leads-table {
+                font-size: 0.9rem;
+            }
+            
+            .leads-table th,
+            .leads-table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>🎯 Lead Priority Dashboard</h1>
+            <p>Prioritized leads based on wholesale margins and deal quality</p>
+        </div>
+
+        <div class="filters-section">
+            <div class="filter-group">
+                <label>Priority Level:</label>
+                <select id="priorityFilter">
+                    <option value="">All Priorities</option>
+                    <option value="ULTRA HOT">Ultra Hot 🔥🔥🔥</option>
+                    <option value="HOT">Hot 🔥🔥</option>
+                    <option value="WARM">Warm 🔥</option>
+                    <option value="LUKEWARM">Lukewarm</option>
+                    <option value="COLD">Cold</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>Min Margin:</label>
+                <input type="number" id="marginFilter" placeholder="$25,000" min="0" step="5000">
+            </div>
+            
+            <div class="filter-group">
+                <label>Timeline:</label>
+                <select id="timelineFilter">
+                    <option value="">All Timelines</option>
+                    <option value="asap">ASAP</option>
+                    <option value="within_30_days">Within 30 Days</option>
+                    <option value="within_60_days">Within 60 Days</option>
+                    <option value="within_90_days">Within 90 Days</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>Cash Offer:</label>
+                <select id="cashOfferFilter">
+                    <option value="">All Leads</option>
+                    <option value="true">Cash Offer Claimed</option>
+                    <option value="false">No Cash Offer</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-number ultra-hot" id="ultraHotCount">0</div>
+                <div class="stat-label">Ultra Hot Leads</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number hot" id="hotCount">0</div>
+                <div class="stat-label">Hot Leads</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number warm" id="warmCount">0</div>
+                <div class="stat-label">Warm Leads</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avgMargin">$0</div>
+                <div class="stat-label">Avg Margin</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalValue">$0</div>
+                <div class="stat-label">Total Pipeline Value</div>
+            </div>
+        </div>
+
+        <div id="leadsTableContainer">
+            <div class="loading">
+                <h3>Loading leads...</h3>
+                <p>Calculating priority scores...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample lead data - replace with actual API call
+        const sampleLeads = [
+            {
+                id: 1,
+                address: "1234 Main St, Las Vegas, NV",
+                sellerPrice: 50000,
+                novationPrice: 120000,
+                retailValue: 150000,
+                propertyCondition: "needs_major_work",
+                motivation: "foreclosure",
+                timeline: "asap",
+                location: "las_vegas",
+                cashOfferClaimed: true,
+                contactInfo: {
+                    name: "John Smith",
+                    phone: "(702) 555-0123",
+                    email: "john@email.com"
+                },
+                submittedAt: "2024-01-15T10:30:00Z"
+            },
+            {
+                id: 2,
+                address: "5678 Oak Ave, Phoenix, AZ",
+                sellerPrice: 80000,
+                novationPrice: 130000,
+                retailValue: 160000,
+                propertyCondition: "needs_minor_work",
+                motivation: "divorce",
+                timeline: "within_30_days",
+                location: "phoenix",
+                cashOfferClaimed: false,
+                contactInfo: {
+                    name: "Sarah Johnson",
+                    phone: "(480) 555-0456",
+                    email: "sarah@email.com"
+                },
+                submittedAt: "2024-01-14T14:15:00Z"
+            }
+        ];
+
+        let allLeads = [];
+        let filteredLeads = [];
+
+        async function loadLeads() {
+            try {
+                // In production, replace with actual API call
+                // const response = await fetch('/api/leads');
+                // allLeads = await response.json();
+                
+                // For demo, use sample data and calculate priorities
+                allLeads = await Promise.all(sampleLeads.map(async (lead) => {
+                    const priorityResponse = await fetch('YOUR_GHL_LEAD_PRIORITY_WEBHOOK_URL', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(lead)
+                    });
+                    
+                    if (priorityResponse.ok) {
+                        const priorityData = await priorityResponse.json();
+                        return { ...lead, priority: priorityData };
+                    }
+                    
+                    return lead;
+                }));
+                
+                filteredLeads = [...allLeads];
+                renderLeads();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading leads:', error);
+                document.getElementById('leadsTableContainer').innerHTML = `
+                    <div class="no-leads">
+                        <h3>Error loading leads</h3>
+                        <p>Please try refreshing the page</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderLeads() {
+            const container = document.getElementById('leadsTableContainer');
+            
+            if (filteredLeads.length === 0) {
+                container.innerHTML = `
+                    <div class="no-leads">
+                        <h3>No leads found</h3>
+                        <p>Try adjusting your filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort by priority score (highest first)
+            filteredLeads.sort((a, b) => (b.priority?.priorityScore || 0) - (a.priority?.priorityScore || 0));
+
+            const tableHTML = `
+                <table class="leads-table">
+                    <thead>
+                        <tr>
+                            <th>Priority</th>
+                            <th>Property</th>
+                            <th>Wholesale Margin</th>
+                            <th>Contact Info</th>
+                            <th>Timeline</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredLeads.map(lead => renderLeadRow(lead)).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            container.innerHTML = tableHTML;
+        }
+
+        function renderLeadRow(lead) {
+            const priority = lead.priority || {};
+            const margin = lead.novationPrice - lead.sellerPrice;
+            const priorityClass = priority.priorityLevel?.toLowerCase().replace(/[^a-z]/g, '-') || 'cold';
+            
+            return `
+                <tr>
+                    <td>
+                        <div class="priority-badge priority-${priorityClass}">
+                            ${priority.priorityLevel || 'Unscored'}
+                        </div>
+                        <div style="margin-top: 8px; font-weight: bold; color: #495057;">
+                            Score: ${priority.priorityScore || 0}/100
+                        </div>
+                        ${priority.recommendations ? `
+                            <div class="recommendations">
+                                ${priority.recommendations[0] || ''}
+                            </div>
+                        ` : ''}
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; margin-bottom: 4px;">
+                            ${lead.address}
+                        </div>
+                        <div style="font-size: 0.9rem; color: #6c757d;">
+                            Condition: ${lead.propertyCondition?.replace('_', ' ') || 'Unknown'}<br>
+                            Motivation: ${lead.motivation?.replace('_', ' ') || 'Unknown'}
+                        </div>
+                        ${lead.cashOfferClaimed ? '<div style="color: #28a745; font-weight: bold; margin-top: 4px;">💸 Cash Offer Claimed</div>' : ''}
+                    </td>
+                    <td>
+                        <div class="margin-highlight" style="color: ${margin >= 50000 ? '#dc3545' : margin >= 25000 ? '#fd7e14' : '#6c757d'};">
+                            $${margin.toLocaleString()}
+                        </div>
+                        <div style="font-size: 0.9rem; color: #6c757d; margin-top: 4px;">
+                            Seller: $${lead.sellerPrice.toLocaleString()}<br>
+                            Novation: $${lead.novationPrice.toLocaleString()}<br>
+                            Retail: $${lead.retailValue.toLocaleString()}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; margin-bottom: 4px;">
+                            ${lead.contactInfo?.name || 'Unknown'}
+                        </div>
+                        <div class="contact-info">
+                            📞 ${lead.contactInfo?.phone || 'No phone'}<br>
+                            ✉️ ${lead.contactInfo?.email || 'No email'}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; color: ${lead.timeline === 'asap' ? '#dc3545' : lead.timeline?.includes('30') ? '#fd7e14' : '#6c757d'};">
+                            ${lead.timeline?.replace('_', ' ').toUpperCase() || 'Unknown'}
+                        </div>
+                        <div style="font-size: 0.85rem; color: #6c757d; margin-top: 4px;">
+                            Submitted: ${new Date(lead.submittedAt).toLocaleDateString()}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="tel:${lead.contactInfo?.phone}" class="btn btn-primary">📞 Call</a>
+                            <a href="mailto:${lead.contactInfo?.email}" class="btn btn-secondary">✉️ Email</a>
+                        </div>
+                        <div style="margin-top: 8px;">
+                            <button class="btn btn-success" onclick="markAsContacted(${lead.id})">Mark Contacted</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function updateStats() {
+            const stats = {
+                ultraHot: 0,
+                hot: 0,
+                warm: 0,
+                totalMargin: 0,
+                count: filteredLeads.length
+            };
+
+            filteredLeads.forEach(lead => {
+                const margin = lead.novationPrice - lead.sellerPrice;
+                stats.totalMargin += margin;
+                
+                const level = lead.priority?.priorityLevel || '';
+                if (level.includes('ULTRA HOT')) stats.ultraHot++;
+                else if (level.includes('HOT')) stats.hot++;
+                else if (level.includes('WARM')) stats.warm++;
+            });
+
+            document.getElementById('ultraHotCount').textContent = stats.ultraHot;
+            document.getElementById('hotCount').textContent = stats.hot;
+            document.getElementById('warmCount').textContent = stats.warm;
+            document.getElementById('avgMargin').textContent = stats.count > 0 ? 
+                `$${Math.round(stats.totalMargin / stats.count).toLocaleString()}` : '$0';
+            document.getElementById('totalValue').textContent = `$${stats.totalMargin.toLocaleString()}`;
+        }
+
+        function applyFilters() {
+            const priorityFilter = document.getElementById('priorityFilter').value;
+            const marginFilter = parseInt(document.getElementById('marginFilter').value) || 0;
+            const timelineFilter = document.getElementById('timelineFilter').value;
+            const cashOfferFilter = document.getElementById('cashOfferFilter').value;
+
+            filteredLeads = allLeads.filter(lead => {
+                const margin = lead.novationPrice - lead.sellerPrice;
+                
+                if (priorityFilter && !lead.priority?.priorityLevel?.includes(priorityFilter)) return false;
+                if (marginFilter && margin < marginFilter) return false;
+                if (timelineFilter && lead.timeline !== timelineFilter) return false;
+                if (cashOfferFilter !== '' && lead.cashOfferClaimed.toString() !== cashOfferFilter) return false;
+                
+                return true;
+            });
+
+            renderLeads();
+            updateStats();
+        }
+
+        function markAsContacted(leadId) {
+            // In production, make API call to update lead status
+            alert(`Lead ${leadId} marked as contacted!`);
+        }
+
+        // Event listeners
+        document.getElementById('priorityFilter').addEventListener('change', applyFilters);
+        document.getElementById('marginFilter').addEventListener('input', applyFilters);
+        document.getElementById('timelineFilter').addEventListener('change', applyFilters);
+        document.getElementById('cashOfferFilter').addEventListener('change', applyFilters);
+
+        // Load leads on page load
+        loadLeads();
+    </script>
+</body>
+</html>

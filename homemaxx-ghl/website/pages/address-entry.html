@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Let's start your offer | HomeMAXX</title>
+    <base href="/">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+    <link rel="stylesheet" href="assets/css/opendoor-style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://maps.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://maps.gstatic.com" crossorigin>
+    <!-- Language Toggle Script -->
+    <script src="/assets/js/language-toggle.js" defer></script>
+</head>
+<body>
+    <a href="#main-content" class="skip-link" data-translate="nav.skip-to-main">Skip to main content</a>
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <div class="header-inner">
+                <div class="logo">
+                    <a href="/" class="logo-link">
+                        <span class="logo-text">Home<span class="text-primary">MAXX</span></span>
+                    </a>
+                </div>
+                <nav class="main-nav" id="main-navigation" aria-label="Main navigation">
+                    <ul role="menubar">
+                        <li role="none">
+                            <a href="/" role="menuitem" data-translate="nav.home">Home</a>
+                        </li>
+                        <li role="none">
+                            <a href="/#how-it-works" role="menuitem" data-translate="nav.how-it-works">How it works</a>
+                        </li>
+                        <li role="none">
+                            <a href="/#browse-homes" role="menuitem" data-translate="nav.browse-homes">Browse homes</a>
+                        </li>
+                        <li role="none">
+                            <a href="/#agents" role="menuitem" data-translate="nav.agents">Agents</a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="header-cta">
+                    <button id="offerPopupBtn" class="btn btn-primary" data-translate="nav.get-offer">Get offer</button>
+                </div>
+                <button class="mobile-menu-toggle" 
+                        aria-label="Toggle mobile menu" 
+                        aria-expanded="false" 
+                        aria-controls="main-navigation">
+                    <span class="sr-only">Menu</span>
+                    <span class="menu-icon" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- Address Entry Section - Opendoor Style -->
+        <section class="hero" style="padding: 6rem 0;">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 data-translate="address-entry.title">Let's start your offer</h1>
+                    <p class="lead" data-translate="address-entry.subtitle">Enter your address to get started. This helps us find sales data for your home and other homes nearby.</p>
+                    
+                    <!-- Address Form -->
+                    <form class="hero-address" id="addressEntryForm" aria-label="Enter your property address">
+                        <label for="propertyAddress" class="sr-only" data-translate="address-entry.label">Enter your home address</label>
+                        <input 
+                            id="propertyAddress" 
+                            name="propertyAddress" 
+                            type="text" 
+                            inputmode="text" 
+                            autocomplete="street-address" 
+                            data-translate="hero.address-placeholder"
+                            placeholder="Enter your home address" 
+                            required
+                            style="background: white; border: 2px solid var(--border);"
+                        >
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search" style="margin-right: 0.5rem;"></i>
+                            <span data-translate="btn.continue">Continue</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Beautiful Property Landscape -->
+        <section style="margin-top: -4rem;">
+            <div class="container">
+                <div style="border-radius: 20px; overflow: hidden; height: 400px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative;">
+                    <img 
+                        src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
+                        alt="Beautiful landscape with mountains and trees" 
+                        style="width: 100%; height: 100%; object-fit: cover; opacity: 0.9;"
+                    >
+                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- $7500 Offer Popup Modal -->
+    <div id="offerModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: white; border-radius: 16px; padding: 2rem; max-width: 500px; margin: 2rem; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+            <button id="closeModal" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+            
+            <div style="text-align: center;">
+                <div style="width: 80px; height: 80px; background: var(--primary-50); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; border: 3px solid var(--primary-200);">
+                    <i class="fas fa-dollar-sign" style="font-size: 2rem; color: var(--primary);"></i>
+                </div>
+                
+                <h2 style="margin-bottom: 1rem; color: var(--text);">About the $7,500 Instant Cash Offer</h2>
+                
+                <div style="background: var(--primary-50); border: 1px solid var(--primary-200); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; text-align: left;">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.25rem;">🚀 Limited Time Offer</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 0.75rem; display: flex; align-items: flex-start;">
+                            <span style="color: var(--success); margin-right: 0.5rem;">✓</span>
+                            <span>For qualifying sellers after a brief verification call</span>
+                        </li>
+                        <li style="margin-bottom: 0.75rem; display: flex; align-items: flex-start;">
+                            <span style="color: var(--success); margin-right: 0.5rem;">✓</span>
+                            <span>Funds can be disbursed in as little as 48 hours after qualification</span>
+                        </li>
+                        <li style="margin-bottom: 0.75rem; display: flex; align-items: flex-start;">
+                            <span style="color: var(--success); margin-right: 0.5rem;">✓</span>
+                            <span>No repairs or showings required; sell your home as-is</span>
+                        </li>
+                        <li style="margin-bottom: 0.75rem; display: flex; align-items: flex-start;">
+                            <span style="color: var(--success); margin-right: 0.5rem;">✓</span>
+                            <span>Offer availability is limited monthly; remaining slots are shown above</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div style="background: var(--bg-secondary); border-radius: 8px; padding: 1rem; margin: 1.5rem 0;">
+                    <p style="font-weight: 600; color: var(--text); margin-bottom: 0.5rem;">
+                        Only <span id="slotsRemaining" style="color: var(--primary); font-size: 1.25rem;">5</span> slots remaining this month
+                    </p>
+                    <div style="background: var(--border); height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div id="slotsProgress" style="background: var(--primary); height: 100%; width: 17%; transition: width 0.3s ease;"></div>
+                    </div>
+                </div>
+                
+                <button onclick="window.location.href='pages/address-entry.html'" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1rem;">
+                    Get My $7,500 Cash Offer
+                </button>
+                
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem; line-height: 1.4;">
+                    *Some qualifying cases may be eligible for up to $15,000. This offer is designed to help homeowners pay off mortgages or facilitate immediate moves. You can opt out of marketing at any time. See our <a href="pages/legal/privacy-policy.html" style="color: var(--primary);">Privacy Policy</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Initialize Google Places Autocomplete
+        function initGooglePlaces() {
+            try {
+                const input = document.getElementById('propertyAddress');
+                if (input && window.google && google.maps && google.maps.places) {
+                    const autocomplete = new google.maps.places.Autocomplete(input, {
+                        types: ['address'],
+                        fields: ['address_components', 'formatted_address', 'geometry']
+                    });
+                    
+                    autocomplete.addListener('place_changed', function() {
+                        const place = autocomplete.getPlace();
+                        if (place && place.formatted_address) {
+                            input.value = place.formatted_address;
+                        }
+                    });
+                }
+            } catch (e) {
+                console.log('Google Places not available');
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('addressEntryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const address = document.getElementById('propertyAddress').value.trim();
+            if (address) {
+                // Redirect to funnel with address parameter
+                window.location.href = `pages/get-offer.html?address=${encodeURIComponent(address)}`;
+            } else {
+                document.getElementById('propertyAddress').focus();
+            }
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('offerModal');
+        const openBtn = document.getElementById('offerPopupBtn');
+        const closeBtn = document.getElementById('closeModal');
+
+        openBtn.addEventListener('click', function() {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        });
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Live slots counter
+        function updateSlotsCounter() {
+            fetch('YOUR_GHL_SLOTS_WEBHOOK_URL', { 
+                headers: { 'Accept': 'application/json' }, 
+                cache: 'no-store' 
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data && typeof data.remaining === 'number') {
+                    const remaining = Math.max(1, data.remaining);
+                    document.getElementById('slotsRemaining').textContent = remaining;
+                    
+                    // Update progress bar (assuming 30 total slots)
+                    const percentage = Math.max(5, (remaining / 30) * 100);
+                    document.getElementById('slotsProgress').style.width = percentage + '%';
+                }
+            })
+            .catch(() => {
+                // Fallback to static number
+                document.getElementById('slotsRemaining').textContent = '5';
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSlotsCounter();
+            // Update every 30 seconds
+            setInterval(updateSlotsCounter, 30000);
+        });
+    </script>
+
+    <!-- Modern Places API -->
+    <script src="/assets/js/modern-places-api.js"></script>
+    
+    <!-- GHL Integration -->
+    <script src="/assets/js/ghl-integration.js"></script>
+    
+    <!-- Google Places API -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHBid-FjKVCrF1E4IL90jD71fTAUcwv4s&libraries=places&loading=async&callback=initGooglePlaces"></script>
+</body>
+</html>
