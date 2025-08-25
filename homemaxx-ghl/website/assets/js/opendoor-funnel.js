@@ -679,19 +679,28 @@ class OpendoorFunnel {
       </div>
       
       <div class="form-group">
-        <label class="form-label" data-translate="contact-name">Full Name (Optional)</label>
+        <label class="form-label" data-translate="contact-name">Full Name *</label>
         <input type="text" 
                class="form-input" 
                placeholder="Enter your full name"
-               id="full-name-input">
+               id="full-name-input"
+               required>
       </div>
       
       <div class="form-group">
-        <label class="form-label" data-translate="contact-phone">Phone Number (Optional)</label>
+        <label class="form-label" data-translate="contact-phone">Phone Number *</label>
         <input type="tel" 
                class="form-input" 
                placeholder="Enter your phone number"
-               id="phone-input">
+               id="phone-input"
+               required>
+      </div>
+      
+      <div class="form-group" style="margin-top: 1rem;">
+        <label style="display: flex; align-items: center; font-size: 0.875rem; color: #6b7280;">
+          <input type="checkbox" id="sms-consent-checkbox" style="margin-right: 0.5rem;" required>
+          I agree to receive SMS messages from HomeMAXX
+        </label>
       </div>
       
       <button class="btn btn-primary" style="width: 100%;" onclick="submitForm()" data-translate="contact-submit">Get My Cash Offer</button>
@@ -1090,7 +1099,9 @@ class OpendoorFunnel {
         }
       };
 
-      // Submit to GHL webhook for manual review
+      console.log('Submitting comprehensive data to GHL webhook:', contactData);
+
+      // Submit to GHL webhook
       const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/46e87a3a-c1d7-4bea-8a70-a022cb1b80ae';
       
       fetch(GHL_WEBHOOK_URL, {
@@ -1237,7 +1248,7 @@ class OpendoorFunnel {
           kitchen_quality: this.formData['kitchen-quality'] || 'not_specified',
           bathroom_quality: this.formData['bathroom-quality'] || 'not_specified',
           living_room_quality: this.formData['living-room-quality'] || 'not_specified',
-          hoa_status: this.formData.hasHOA === 'yes' ? 'yes' : (this.formData.hasHOA === 'no' ? 'no' : 'not_specified'),
+          hoa_status: this.formData.hasHOA || 'not_specified',
           hoa_monthly_fees: this.formData['hoa-fees'] || '0',
           property_issues: Array.isArray(this.formData['property-issues']) ? this.formData['property-issues'].join(', ') : 'none',
           agent_options: this.formData['agent-options'] || 'not_applicable',
