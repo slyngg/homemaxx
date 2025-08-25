@@ -674,13 +674,30 @@ class OpendoorFunnel {
         <input type="email" 
                class="form-input" 
                placeholder="Enter your email"
-               id="email-input">
+               id="email-input"
+               required>
       </div>
       
-      <button class="btn btn-primary" style="width: 100%;" onclick="submitForm()" data-translate="contact-submit">Continue with email</button>
+      <div class="form-group">
+        <label class="form-label" data-translate="contact-name">Full Name (Optional)</label>
+        <input type="text" 
+               class="form-input" 
+               placeholder="Enter your full name"
+               id="full-name-input">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" data-translate="contact-phone">Phone Number (Optional)</label>
+        <input type="tel" 
+               class="form-input" 
+               placeholder="Enter your phone number"
+               id="phone-input">
+      </div>
+      
+      <button class="btn btn-primary" style="width: 100%;" onclick="submitForm()" data-translate="contact-submit">Get My Cash Offer</button>
       
       <p style="font-size: 0.75rem; color: #6b7280; text-align: center; margin-top: 1rem;" data-translate="contact-terms">
-        By clicking "Continue", you agree to HomeMAXX's 
+        By clicking "Get My Cash Offer", you agree to HomeMAXX's 
         <a href="#" style="color: #3b82f6;">terms of service</a> and 
         <a href="#" style="color: #3b82f6;">Privacy Policy</a>.
       </p>
@@ -1164,47 +1181,34 @@ class OpendoorFunnel {
     
     try {
       // Get form inputs
-      const firstNameInput = document.getElementById('first-name-input');
-      const lastNameInput = document.getElementById('last-name-input');
+      const fullNameInput = document.getElementById('full-name-input');
       const emailInput = document.getElementById('email-input');
       const phoneInput = document.getElementById('phone-input');
-      const smsConsentCheckbox = document.getElementById('sms-consent-checkbox');
       
-      // Validate required fields
-      const firstName = firstNameInput?.value?.trim() || '';
-      const lastName = lastNameInput?.value?.trim() || '';
+      // Extract required and optional data
       const email = emailInput?.value?.trim() || '';
+      const fullName = fullNameInput?.value?.trim() || '';
       const phone = phoneInput?.value?.trim() || '';
-      const smsConsent = smsConsentCheckbox?.checked || false;
       
-      if (!firstName) {
-        alert('Please enter your first name.');
-        firstNameInput?.focus();
-        return;
-      }
-      
-      if (!lastName) {
-        alert('Please enter your last name.');
-        lastNameInput?.focus();
-        return;
-      }
-      
+      // Only validate email as required
       if (!email) {
         alert('Please enter your email address.');
         emailInput?.focus();
         return;
       }
       
-      if (!phone) {
-        alert('Please enter your phone number.');
-        phoneInput?.focus();
-        return;
-      }
+      // Extract first/last name from full name or email
+      let firstName = '';
+      let lastName = '';
       
-      if (!smsConsent) {
-        alert('Please agree to receive SMS messages by checking the consent box.');
-        smsConsentCheckbox?.focus();
-        return;
+      if (fullName) {
+        const nameParts = fullName.split(' ');
+        firstName = nameParts[0] || '';
+        lastName = nameParts.slice(1).join(' ') || '';
+      } else {
+        // Extract from email if no name provided
+        firstName = this.extractFirstName();
+        lastName = this.extractLastName();
       }
       
       // Store form data
@@ -1212,51 +1216,52 @@ class OpendoorFunnel {
       this.formData.lastName = lastName;
       this.formData.email = email;
       this.formData.phone = phone;
-      this.formData.smsConsent = smsConsent;
       
-      // Prepare comprehensive data for GHL webhook
+      // Prepare comprehensive data for GHL webhook with ALL survey responses
       const contactData = {
         contact: {
           // Basic contact information
           firstName: firstName,
           lastName: lastName,
           email: email,
-          phone: phone,
+          phone: phone || '',
           
           // Property information
           address: this.formData.address || this.preconfirmedAddress || '',
           
-          // Survey responses mapped to GHL custom fields
+          // ALL Survey responses mapped to GHL custom fields
           property_address: this.formData.address || this.preconfirmedAddress || '',
+          owner_type: this.formData['owner-type'] || 'not_specified',
           seller_timeline: this.formData['timeline'] || 'not_specified',
-          property_condition: this.formData['kitchen-quality'] || 'not_specified',
           kitchen_countertops: this.formData['kitchen-countertops'] || 'not_specified',
           kitchen_quality: this.formData['kitchen-quality'] || 'not_specified',
           bathroom_quality: this.formData['bathroom-quality'] || 'not_specified',
           living_room_quality: this.formData['living-room-quality'] || 'not_specified',
-          hoa_status: this.formData.hasHOA || 'not_specified',
+          hoa_status: this.formData.hasHOA === 'yes' ? 'yes' : (this.formData.hasHOA === 'no' ? 'no' : 'not_specified'),
           hoa_monthly_fees: this.formData['hoa-fees'] || '0',
           property_issues: Array.isArray(this.formData['property-issues']) ? this.formData['property-issues'].join(', ') : 'none',
-          owner_type: this.formData['owner-type'] || 'owner',
+          agent_options: this.formData['agent-options'] || 'not_applicable',
           user_type: this.userType,
-          sms_consent: smsConsent ? 'yes' : 'no',
+          
+          // Lead tracking and metadata
           lead_priority: 'Standard - Funnel Completion',
-          contact_method: 'Email and Phone Provided',
+          contact_method: phone ? 'Email and Phone Provided' : 'Email Only',
           calculation_status: 'Pending',
           funnel_completion_date: new Date().toISOString(),
-          
-          // Lead source and tracking
           leadSource: 'HomeMAXX Funnel',
           funnelStep: 'Completed',
           submissionDate: new Date().toISOString(),
-          userAgent: navigator.userAgent
+          userAgent: navigator.userAgent,
+          
+          // All form data as JSON for backup
+          raw_form_data: JSON.stringify(this.formData)
         }
       };
 
       console.log('Submitting comprehensive data to GHL webhook:', contactData);
 
       // Submit to GHL webhook
-      const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/46e87a3a-c1d7-4bea-8a70-a022cb1b80ae';
+      const GHL_WEBHOOK_URL = 'YOUR_GHL_CONSULTATION_REQUEST_WEBHOOK_URL';
       
       const response = await fetch(GHL_WEBHOOK_URL, {
         method: 'POST',
