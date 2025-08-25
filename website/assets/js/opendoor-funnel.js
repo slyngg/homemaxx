@@ -674,13 +674,39 @@ class OpendoorFunnel {
         <input type="email" 
                class="form-input" 
                placeholder="Enter your email"
-               id="email-input">
+               id="email-input"
+               required>
       </div>
       
-      <button class="btn btn-primary" style="width: 100%;" onclick="submitForm()" data-translate="contact-submit">Continue with email</button>
+      <div class="form-group">
+        <label class="form-label" data-translate="contact-name">Full Name *</label>
+        <input type="text" 
+               class="form-input" 
+               placeholder="Enter your full name"
+               id="full-name-input"
+               required>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" data-translate="contact-phone">Phone Number *</label>
+        <input type="tel" 
+               class="form-input" 
+               placeholder="Enter your phone number"
+               id="phone-input"
+               required>
+      </div>
+      
+      <div class="form-group" style="margin-top: 1rem;">
+        <label style="display: flex; align-items: center; font-size: 0.875rem; color: #6b7280;">
+          <input type="checkbox" id="sms-consent-checkbox" style="margin-right: 0.5rem;" required>
+          I agree to receive SMS messages from HomeMAXX
+        </label>
+      </div>
+      
+      <button class="btn btn-primary" style="width: 100%;" onclick="submitForm()" data-translate="contact-submit">Get My Cash Offer</button>
       
       <p style="font-size: 0.75rem; color: #6b7280; text-align: center; margin-top: 1rem;" data-translate="contact-terms">
-        By clicking "Continue", you agree to HomeMAXX's 
+        By clicking "Get My Cash Offer", you agree to HomeMAXX's 
         <a href="#" style="color: #3b82f6;">terms of service</a> and 
         <a href="#" style="color: #3b82f6;">Privacy Policy</a>.
       </p>
