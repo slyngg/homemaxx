@@ -712,8 +712,8 @@ class OpendoorFunnel {
       
       <p style="font-size: 0.75rem; color: #6b7280; text-align: center; margin-top: 1rem;" data-translate="contact-terms">
         By clicking "Get My Cash Offer", you agree to HomeMAXX's 
-        <a href="#" style="color: #3b82f6;">terms of service</a> and 
-        <a href="#" style="color: #3b82f6;">Privacy Policy</a>.
+        <a href="pages/legal/terms-of-service.html" style="color: #3b82f6;">terms of service</a> and 
+        <a href="pages/legal/privacy-policy.html" style="color: #3b82f6;">Privacy Policy</a>.
       </p>
     `;
   }
