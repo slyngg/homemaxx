@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://maps.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://maps.gstatic.com" crossorigin>
     <!-- Language Toggle Script -->
-    <script src="/assets/js/language-toggle.js" defer></script>
+    <script src="assets/js/language-toggle.js" defer></script>
 </head>
 <body>
     <a href="#main-content" class="skip-link" data-translate="nav.skip-to-main">Skip to main content</a>
@@ -107,6 +107,35 @@
         </section>
     </main>
 
+    <!-- Address Confirmation Modal -->
+    <div id="addressModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: white; border-radius: 16px; padding: 2rem; max-width: 500px; margin: 2rem; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+            <button id="closeAddressModal" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+            
+            <div style="text-align: center;">
+                <div style="width: 80px; height: 80px; background: var(--primary-50); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; border: 3px solid var(--primary-200);">
+                    <i class="fas fa-map-marker-alt" style="font-size: 2rem; color: var(--primary);"></i>
+                </div>
+                
+                <h2 style="margin-bottom: 1rem; color: var(--text);">Confirm Your Address</h2>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; text-align: left;">
+                    <p style="margin-bottom: 1rem; font-weight: 600;">Is this your property address?</p>
+                    <div id="confirmedAddress" style="font-size: 1.1rem; color: var(--text); padding: 1rem; background: white; border-radius: 8px; border: 2px solid var(--primary-200);"></div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button id="confirmAddressBtn" class="btn btn-primary" style="flex: 1;">
+                        Yes, Continue
+                    </button>
+                    <button id="editAddressBtn" class="btn btn-outline" style="flex: 1;">
+                        Edit Address
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- $7500 Offer Popup Modal -->
     <div id="offerModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
         <div class="modal-content" style="background: white; border-radius: 16px; padding: 2rem; max-width: 500px; margin: 2rem; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
@@ -163,26 +192,40 @@
 
     <!-- JavaScript -->
     <script>
+        let autocomplete;
+        let selectedPlace = null;
+
         // Initialize Google Places Autocomplete
         function initGooglePlaces() {
             try {
                 const input = document.getElementById('propertyAddress');
                 if (input && window.google && google.maps && google.maps.places) {
-                    const autocomplete = new google.maps.places.Autocomplete(input, {
+                    autocomplete = new google.maps.places.Autocomplete(input, {
                         types: ['address'],
-                        fields: ['address_components', 'formatted_address', 'geometry']
+                        fields: ['address_components', 'formatted_address', 'geometry'],
+                        componentRestrictions: { country: 'us' }
                     });
                     
                     autocomplete.addListener('place_changed', function() {
                         const place = autocomplete.getPlace();
                         if (place && place.formatted_address) {
+                            selectedPlace = place;
                             input.value = place.formatted_address;
                         }
                     });
                 }
             } catch (e) {
-                console.log('Google Places not available');
+                console.log('Google Places not available:', e);
             }
+        }
+
+        // Show address confirmation modal
+        function showAddressConfirmation(address) {
+            const modal = document.getElementById('addressModal');
+            const confirmedAddressDiv = document.getElementById('confirmedAddress');
+            confirmedAddressDiv.textContent = address;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
         }
 
         // Handle form submission
@@ -190,27 +233,53 @@
             e.preventDefault();
             const address = document.getElementById('propertyAddress').value.trim();
             if (address) {
-                // Redirect to funnel with address parameter
-                window.location.href = `pages/get-offer.html?address=${encodeURIComponent(address)}`;
+                // Show confirmation modal
+                showAddressConfirmation(address);
             } else {
                 document.getElementById('propertyAddress').focus();
             }
         });
 
-        // Modal functionality
-        const modal = document.getElementById('offerModal');
-        const openBtn = document.getElementById('offerPopupBtn');
-        const closeBtn = document.getElementById('closeModal');
+        // Address confirmation modal functionality
+        const addressModal = document.getElementById('addressModal');
+        const confirmBtn = document.getElementById('confirmAddressBtn');
+        const editBtn = document.getElementById('editAddressBtn');
+        const closeAddressBtn = document.getElementById('closeAddressModal');
 
-        openBtn.addEventListener('click', function() {
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
+        confirmBtn.addEventListener('click', function() {
+            const address = document.getElementById('propertyAddress').value.trim();
+            // Redirect to funnel with address parameter
+            window.location.href = `pages/get-offer.html?address=${encodeURIComponent(address)}`;
         });
 
-        closeBtn.addEventListener('click', function() {
-            modal.style.display = 'none';
+        editBtn.addEventListener('click', function() {
+            addressModal.style.display = 'none';
+            document.body.style.overflow = '';
+            document.getElementById('propertyAddress').focus();
+        });
+
+        closeAddressBtn.addEventListener('click', function() {
+            addressModal.style.display = 'none';
             document.body.style.overflow = '';
         });
+
+        addressModal.addEventListener('click', function(e) {
+            if (e.target === addressModal) {
+                addressModal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
+
+        // $7500 Modal functionality
+        const modal = document.getElementById('offerModal');
+        const closeBtn = document.getElementById('closeModal');
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            });
+        }
 
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
@@ -221,7 +290,7 @@
 
         // Live slots counter
         function updateSlotsCounter() {
-            fetch('/.netlify/functions/slots', { 
+            fetch('/.netlify/functions/get-available-slots', { 
                 headers: { 'Accept': 'application/json' }, 
                 cache: 'no-store' 
             })
@@ -229,16 +298,25 @@
             .then(data => {
                 if (data && typeof data.remaining === 'number') {
                     const remaining = Math.max(1, data.remaining);
-                    document.getElementById('slotsRemaining').textContent = remaining;
+                    const slotsElement = document.getElementById('slotsRemaining');
+                    if (slotsElement) {
+                        slotsElement.textContent = remaining;
+                    }
                     
                     // Update progress bar (assuming 30 total slots)
                     const percentage = Math.max(5, (remaining / 30) * 100);
-                    document.getElementById('slotsProgress').style.width = percentage + '%';
+                    const progressElement = document.getElementById('slotsProgress');
+                    if (progressElement) {
+                        progressElement.style.width = percentage + '%';
+                    }
                 }
             })
             .catch(() => {
                 // Fallback to static number
-                document.getElementById('slotsRemaining').textContent = '5';
+                const slotsElement = document.getElementById('slotsRemaining');
+                if (slotsElement) {
+                    slotsElement.textContent = '5';
+                }
             });
         }
 
@@ -248,14 +326,20 @@
             // Update every 30 seconds
             setInterval(updateSlotsCounter, 30000);
         });
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const mainNav = document.querySelector('.main-nav');
+
+        if (mobileMenuToggle && mainNav) {
+            mobileMenuToggle.addEventListener('click', function() {
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                this.setAttribute('aria-expanded', !isExpanded);
+                mainNav.classList.toggle('active');
+            });
+        }
     </script>
 
-    <!-- Modern Places API -->
-    <script src="../assets/js/modern-places-api.js"></script>
-    
-    <!-- GHL Integration -->
-    <script src="../assets/js/ghl-integration.js"></script>
-    
     <!-- Google Places API -->
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHBid-FjKVCrF1E4IL90jD71fTAUcwv4s&libraries=places&loading=async&callback=initGooglePlaces"></script>
 </body>
