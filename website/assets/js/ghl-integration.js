@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!contactForm) return;
 
     // Update the form action with your actual GHL webhook URL
-    const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/cad6f75b-e78a-4fb9-8e72-bc9eaf37fe8d';
+    const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/54168c84-2392-4dd4-b6ce-a4eb171801f9';
     
     // Update the form action URL
     contactForm.action = GHL_WEBHOOK_URL;

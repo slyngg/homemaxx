@@ -1105,7 +1105,7 @@ class OpendoorFunnel {
       };
 
       // Submit to GHL webhook for manual review
-      const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/46e87a3a-c1d7-4bea-8a70-a022cb1b80ae';
+      const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/54168c84-2392-4dd4-b6ce-a4eb171801f9';
       
       fetch(GHL_WEBHOOK_URL, {
         method: 'POST',
@@ -1282,7 +1282,7 @@ class OpendoorFunnel {
       console.log('Submitting comprehensive data to GHL webhook:', contactData);
 
       // Submit to GHL webhook
-      const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/46e87a3a-c1d7-4bea-8a70-a022cb1b80ae';
+      const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/54168c84-2392-4dd4-b6ce-a4eb171801f9';
       
       const response = await fetch(GHL_WEBHOOK_URL, {
         method: 'POST',
