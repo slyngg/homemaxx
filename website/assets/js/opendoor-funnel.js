@@ -1069,7 +1069,7 @@ class OpendoorFunnel {
     `;
   }
 
-  sendOfferAnyway() {
+  async sendOfferAnyway() {
     console.log('Sending offer anyway for manual review');
     
     try {
@@ -1114,42 +1114,46 @@ class OpendoorFunnel {
         }
       };
 
-      // Submit to GHL webhook for manual review
+      console.log('Submitting comprehensive data to GHL webhook:', contactData);
+
+      // Submit to GHL webhook
       const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/54168c84-2392-4dd4-b6ce-a4eb171801f9';
       
-      fetch(GHL_WEBHOOK_URL, {
+      const response = await fetch(GHL_WEBHOOK_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
         body: JSON.stringify(contactData)
-      }).then(response => {
-        if (response.ok) {
-          console.log('Manual review submission successful');
-        } else {
-          console.error('Manual review submission failed');
-        }
-      }).catch(error => {
-        console.error('Manual review submission error:', error);
       });
 
-      // Show manual review confirmation
-      document.getElementById('qualification-results').innerHTML = `
-        <div class="manual-review-confirmation">
-          <div class="success-icon">✅</div>
-          <h2>Thank you for your submission!</h2>
-          <p>Our team will manually review your property details and contact you within 24 hours with a personalized offer.</p>
-          <div class="contact-info">
-            <p><strong>Need immediate assistance?</strong></p>
-            <p>Call us at <a href="tel:(725) 772-9847">(725) 772-9847</a></p>
-            <p>Email: <a href="mailto:support@homemaxx.com">support@homemaxx.com</a></p>
-          </div>
-        </div>
-      `;
+      console.log('GHL webhook response status:', response.status);
+
+      if (response.ok) {
+        console.log('Successfully submitted comprehensive data to GHL webhook');
+        const responseText = await response.text();
+        console.log('GHL webhook response:', responseText);
+        
+        // Move to qualification step
+        this.showStep(this.currentStep + 1);
+        setTimeout(() => this.performQualificationCheck(), 500);
+        
+      } else {
+        console.error('GHL webhook submission failed:', response.status, response.statusText);
+        const errorText = await response.text();
+        console.error('GHL webhook error response:', errorText);
+        
+        // Still proceed to qualification but log the error
+        this.showStep(this.currentStep + 1);
+        setTimeout(() => this.performQualificationCheck(), 500);
+      }
 
     } catch (error) {
       console.error('Send offer anyway error:', error);
+      // Still proceed to qualification step even if webhook fails
+      this.showStep(this.currentStep + 1);
+      setTimeout(() => this.performQualificationCheck(), 500);
     }
   }
 
