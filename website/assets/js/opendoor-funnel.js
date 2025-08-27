@@ -702,9 +702,17 @@ class OpendoorFunnel {
       </div>
       
       <div class="form-group" style="margin-top: 1rem;">
-        <label style="display: flex; align-items: center; font-size: 0.875rem; color: #6b7280;">
-          <input type="checkbox" id="sms-consent-checkbox" style="margin-right: 0.5rem;" required>
-          I agree to receive SMS messages from HomeMAXX
+        <label style="display: flex; align-items: flex-start; font-size: 0.875rem; color: #374151; line-height: 1.4;">
+          <input type="checkbox" id="sms-consent-checkbox" style="margin-right: 0.5rem; margin-top: 0.2rem; flex-shrink: 0;" required>
+          <span>
+            I consent to receive SMS messages from HomeMAXX about my property evaluation, cash offers, and related real estate services. 
+            Message frequency varies (up to 5 messages per week). Message and data rates may apply. 
+            Reply <strong>STOP</strong> to opt out or <strong>HELP</strong> for help. 
+            Carriers are not liable for delayed or undelivered messages. 
+            By providing my phone number, I agree to HomeMAXX's 
+            <a href="pages/legal/terms-of-service.html" style="color: #3b82f6; text-decoration: underline;" target="_blank">Terms of Service</a> and 
+            <a href="pages/legal/privacy-policy.html" style="color: #3b82f6; text-decoration: underline;" target="_blank">Privacy Policy</a>.
+          </span>
         </label>
       </div>
       
@@ -1091,6 +1099,8 @@ class OpendoorFunnel {
           owner_type: this.formData['owner-type'] || 'owner',
           user_type: this.userType,
           sms_consent: this.formData.smsConsent ? 'yes' : 'no',
+          sms_consent_timestamp: this.formData.smsConsent ? new Date().toISOString() : null,
+          sms_consent_ip: this.formData.smsConsent ? (await this.getUserIP()) : null,
           lead_priority: 'Manual Review Required',
           contact_method: 'Email and Phone Provided',
           calculation_status: 'Manual Review',
@@ -1266,6 +1276,8 @@ class OpendoorFunnel {
           owner_type: this.formData['owner-type'] || 'owner',
           user_type: this.userType,
           sms_consent: smsConsent ? 'yes' : 'no',
+          sms_consent_timestamp: smsConsent ? new Date().toISOString() : null,
+          sms_consent_ip: smsConsent ? (await this.getUserIP()) : null,
           lead_priority: 'Standard - Funnel Completion',
           contact_method: 'Email and Phone Provided',
           calculation_status: 'Pending',
@@ -1349,6 +1361,17 @@ class OpendoorFunnel {
       return parts.length > 1 ? parts[1] : 'Unknown';
     } else {
       return 'Unknown';
+    }
+  }
+
+  async getUserIP() {
+    try {
+      const response = await fetch('https://api.ipify.org?format=json');
+      const data = await response.json();
+      return data.ip;
+    } catch (error) {
+      console.error('Failed to get user IP:', error);
+      return null;
     }
   }
 }
