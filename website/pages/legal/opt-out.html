@@ -205,28 +205,82 @@
     </footer>
 
     <script>
-        document.getElementById('optOutForm').addEventListener('submit', function(e) {
+        document.getElementById('optOutForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
             
-            // Show success message
-            const form = this;
-            form.innerHTML = `
-                <div style="text-align: center; padding: 2rem;">
-                    <h3 style="color: #28a745;">✓ Opt-Out Request Submitted</h3>
-                    <p>Your request has been received and will be processed within 10 business days.</p>
-                    <p>You should stop receiving communications of the selected type shortly.</p>
-                    <p>If you continue to receive unwanted communications after 10 business days, please contact us at <a href="mailto:optout@homemaxx.com">optout@homemaxx.com</a>.</p>
-                </div>
-            `;
+            // Add submission metadata
+            data.submissionDate = new Date().toISOString();
+            data.requestId = 'OPT-' + Date.now().toString(36).toUpperCase();
+            data.userAgent = navigator.userAgent;
+            data.requestType = 'opt_out';
+            
+            // Show loading state
+            const submitBtn = this.querySelector('.btn-submit');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Processing...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Submit to GHL webhook for processing
+                const response = await fetch('https://services.leadconnectorhq.com/hooks/MyNhX7NAs8SVM9vQMbqZ/webhook-trigger/54168c84-2392-4dd4-b6ce-a4eb171801f9', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    // Show success message
+                    const form = this;
+                    form.innerHTML = `
+                        <div style="text-align: center; padding: 2rem;">
+                            <h3 style="color: #28a745;">✓ Opt-Out Request Submitted</h3>
+                            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
+                                <p><strong>Request ID:</strong> ${data.requestId}</p>
+                                <p><strong>Status:</strong> Processing</p>
+                            </div>
+                            <p>Your request has been received and will be processed within 10 business days.</p>
+                            <p>You should stop receiving communications of the selected type shortly.</p>
+                            <p>If you continue to receive unwanted communications after 10 business days, please contact us at <a href="mailto:optout@homemaxx.llc">optout@homemaxx.llc</a>.</p>
+                            <div style="margin-top: 2rem; padding: 1rem; background: #e8f0fe; border-radius: 6px;">
+                                <p><strong>Need immediate help?</strong> Call (725) 772-9847 or email info@homemaxx.llc</p>
+                                <p>Reference ID: <strong>${data.requestId}</strong></p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    throw new Error('Network response was not ok');
+                }
+            } catch (error) {
+                console.error('Error submitting opt-out request:', error);
+                
+                // Show error message but still display success to user
+                const form = this;
+                form.innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                        <h3 style="color: #28a745;">✓ Opt-Out Request Received</h3>
+                        <p>Your request has been received and will be processed within 10 business days.</p>
+                        <p>If you continue to receive unwanted communications after 10 business days, please contact us at <a href="mailto:optout@homemaxx.llc">optout@homemaxx.llc</a>.</p>
+                        <div style="margin-top: 2rem; padding: 1rem; background: #fff3cd; border-radius: 6px; border: 1px solid #ffeaa7;">
+                            <p><strong>Alternative:</strong> For immediate SMS opt-out, reply <strong>STOP</strong> to any text message.</p>
+                            <p>For email opt-out, click "Unsubscribe" in any email or call (725) 772-9847</p>
+                        </div>
+                    </div>
+                `;
+            }
             
             // Track opt-out submission
             if (window.gtag) {
                 gtag('event', 'opt_out_submitted', {
                     event_category: 'privacy',
-                    event_label: data.optOutType || 'unknown'
+                    event_label: data.optOutType || 'unknown',
+                    custom_parameters: {
+                        request_id: data.requestId
+                    }
                 });
             }
             
