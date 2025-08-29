@@ -662,32 +662,64 @@
 
       // Handle language selection
       languageOptions.forEach(option => {
-        option.addEventListener('click', function() {
+        option.addEventListener('click', function(e) {
+          e.preventDefault();
           const selectedLang = this.dataset.lang;
-          const flagImg = this.querySelector('.flag-icon').src;
-          const langText = selectedLang.toUpperCase();
+          const selectedFlag = this.querySelector('.flag-icon').textContent;
+          const selectedText = this.querySelector('.language-text').textContent;
 
-          // Update current display
-          if (currentFlag && currentLanguage) {
-            currentFlag.src = flagImg;
-            currentLanguage.textContent = langText;
-          }
+          // Update current language display
+          if (currentFlag) currentFlag.textContent = selectedFlag;
+          if (currentLanguage) currentLanguage.textContent = selectedText;
 
+          // Store in localStorage
+          localStorage.setItem('homemaxx_language', selectedLang);
+          
+          console.log('Language changed to:', selectedLang);
+          
           // Close dropdown
           languageToggle.classList.remove('active');
-
-          // Trigger language change event using the global language toggle
-          if (window.languageToggle && typeof window.languageToggle.switchLanguage === 'function') {
-            window.languageToggle.switchLanguage(selectedLang);
-          } else {
-            console.log('Language toggle not available, setting localStorage');
-            localStorage.setItem('homemaxx_language', selectedLang);
-          }
-
-          console.log('Language changed to:', selectedLang);
         });
       });
+
+      // Set initial language from localStorage
+      const savedLang = localStorage.getItem('homemaxx_language') || 'en';
+      const savedOption = document.querySelector(`[data-lang="${savedLang}"]`);
+      if (savedOption && currentFlag && currentLanguage) {
+        currentFlag.textContent = savedOption.querySelector('.flag-icon').textContent;
+        currentLanguage.textContent = savedOption.querySelector('.language-text').textContent;
+      }
     }
+
+    // Popup interaction functions
+    function closePopup(popupId) {
+      const popup = document.getElementById(popupId);
+      if (popup) {
+        popup.style.display = 'none';
+      }
+    }
+
+    function bookAppointment() {
+      // Close the popup first
+      closePopup('subject-to-approval-popup');
+      
+      // Redirect to appointment booking or open calendar
+      // For now, we'll use a simple alert - you can integrate with your booking system
+      alert('Redirecting to appointment booking system...');
+      
+      // Example: window.open('https://calendly.com/homemaxx', '_blank');
+      // Or integrate with your existing booking system
+    }
+
+    // Close popup when clicking overlay
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('popup-overlay')) {
+        const popup = e.target.closest('.qualification-popup');
+        if (popup) {
+          popup.style.display = 'none';
+        }
+      }
+    });
   </script>
 </body>
 </html>

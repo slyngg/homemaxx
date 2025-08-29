@@ -25,6 +25,11 @@ const TIMELINE_URGENCY = {
   'just-browsing': { multiplier: 0.98, priority: 20 } // 2% discount
 };
 
+const QUALIFICATION_THRESHOLDS = {
+  AUTO_APPROVAL: 15000,
+  MANUAL_APPROVAL: 10000
+};
+
 exports.handler = async (event, context) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -198,6 +203,17 @@ function calculateBasicCashOffer(marketValue, propertyData) {
 }
 
 function calculateBasicPriority(propertyData, marketValue, cashOffer) {
+  // Calculate assignment fee first
+  const address = propertyData.address || propertyData.preconfirmedAddress || '';
+  let state = 'TX'; // Default
+  if (address.includes('NV')) state = 'NV';
+  else if (address.includes('CA')) state = 'CA';
+  else if (address.includes('FL')) state = 'FL';
+  else if (address.includes('GA')) state = 'GA';
+  else if (address.includes('AZ')) state = 'AZ';
+  
+  const assignmentFee = MARKET_MULTIPLIERS[state]?.assignmentBase || 12000;
+  
   // Property condition scoring (30 points total - 10 points each room)
   let conditionScore = 0;
   
@@ -247,21 +263,25 @@ function calculateBasicPriority(propertyData, marketValue, cashOffer) {
   // Condition adjustment
   score += conditionScore;
   
+  // Determine qualification status based on assignment fee
+  let qualificationStatus = 'NOT_ELIGIBLE';
   let level = 'STANDARD ';
   let color = '#6b7280';
   let priority = 'STANDARD';
-  let contactTiming = 'Contact within 24-48 hours or allow self-booking';
+  let contactTiming = 'Not eligible for instant cash bonus';
   
-  if (score >= 75) {
+  if (assignmentFee >= QUALIFICATION_THRESHOLDS.AUTO_APPROVAL) {
+    qualificationStatus = 'AUTO_APPROVED';
     level = 'URGENT ';
     color = '#dc2626';
     priority = 'HIGHEST';
-    contactTiming = 'Call within 10 minutes';
-  } else if (score >= 50) {
+    contactTiming = 'Call within 10 minutes - Auto approved for instant cash bonus';
+  } else if (assignmentFee >= QUALIFICATION_THRESHOLDS.MANUAL_APPROVAL) {
+    qualificationStatus = 'MANUAL_REVIEW';
     level = 'IMPORTANT ';
     color = '#ea580c';
     priority = 'HIGH';
-    contactTiming = 'Contact within 24 hours';
+    contactTiming = 'Contact within 24 hours - Subject to approval';
   }
   
   return {
@@ -270,9 +290,11 @@ function calculateBasicPriority(propertyData, marketValue, cashOffer) {
     color,
     priority,
     contactTiming,
-    recommendations: ['Manual review - basic scoring used'],
-    wholesaleMargin: 'TBD',
-    marginPercentage: 'TBD',
+    qualificationStatus,
+    assignmentFee,
+    recommendations: [`Assignment fee: $${assignmentFee.toLocaleString()}`, `Status: ${qualificationStatus}`],
+    wholesaleMargin: assignmentFee,
+    marginPercentage: ((assignmentFee / marketValue.estimated) * 100).toFixed(1) + '%',
     fallbackCalculation: true
   };
 }

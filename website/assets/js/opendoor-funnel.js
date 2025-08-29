@@ -66,6 +66,18 @@ class OpendoorFunnel {
         render: () => this.renderPropertyDetailsStep()
       },
       {
+        id: 'motivation',
+        title: "What's prompting you to think about selling your property at this time?",
+        subtitle: 'This helps us understand your goals so we can provide the best options while personalizing it to you. Please choose all that apply.',
+        render: () => this.renderMotivationStep()
+      },
+      {
+        id: 'price-expectations',
+        title: 'Do you have an idea of what you\'d like to receive for the property?',
+        subtitle: 'No pressure here — sharing your expectations simply helps us understand what would work best for you.',
+        render: () => this.renderPriceExpectationsStep()
+      },
+      {
         id: 'owner-type',
         title: 'Are you the owner of this home?',
         subtitle: 'We have additional questions if you\'re an agent.',
@@ -176,6 +188,44 @@ class OpendoorFunnel {
     // Listen for language changes
     window.addEventListener('languageChanged', (event) => {
       this.handleLanguageChange(event.detail.language);
+    });
+
+    // Photo upload events
+    document.addEventListener('change', (e) => {
+      if (e.target.id === 'photo-upload-input') {
+        this.handlePhotoUpload(e);
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('#photo-upload-zone')) {
+        document.getElementById('photo-upload-input')?.click();
+      }
+      if (e.target.classList.contains('remove-photo')) {
+        this.removePhoto(e.target.dataset.index);
+      }
+    });
+
+    // Drag and drop events
+    document.addEventListener('dragover', (e) => {
+      if (e.target.closest('#photo-upload-zone')) {
+        e.preventDefault();
+        e.target.closest('#photo-upload-zone').classList.add('drag-over');
+      }
+    });
+
+    document.addEventListener('dragleave', (e) => {
+      if (e.target.closest('#photo-upload-zone')) {
+        e.target.closest('#photo-upload-zone').classList.remove('drag-over');
+      }
+    });
+
+    document.addEventListener('drop', (e) => {
+      if (e.target.closest('#photo-upload-zone')) {
+        e.preventDefault();
+        e.target.closest('#photo-upload-zone').classList.remove('drag-over');
+        this.handlePhotoDrop(e);
+      }
     });
   }
 
@@ -412,6 +462,32 @@ class OpendoorFunnel {
           <span class="detail-value">0.18 acres</span>
           <a href="#" class="edit-link">Edit</a>
         </div>
+      </div>
+    `;
+  }
+
+  renderMotivationStep() {
+    return `
+      <div class="option-grid">
+        <button class="option-btn" onclick="selectOption('moving-to-new-home')" data-translate="motivation-moving-to-new-home">Moving to a new home</button>
+        <button class="option-btn" onclick="selectOption('job-relocation')" data-translate="motivation-job-relocation">Job relocation</button>
+        <button class="option-btn" onclick="selectOption('retirement')" data-translate="motivation-retirement">Retirement</button>
+        <button class="option-btn" onclick="selectOption('divorce')" data-translate="motivation-divorce">Divorce</button>
+        <button class="option-btn" onclick="selectOption('inheritance')" data-translate="motivation-inheritance">Inheritance</button>
+        <button class="option-btn" onclick="selectOption('other')" data-translate="motivation-other">Other</button>
+      </div>
+    `;
+  }
+
+  renderPriceExpectationsStep() {
+    return `
+      <div class="option-grid">
+        <button class="option-btn" onclick="selectOption('under-200k')" data-translate="price-expectations-under-200k">Under $200,000</button>
+        <button class="option-btn" onclick="selectOption('200k-300k')" data-translate="price-expectations-200k-300k">$200,000 - $300,000</button>
+        <button class="option-btn" onclick="selectOption('300k-400k')" data-translate="price-expectations-300k-400k">$300,000 - $400,000</button>
+        <button class="option-btn" onclick="selectOption('400k-500k')" data-translate="price-expectations-400k-500k">$400,000 - $500,000</button>
+        <button class="option-btn" onclick="selectOption('500k-plus')" data-translate="price-expectations-500k-plus">$500,000+</button>
+        <button class="option-btn" onclick="selectOption('unsure')" data-translate="price-expectations-unsure">Unsure</button>
       </div>
     `;
   }
@@ -818,7 +894,7 @@ class OpendoorFunnel {
       kitchenQuality: this.formData['kitchen-quality'] || 'average',
       bathroomQuality: this.formData['bathroom-quality'] || 'average',
       livingRoomQuality: this.formData['living-room-quality'] || 'average',
-      timeline: this.formData['timeline'] || 'flexible',
+      timeline: this.formData['timeline'] || this.formData.timeline || 'flexible',
       propertyIssues: this.formData['property-issues'] || [],
       hasHOA: this.formData.hasHOA === 'yes',
       hoaFees: this.formData['hoa-fees'] || 0,
@@ -852,7 +928,6 @@ class OpendoorFunnel {
     const { 
       marketValue, 
       cashOfferRange, 
-      assignmentFeeProjection, 
       qualificationScore, 
       bonusEligible,
       marketInsights,
@@ -862,8 +937,8 @@ class OpendoorFunnel {
     const isQualified = qualificationScore >= 70;
     
     // Safe check for assignmentFeeProjection
-    const assignmentTier = assignmentFeeProjection?.tier || 'standard';
-    const assignmentAmount = assignmentFeeProjection?.projectedFee || 0;
+    const assignmentTier = offerData.assignmentFeeProjection?.tier || 'standard';
+    const assignmentAmount = offerData.assignmentFeeProjection?.projectedFee || 0;
 
     return `
       <div class="offer-results">
@@ -876,14 +951,17 @@ class OpendoorFunnel {
     const { 
       marketValue, 
       cashOfferRange, 
-      assignmentFeeProjection, 
+      qualificationScore, 
       bonusEligible,
       marketInsights 
     } = offerData;
 
-    // Safe defaults for assignmentFeeProjection
-    const assignmentTier = assignmentFeeProjection?.tier || 'standard';
-    const assignmentAmount = assignmentFeeProjection?.projectedFee || 0;
+    // Check qualification status for popup
+    if (offerData.priority && offerData.priority.qualificationStatus === 'AUTO_APPROVED') {
+      this.showAutoApprovedPopup();
+    } else if (offerData.priority && offerData.priority.qualificationStatus === 'MANUAL_REVIEW') {
+      this.showSubjectToApprovalPopup();
+    }
 
     return `
       <div class="qualified-offer">
@@ -986,58 +1064,20 @@ class OpendoorFunnel {
       marketValue, 
       cashOfferRange, 
       qualificationScore, 
-      marketInsights 
+      bonusEligible,
+      marketInsights,
+      nextSteps 
     } = offerData;
+
+    const isQualified = qualificationScore >= 70;
+    
+    // Safe check for assignmentFeeProjection
+    const assignmentTier = offerData.assignmentFeeProjection?.tier || 'standard';
+    const assignmentAmount = offerData.assignmentFeeProjection?.projectedFee || 0;
 
     return `
       <div class="unqualified-result">
-        <div class="result-header">
-          <div class="result-icon">📋</div>
-          <h2 data-translate="unqualified-result-header">Thank you for your interest!</h2>
-          <p class="result-subtitle" data-translate="unqualified-result-subtitle">We've analyzed your property and prepared a personalized assessment</p>
-        </div>
-
-        <div class="offer-summary">
-          <div class="offer-card">
-            <div class="offer-label" data-translate="unqualified-offer-label">Estimated Cash Offer Range</div>
-            <div class="offer-amount">$${cashOfferRange.min.toLocaleString()} - $${cashOfferRange.max.toLocaleString()}</div>
-            <div class="offer-note" data-translate="unqualified-offer-note">Based on current market analysis</div>
-          </div>
-
-          <div class="qualification-score">
-            <div class="score-label" data-translate="unqualified-qualification-score">Property Assessment Score</div>
-            <div class="score-value">${qualificationScore}/100</div>
-            <div class="score-bar">
-              <div class="score-fill" style="width: ${qualificationScore}%"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="alternative-options">
-          <h3 data-translate="unqualified-alternative-options">How we can still help you</h3>
-          <div class="options-grid">
-            <div class="option-card">
-              <div class="option-icon">🏠</div>
-              <div class="option-title" data-translate="unqualified-option-traditional">Traditional Cash Offer</div>
-              <div class="option-description" data-translate="unqualified-option-traditional-description">We can still make a competitive cash offer for your property</div>
-            </div>
-            <div class="option-card">
-              <div class="option-icon">🤝</div>
-              <div class="option-title" data-translate="unqualified-option-market-analysis">Market Analysis</div>
-              <div class="option-description" data-translate="unqualified-option-market-analysis-description">Get detailed insights about your property's market potential</div>
-            </div>
-            <div class="option-card">
-              <div class="option-icon">📞</div>
-              <div class="option-title" data-translate="unqualified-option-expert-consultation">Expert Consultation</div>
-              <div class="option-description" data-translate="unqualified-option-expert-consultation-description">Speak with our team about your selling options</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="cta-section">
-          <button class="btn btn-primary" onclick="scheduleConsultation()" data-translate="unqualified-cta-schedule">Schedule Free Consultation</button>
-          <button class="btn btn-secondary" onclick="requestTraditionalOffer()" data-translate="unqualified-cta-traditional">Request Traditional Offer</button>
-        </div>
+        ${isQualified ? this.renderQualifiedOffer(offerData) : this.renderUnqualifiedResult(offerData)}
       </div>
     `;
   }
@@ -1079,24 +1119,26 @@ class OpendoorFunnel {
           // Basic contact information
           firstName: this.extractFirstName(),
           lastName: this.extractLastName(),
-          email: this.formData.email || document.getElementById('email-input')?.value,
+          email: this.formData.email || '',
           phone: this.formData.phone || '',
           
           // Property information
           address: this.formData.address || this.preconfirmedAddress || '',
           
-          // Survey responses mapped to GHL custom fields
+          // Survey responses mapped to GHL custom fields - ALL collected data
           property_address: this.formData.address || this.preconfirmedAddress || '',
-          seller_timeline: this.formData['timeline'] || 'not_specified',
-          property_condition: this.formData['kitchen-quality'] || 'not_specified',
-          kitchen_countertops: this.formData['kitchen-countertops'] || 'not_specified',
-          kitchen_quality: this.formData['kitchen-quality'] || 'not_specified',
-          bathroom_quality: this.formData['bathroom-quality'] || 'not_specified',
-          living_room_quality: this.formData['living-room-quality'] || 'not_specified',
-          hoa_status: this.formData.hasHOA || 'not_specified',
-          hoa_monthly_fees: this.formData['hoa-fees'] || '0',
-          property_issues: Array.isArray(this.formData['property-issues']) ? this.formData['property-issues'].join(', ') : 'none',
-          owner_type: this.formData['owner-type'] || 'owner',
+          seller_timeline: this.formData['timeline'] || this.formData.timeline || 'not_specified',
+          property_condition: this.formData['kitchen-quality'] || this.formData.kitchenQuality || 'not_specified',
+          kitchen_countertops: this.formData['kitchen-countertops'] || this.formData.kitchenCountertops || 'not_specified',
+          kitchen_quality: this.formData['kitchen-quality'] || this.formData.kitchenQuality || 'not_specified',
+          bathroom_quality: this.formData['bathroom-quality'] || this.formData.bathroomQuality || 'not_specified',
+          living_room_quality: this.formData['living-room-quality'] || this.formData.livingRoomQuality || 'not_specified',
+          hoa_status: this.formData.hasHOA || this.formData.hoaStatus || 'not_specified',
+          hoa_monthly_fees: this.formData['hoa-fees'] || this.formData.hoaFees || '0',
+          property_issues: Array.isArray(this.formData['property-issues']) ? 
+            this.formData['property-issues'].join(', ') : 
+            (Array.isArray(this.formData.propertyIssues) ? this.formData.propertyIssues.join(', ') : 'none'),
+          owner_type: this.formData['owner-type'] || this.formData.ownerType || 'owner',
           user_type: this.userType,
           sms_consent: this.formData.smsConsent ? 'yes' : 'no',
           sms_consent_timestamp: this.formData.smsConsent ? new Date().toISOString() : null,
@@ -1106,11 +1148,19 @@ class OpendoorFunnel {
           calculation_status: 'Manual Review',
           funnel_completion_date: new Date().toISOString(),
           
+          // Additional collected data
+          cash_offer_claimed: this.formData.cashOfferClaimed || false,
+          funnel_version: '2.0',
+          data_collection_complete: true,
+          
           // Lead source and tracking
           leadSource: 'HomeMAXX Funnel',
           funnelStep: 'Completed',
           submissionDate: new Date().toISOString(),
-          userAgent: navigator.userAgent
+          userAgent: navigator.userAgent,
+          
+          // Debug: Include raw form data for verification
+          raw_form_data: JSON.stringify(this.formData)
         }
       };
 
@@ -1186,10 +1236,184 @@ class OpendoorFunnel {
     `;
   }
 
-  bookAppointment() {
-    // TO DO: implement appointment booking logic
-    this.appointmentBooked = true;
-    this.showStep(this.currentStep + 1);
+  async bookAppointment() {
+    try {
+      // Show loading state
+      const bookingButton = document.querySelector('.btn-primary');
+      if (bookingButton) {
+        bookingButton.textContent = 'Loading Calendar...';
+        bookingButton.disabled = true;
+      }
+
+      // Get available slots
+      const slotsResponse = await fetch('/.netlify/functions/get-available-slots', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!slotsResponse.ok) {
+        throw new Error('Failed to fetch available slots');
+      }
+
+      const slotsData = await slotsResponse.json();
+      
+      // Show calendar modal with available slots
+      this.showCalendarModal(slotsData.slots);
+      
+    } catch (error) {
+      console.error('Appointment booking error:', error);
+      alert('Unable to load calendar. Please call (725) 772-9847 to schedule your appointment.');
+    } finally {
+      // Reset button state
+      const bookingButton = document.querySelector('.btn-primary');
+      if (bookingButton) {
+        bookingButton.textContent = 'Book Appointment';
+        bookingButton.disabled = false;
+      }
+    }
+  }
+
+  showCalendarModal(availableSlots) {
+    const modalHTML = `
+      <div id="calendar-modal" class="modal-overlay" style="
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.5); z-index: 10000; display: flex; 
+        align-items: center; justify-content: center;">
+        <div class="modal-content" style="
+          background: white; border-radius: 12px; padding: 30px; 
+          max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+          <h3 style="margin-top: 0; color: #1f2937;">Select Your Appointment Time</h3>
+          <p style="color: #6b7280; margin-bottom: 20px;">Choose a convenient time for your $7,500 cash offer consultation</p>
+          
+          <div id="slots-container">
+            ${this.renderAvailableSlots(availableSlots)}
+          </div>
+          
+          <div style="margin-top: 20px; text-align: center;">
+            <button onclick="window.funnelInstance.closeCalendarModal()" 
+              style="background: #6b7280; color: white; border: none; padding: 10px 20px; 
+              border-radius: 6px; cursor: pointer; margin-right: 10px;">Cancel</button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  }
+
+  renderAvailableSlots(slots) {
+    if (!slots || slots.length === 0) {
+      return '<p style="text-align: center; color: #6b7280;">No available slots. Please call (725) 772-9847.</p>';
+    }
+
+    return slots.map(dayGroup => `
+      <div style="margin-bottom: 20px;">
+        <h4 style="color: #374151; margin-bottom: 10px;">${dayGroup.date}</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px;">
+          ${dayGroup.slots.map(slot => `
+            <button onclick="window.funnelInstance.selectTimeSlot('${slot.startTime}', '${slot.endTime}', '${slot.displayTime}')"
+              style="background: #3b82f6; color: white; border: none; padding: 8px 12px; 
+              border-radius: 6px; cursor: pointer; font-size: 14px; transition: background 0.2s;"
+              onmouseover="this.style.background='#2563eb'"
+              onmouseout="this.style.background='#3b82f6'">
+              ${slot.displayTime}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async selectTimeSlot(startTime, endTime, displayTime) {
+    try {
+      // Show booking confirmation
+      const confirmed = confirm(`Confirm appointment for ${displayTime}?`);
+      if (!confirmed) return;
+
+      // Prepare lead data for booking
+      const leadData = {
+        firstName: this.extractFirstName(),
+        lastName: this.extractLastName(),
+        email: this.formData.email || '',
+        phone: this.formData.phone || '',
+        address: {
+          full: this.formData.address || this.preconfirmedAddress || '',
+          state: this.extractStateFromAddress(this.formData.address || this.preconfirmedAddress || '')
+        },
+        timeline: this.formData.timeline || this.formData['seller-timeline'] || '',
+        propertyType: this.formData.propertyType || this.formData['property-type'] || '',
+        propertyCondition: this.formData.propertyCondition || this.formData['property-condition'] || '',
+        propertyDetails: {
+          estimatedValue: this.offerData?.marketValue?.estimated || 0
+        }
+      };
+
+      const selectedSlot = { startTime, endTime };
+
+      // Book appointment via Netlify function
+      const response = await fetch('/.netlify/functions/book-appointment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          leadData,
+          selectedSlot
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Booking failed');
+      }
+
+      const result = await response.json();
+      
+      // Close modal and show success
+      this.closeCalendarModal();
+      this.appointmentBooked = true;
+      this.showBookingConfirmation(displayTime, result.appointmentId);
+      
+    } catch (error) {
+      console.error('Slot selection error:', error);
+      alert('Booking failed. Please try again or call (725) 772-9847.');
+    }
+  }
+
+  extractStateFromAddress(address) {
+    if (!address) return '';
+    const stateMatch = address.match(/\b([A-Z]{2})\b/);
+    return stateMatch ? stateMatch[1] : '';
+  }
+
+  closeCalendarModal() {
+    const modal = document.getElementById('calendar-modal');
+    if (modal) {
+      modal.remove();
+    }
+  }
+
+  showBookingConfirmation(displayTime, appointmentId) {
+    const confirmationHTML = `
+      <div style="background: #10b981; color: white; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;">
+        <h3 style="margin: 0 0 10px 0;">🎉 Appointment Confirmed!</h3>
+        <p style="margin: 0;">Your consultation is scheduled for ${displayTime}</p>
+        <p style="margin: 10px 0 0 0; font-size: 14px;">Confirmation #${appointmentId}</p>
+      </div>
+    `;
+    
+    // Replace the booking button area with confirmation
+    const bookingContainer = document.querySelector('.calendar-booking');
+    if (bookingContainer) {
+      bookingContainer.innerHTML = confirmationHTML;
+    }
+    
+    // Move to next step after a short delay
+    setTimeout(() => {
+      this.showStep(this.currentStep + 1);
+    }, 3000);
   }
 
   saveDraft() {
@@ -1266,32 +1490,67 @@ class OpendoorFunnel {
           // Property information
           address: this.formData.address || this.preconfirmedAddress || '',
           
-          // Survey responses mapped to GHL custom fields
+          // Survey responses mapped to GHL custom fields - ALL collected data
           property_address: this.formData.address || this.preconfirmedAddress || '',
-          seller_timeline: this.formData['timeline'] || 'not_specified',
-          property_condition: this.formData['kitchen-quality'] || 'not_specified',
-          kitchen_countertops: this.formData['kitchen-countertops'] || 'not_specified',
-          kitchen_quality: this.formData['kitchen-quality'] || 'not_specified',
-          bathroom_quality: this.formData['bathroom-quality'] || 'not_specified',
-          living_room_quality: this.formData['living-room-quality'] || 'not_specified',
-          hoa_status: this.formData.hasHOA || 'not_specified',
-          hoa_monthly_fees: this.formData['hoa-fees'] || '0',
-          property_issues: Array.isArray(this.formData['property-issues']) ? this.formData['property-issues'].join(', ') : 'none',
-          owner_type: this.formData['owner-type'] || 'owner',
+          seller_timeline: this.formData['timeline'] || this.formData.timeline || 'not_specified',
+          property_condition: this.formData['kitchen-quality'] || this.formData.kitchenQuality || 'not_specified',
+          kitchen_countertops: this.formData['kitchen-countertops'] || this.formData.kitchenCountertops || 'not_specified',
+          kitchen_quality: this.formData['kitchen-quality'] || this.formData.kitchenQuality || 'not_specified',
+          bathroom_quality: this.formData['bathroom-quality'] || this.formData.bathroomQuality || 'not_specified',
+          living_room_quality: this.formData['living-room-quality'] || this.formData.livingRoomQuality || 'not_specified',
+          hoa_status: this.formData.hasHOA || this.formData.hoaStatus || 'not_specified',
+          hoa_monthly_fees: this.formData['hoa-fees'] || this.formData.hoaFees || '0',
+          property_issues: Array.isArray(this.formData['property-issues']) ? 
+            this.formData['property-issues'].join(', ') : 
+            (Array.isArray(this.formData.propertyIssues) ? this.formData.propertyIssues.join(', ') : 'none'),
+          owner_type: this.formData['owner-type'] || this.formData.ownerType || 'owner',
           user_type: this.userType,
+          
+          // NEW: Motivation fields
+          motivations: Array.isArray(this.formData.motivations) ? 
+            this.formData.motivations.join(', ') : 'not_specified',
+          unique_situation_details: this.formData['unique-situation-details'] || '',
+          
+          // NEW: Price expectations fields
+          price_expectation_type: this.formData['price-expectation-type'] || 'not_specified',
+          price_expectation: this.formData['price-expectation'] || '',
+          price_expectation_range: this.formData['price-expectation-range'] || '',
+          
+          // NEW: Photo upload data
+          photos_uploaded: this.formData.photos ? this.formData.photos.length : 0,
+          photo_metadata: this.formData.photos ? JSON.stringify(this.formData.photos.map(photo => ({
+            name: photo.name,
+            size: photo.originalSize,
+            type: photo.type,
+            timestamp: photo.timestamp
+          }))) : '[]',
+          property_photos: this.formData.photos ? this.formData.photos.map(photo => ({
+            name: photo.name,
+            data: photo.dataUrl,
+            type: photo.type
+          })) : [],
+          
           sms_consent: smsConsent ? 'yes' : 'no',
           sms_consent_timestamp: smsConsent ? new Date().toISOString() : null,
           sms_consent_ip: smsConsent ? (await this.getUserIP()) : null,
           lead_priority: 'Standard - Funnel Completion',
           contact_method: 'Email and Phone Provided',
-          calculation_status: 'Pending',
+          calculation_status: 'Pending Qualification',
           funnel_completion_date: new Date().toISOString(),
+          
+          // Additional collected data
+          cash_offer_claimed: this.formData.cashOfferClaimed || false,
+          funnel_version: '2.0',
+          data_collection_complete: true,
           
           // Lead source and tracking
           leadSource: 'HomeMAXX Funnel',
           funnelStep: 'Completed',
           submissionDate: new Date().toISOString(),
-          userAgent: navigator.userAgent
+          userAgent: navigator.userAgent,
+          
+          // Debug: Include raw form data for verification
+          raw_form_data: JSON.stringify(this.formData)
         }
       };
 
@@ -1378,6 +1637,173 @@ class OpendoorFunnel {
       return null;
     }
   }
+
+  showAutoApprovedPopup() {
+    const popup = document.getElementById('auto-approved-popup');
+    popup.style.display = 'block';
+  }
+
+  showSubjectToApprovalPopup() {
+    const popup = document.getElementById('subject-to-approval-popup');
+    popup.style.display = 'block';
+  }
+
+  async handlePhotoUpload(event) {
+    const files = Array.from(event.target.files);
+    await this.processPhotoFiles(files);
+  }
+
+  async handlePhotoDrop(event) {
+    const files = Array.from(event.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+    await this.processPhotoFiles(files);
+  }
+
+  async processPhotoFiles(files) {
+    if (!this.formData.photos) {
+      this.formData.photos = [];
+    }
+
+    const maxPhotos = 24;
+    const maxFileSize = 10 * 1024 * 1024; // 10MB
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/heic', 'image/heif'];
+
+    for (const file of files) {
+      if (this.formData.photos.length >= maxPhotos) {
+        alert(`Maximum of ${maxPhotos} photos allowed.`);
+        break;
+      }
+
+      if (!allowedTypes.includes(file.type.toLowerCase())) {
+        alert(`${file.name} is not a supported image format. Please use JPG, PNG, or HEIC.`);
+        continue;
+      }
+
+      if (file.size > maxFileSize) {
+        alert(`${file.name} is too large. Please use images under 10MB.`);
+        continue;
+      }
+
+      try {
+        const photoData = await this.processPhoto(file);
+        this.formData.photos.push(photoData);
+      } catch (error) {
+        console.error('Error processing photo:', error);
+        alert(`Error processing ${file.name}. Please try again.`);
+      }
+    }
+
+    this.updatePhotoPreview();
+    this.updateNavigationState();
+  }
+
+  async processPhoto(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          const maxWidth = 1200;
+          const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
+          canvas.width = img.width * ratio;
+          canvas.height = img.height * ratio;
+          
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          
+          resolve({
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            dataUrl: compressedDataUrl,
+            originalSize: file.size,
+            compressedSize: compressedDataUrl.length,
+            timestamp: Date.now()
+          });
+        };
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  updatePhotoPreview() {
+    const previewGrid = document.getElementById('photo-preview-grid');
+    const photoCount = document.getElementById('photo-count-text');
+    
+    if (!previewGrid || !this.formData.photos) return;
+
+    previewGrid.innerHTML = this.formData.photos.map((photo, index) => `
+      <div class="photo-preview-item">
+        <img src="${photo.dataUrl}" alt="${photo.name}" />
+        <div class="photo-overlay">
+          <button type="button" class="remove-photo" data-index="${index}">×</button>
+        </div>
+        <div class="photo-info">
+          <span class="photo-name">${photo.name}</span>
+        </div>
+      </div>
+    `).join('');
+
+    if (photoCount) {
+      const count = this.formData.photos.length;
+      photoCount.textContent = `${count} photo${count !== 1 ? 's' : ''} uploaded`;
+    }
+  }
+
+  removePhoto(index) {
+    if (this.formData.photos && this.formData.photos[index]) {
+      this.formData.photos.splice(index, 1);
+      this.updatePhotoPreview();
+      this.updateNavigationState();
+    }
+  }
+
+  updateNavigationState() {
+    const currentStepId = this.steps.filter(step => !step.condition || step.condition())[this.currentStep]?.id;
+    const nextBtn = document.getElementById('next-btn');
+    
+    if (!nextBtn) return;
+    
+    let canProceed = false;
+    
+    switch (currentStepId) {
+      case 'motivation':
+        canProceed = this.formData.motivations && this.formData.motivations.length > 0;
+        break;
+        
+      case 'price-expectations':
+        const hasNumberType = this.formData['price-expectation-type'] === 'has-number';
+        const noNumberType = this.formData['price-expectation-type'] === 'no-number';
+        
+        if (hasNumberType) {
+          canProceed = this.formData['price-expectation'] && this.formData['price-expectation'].trim().length > 0;
+        } else if (noNumberType) {
+          canProceed = this.formData['price-expectation'] && this.formData['price-expectation'] !== '';
+        } else {
+          canProceed = false;
+        }
+        break;
+        
+      case 'property-issues':
+        canProceed = this.formData['property-issues'] && this.formData['property-issues'].length > 0;
+        break;
+        
+      case 'photo-upload':
+        canProceed = true;
+        break;
+        
+      default:
+        canProceed = true;
+        break;
+    }
+    
+    nextBtn.disabled = !canProceed;
+    nextBtn.style.opacity = canProceed ? '1' : '0.5';
+  }
 }
 
 // Global functions for onclick handlers
@@ -1403,7 +1829,107 @@ function contactSupport() {
   window.open('tel:(725) 772-9847', '_self');
 }
 
-// Make funnel instance globally available
-window.addEventListener('DOMContentLoaded', function() {
-  window.funnelInstance = new OpendoorFunnel();
-});
+// Global functions for funnel navigation and form handling
+window.selectOption = function(value) {
+  if (window.funnelInstance) {
+    window.funnelInstance.selectOption(value);
+  }
+};
+
+window.selectImageOption = function(value) {
+  if (window.funnelInstance) {
+    window.funnelInstance.selectImageOption(value);
+  }
+};
+
+window.goNext = function() {
+  if (window.funnelInstance) {
+    window.funnelInstance.nextStep();
+  }
+};
+
+window.goBack = function() {
+  if (window.funnelInstance) {
+    window.funnelInstance.previousStep();
+  }
+};
+
+// New handler functions for motivation and price expectations
+window.handleMotivationChange = function(checkbox) {
+  if (window.funnelInstance) {
+    const motivations = window.funnelInstance.formData.motivations || [];
+    
+    if (checkbox.checked) {
+      if (!motivations.includes(checkbox.value)) {
+        motivations.push(checkbox.value);
+      }
+      
+      // Show unique situation text area if selected
+      if (checkbox.value === 'unique-situation') {
+        document.getElementById('unique-situation-text').style.display = 'block';
+      }
+    } else {
+      const index = motivations.indexOf(checkbox.value);
+      if (index > -1) {
+        motivations.splice(index, 1);
+      }
+      
+      // Hide unique situation text area if deselected
+      if (checkbox.value === 'unique-situation') {
+        document.getElementById('unique-situation-text').style.display = 'none';
+        window.funnelInstance.formData['unique-situation-details'] = '';
+      }
+    }
+    
+    window.funnelInstance.formData.motivations = motivations;
+    window.funnelInstance.updateNavigationState();
+  }
+};
+
+window.handleUniquesituationChange = function(textarea) {
+  if (window.funnelInstance) {
+    window.funnelInstance.formData['unique-situation-details'] = textarea.value;
+  }
+};
+
+window.showPriceOption = function(option) {
+  // Update button states
+  document.getElementById('has-number-btn').classList.remove('active');
+  document.getElementById('no-number-btn').classList.remove('active');
+  
+  if (option === 'has-number') {
+    document.getElementById('has-number-btn').classList.add('active');
+    document.getElementById('has-number-section').style.display = 'block';
+    document.getElementById('no-number-section').style.display = 'none';
+  } else {
+    document.getElementById('no-number-btn').classList.add('active');
+    document.getElementById('has-number-section').style.display = 'none';
+    document.getElementById('no-number-section').style.display = 'block';
+  }
+  
+  if (window.funnelInstance) {
+    window.funnelInstance.formData['price-expectation-type'] = option;
+    window.funnelInstance.updateNavigationState();
+  }
+};
+
+window.handlePriceInputChange = function(input) {
+  if (window.funnelInstance) {
+    window.funnelInstance.formData['price-expectation'] = input.value;
+    window.funnelInstance.updateNavigationState();
+  }
+};
+
+window.selectPriceRange = function(range) {
+  // Update button states
+  document.querySelectorAll('#no-number-section .option-btn').forEach(btn => {
+    btn.classList.remove('selected');
+  });
+  
+  event.target.classList.add('selected');
+  
+  if (window.funnelInstance) {
+    window.funnelInstance.formData['price-expectation'] = range;
+    window.funnelInstance.updateNavigationState();
+  }
+};
