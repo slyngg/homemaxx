@@ -1136,8 +1136,8 @@ class OpendoorFunnel {
           hoa_status: this.formData.hasHOA || this.formData.hoaStatus || 'not_specified',
           hoa_monthly_fees: this.formData['hoa-fees'] || this.formData.hoaFees || '0',
           property_issues: Array.isArray(this.formData['property-issues']) ? 
-            this.formData['property-issues'].join(', ') : 
-            (Array.isArray(this.formData.propertyIssues) ? this.formData.propertyIssues.join(', ') : 'none'),
+            this.formData['property-issues'] : 
+            (Array.isArray(this.formData.propertyIssues) ? this.formData.propertyIssues : ['none']),
           owner_type: this.formData['owner-type'] || this.formData.ownerType || 'owner',
           user_type: this.userType,
           sms_consent: this.formData.smsConsent ? 'yes' : 'no',
@@ -1501,8 +1501,8 @@ class OpendoorFunnel {
           hoa_status: this.formData.hasHOA || this.formData.hoaStatus || 'not_specified',
           hoa_monthly_fees: this.formData['hoa-fees'] || this.formData.hoaFees || '0',
           property_issues: Array.isArray(this.formData['property-issues']) ? 
-            this.formData['property-issues'].join(', ') : 
-            (Array.isArray(this.formData.propertyIssues) ? this.formData.propertyIssues.join(', ') : 'none'),
+            this.formData['property-issues'] : 
+            (Array.isArray(this.formData.propertyIssues) ? this.formData.propertyIssues : ['none']),
           owner_type: this.formData['owner-type'] || this.formData.ownerType || 'owner',
           user_type: this.userType,
           
