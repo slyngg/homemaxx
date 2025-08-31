@@ -458,39 +458,31 @@ class OpendoorFunnel {
 
   renderMotivationStep() {
     return `
-      <div class="checkbox-grid">
-        <label class="checkbox-option">
-          <input type="checkbox" value="moving-to-new-home" onchange="handleMotivationChange(this)">
-          <span class="checkbox-label" data-translate="motivation-moving-to-new-home">Moving to a new home</span>
-        </label>
-        <label class="checkbox-option">
-          <input type="checkbox" value="job-relocation" onchange="handleMotivationChange(this)">
-          <span class="checkbox-label" data-translate="motivation-job-relocation">Job relocation</span>
-        </label>
-        <label class="checkbox-option">
-          <input type="checkbox" value="retirement" onchange="handleMotivationChange(this)">
-          <span class="checkbox-label" data-translate="motivation-retirement">Retirement</span>
-        </label>
-        <label class="checkbox-option">
-          <input type="checkbox" value="divorce" onchange="handleMotivationChange(this)">
-          <span class="checkbox-label" data-translate="motivation-divorce">Divorce</span>
-        </label>
-        <label class="checkbox-option">
-          <input type="checkbox" value="financial-hardship" onchange="handleMotivationChange(this)">
-          <span class="checkbox-label" data-translate="motivation-financial-hardship">Financial hardship</span>
-        </label>
-        <label class="checkbox-option">
-          <input type="checkbox" value="downsizing" onchange="handleMotivationChange(this)">
-          <span class="checkbox-label" data-translate="motivation-downsizing">Downsizing</span>
-        </label>
-        <label class="checkbox-option">
-          <input type="checkbox" value="inheritance" onchange="handleMotivationChange(this)">
-          <span class="checkbox-label" data-translate="motivation-inheritance">Inheritance</span>
-        </label>
-        <label class="checkbox-option">
-          <input type="checkbox" value="unique-situation" onchange="handleMotivationChange(this)">
-          <span class="checkbox-label" data-translate="motivation-unique-situation">Unique situation</span>
-        </label>
+      <div class="option-grid">
+        <button class="option-btn" onclick="toggleMotivation('moving-to-new-home')" data-translate="motivation-moving-to-new-home">
+          Moving to a new home
+        </button>
+        <button class="option-btn" onclick="toggleMotivation('job-relocation')" data-translate="motivation-job-relocation">
+          Job relocation
+        </button>
+        <button class="option-btn" onclick="toggleMotivation('retirement')" data-translate="motivation-retirement">
+          Retirement
+        </button>
+        <button class="option-btn" onclick="toggleMotivation('divorce')" data-translate="motivation-divorce">
+          Divorce
+        </button>
+        <button class="option-btn" onclick="toggleMotivation('financial-hardship')" data-translate="motivation-financial-hardship">
+          Financial hardship
+        </button>
+        <button class="option-btn" onclick="toggleMotivation('downsizing')" data-translate="motivation-downsizing">
+          Downsizing
+        </button>
+        <button class="option-btn" onclick="toggleMotivation('inheritance')" data-translate="motivation-inheritance">
+          Inheritance
+        </button>
+        <button class="option-btn" onclick="toggleMotivation('unique-situation')" data-translate="motivation-unique-situation">
+          Unique situation
+        </button>
       </div>
       
       <div id="unique-situation-text" style="display: none; margin-top: 1rem;">
@@ -1270,29 +1262,30 @@ window.goBack = function() {
 };
 
 // New handler functions for motivation and price expectations
-window.handleMotivationChange = function(checkbox) {
+window.toggleMotivation = function(value) {
   if (window.funnelInstance) {
     const motivations = window.funnelInstance.formData.motivations || [];
+    const button = event.target;
     
-    if (checkbox.checked) {
-      if (!motivations.includes(checkbox.value)) {
-        motivations.push(checkbox.value);
-      }
-      
-      // Show unique situation text area if selected
-      if (checkbox.value === 'unique-situation') {
-        document.getElementById('unique-situation-text').style.display = 'block';
-      }
-    } else {
-      const index = motivations.indexOf(checkbox.value);
-      if (index > -1) {
-        motivations.splice(index, 1);
-      }
+    if (motivations.includes(value)) {
+      // Remove motivation
+      const index = motivations.indexOf(value);
+      motivations.splice(index, 1);
+      button.classList.remove('selected');
       
       // Hide unique situation text area if deselected
-      if (checkbox.value === 'unique-situation') {
+      if (value === 'unique-situation') {
         document.getElementById('unique-situation-text').style.display = 'none';
         window.funnelInstance.formData['unique-situation-details'] = '';
+      }
+    } else {
+      // Add motivation
+      motivations.push(value);
+      button.classList.add('selected');
+      
+      // Show unique situation text area if selected
+      if (value === 'unique-situation') {
+        document.getElementById('unique-situation-text').style.display = 'block';
       }
     }
     
