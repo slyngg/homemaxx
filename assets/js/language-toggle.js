@@ -609,12 +609,12 @@ class LanguageToggle {
     // Create toggle button HTML
     const toggleHTML = `
       <div class="language-toggle" id="language-toggle">
-        <button class="lang-btn" data-lang="en" ${this.currentLanguage === 'en' ? 'class="active"' : ''}>
+        <button class="lang-btn ${this.currentLanguage === 'en' ? 'active' : ''}" data-lang="en">
           <span class="flag">🇺🇸</span>
           <span class="lang-text">EN</span>
         </button>
         <div class="toggle-divider">|</div>
-        <button class="lang-btn" data-lang="es" ${this.currentLanguage === 'es' ? 'class="active"' : ''}>
+        <button class="lang-btn ${this.currentLanguage === 'es' ? 'active' : ''}" data-lang="es">
           <span class="flag">🇪🇸</span>
           <span class="lang-text">ES</span>
         </button>

@@ -774,6 +774,13 @@ class OpendoorFunnel {
   async submitForm() {
     console.log('Submitting form data:', this.formData);
     
+    // Prevent multiple submissions
+    const submitButton = document.querySelector('button[onclick="submitForm()"]');
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = 'Submitting...';
+    }
+    
     try {
       // Get form inputs
       const fullNameInput = document.getElementById('full-name-input');
@@ -786,41 +793,22 @@ class OpendoorFunnel {
       const fullName = fullNameInput?.value?.trim() || '';
       const phone = phoneInput?.value?.trim() || '';
       const smsConsent = smsConsentCheckbox?.checked || false;
-      
-      // Validate required fields
-      if (!email) {
-        alert('Please enter your email address.');
+
+      // Basic validation
+      if (!email || !fullName || !phone) {
+        alert('Please fill in all required fields.');
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Submit My Information';
+        }
         return;
       }
-      
-      if (!fullName) {
-        alert('Please enter your full name.');
-        return;
-      }
-      
-      if (!phone) {
-        alert('Please enter your phone number.');
-        return;
-      }
-      
-      if (!smsConsent) {
-        alert('Please agree to receive SMS messages to continue.');
-        return;
-      }
-      
-      // Split full name into first and last name
+
+      // Extract first and last name
       const nameParts = fullName.split(' ');
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
-      
-      // Store in form data
-      this.formData.email = email;
-      this.formData.fullName = fullName;
-      this.formData.firstName = firstName;
-      this.formData.lastName = lastName;
-      this.formData.phone = phone;
-      this.formData.smsConsent = smsConsent;
-      
+
       // Prepare comprehensive data for GHL webhook
       const contactData = {
         contact: {
@@ -843,42 +831,38 @@ class OpendoorFunnel {
           living_room_quality: this.formData['living-room-quality'] || this.formData.livingRoomQuality || 'not_specified',
           hoa_status: this.formData.hasHOA || this.formData.hoaStatus || 'not_specified',
           hoa_monthly_fees: this.formData['hoa-fees'] || this.formData.hoaFees || '0',
+          
+          // NEW: Motivation fields (arrays)
+          motivations: Array.isArray(this.formData.motivations) ? this.formData.motivations : [],
+          unique_situation_details: this.formData['unique-situation-details'] || '',
+          
+          // NEW: Price expectation fields
+          price_expectation_type: this.formData['price-expectation-type'] || 'not_specified',
+          price_expectation: this.formData['price-expectation'] || '',
+          price_expectation_range: this.formData['price-expectation-range'] || '',
+          
+          // Fixed: Property issues as array
           property_issues: Array.isArray(this.formData['property-issues']) ? 
             this.formData['property-issues'] : 
             (Array.isArray(this.formData.propertyIssues) ? this.formData.propertyIssues : ['none']),
           owner_type: this.formData['owner-type'] || this.formData.ownerType || 'owner',
           user_type: this.userType,
           
-          // NEW: Motivation fields
-          motivations: Array.isArray(this.formData.motivations) ? 
-            this.formData.motivations.join(', ') : 'not_specified',
-          unique_situation_details: this.formData['unique-situation-details'] || '',
-          
-          // NEW: Price expectations fields
-          price_expectation_type: this.formData['price-expectation-type'] || 'not_specified',
-          price_expectation: this.formData['price-expectation'] || '',
-          price_expectation_range: this.formData['price-expectation-range'] || '',
-          
           // NEW: Photo upload data
           photos_uploaded: this.formData.photos ? this.formData.photos.length : 0,
           photo_metadata: this.formData.photos ? JSON.stringify(this.formData.photos.map(photo => ({
             name: photo.name,
-            size: photo.originalSize,
+            size: photo.size,
             type: photo.type,
-            timestamp: photo.timestamp
+            timestamp: Date.now()
           }))) : '[]',
-          property_photos: this.formData.photos ? this.formData.photos.map(photo => ({
-            name: photo.name,
-            data: photo.dataUrl,
-            type: photo.type
-          })) : [],
           
           sms_consent: smsConsent ? 'yes' : 'no',
           sms_consent_timestamp: smsConsent ? new Date().toISOString() : null,
           sms_consent_ip: smsConsent ? (await this.getUserIP()) : null,
           lead_priority: 'Standard - Funnel Completion',
           contact_method: 'Email and Phone Provided',
-          calculation_status: 'Pending Qualification',
+          calculation_status: 'Completed',
           funnel_completion_date: new Date().toISOString(),
           
           // Additional collected data
@@ -918,45 +902,86 @@ class OpendoorFunnel {
         const responseText = await response.text();
         console.log('GHL webhook response:', responseText);
         
+        // Show success confirmation
+        this.showSuccessConfirmation(firstName);
+        
       } else {
         console.error('GHL webhook submission failed:', response.status, response.statusText);
         const errorText = await response.text();
         console.error('GHL webhook error response:', errorText);
+        
+        // Show error message but still show some confirmation
+        this.showErrorConfirmation();
       }
 
     } catch (error) {
       console.error('Form submission error:', error);
+      this.showErrorConfirmation();
     }
   }
 
-  extractFirstName() {
-    const email = this.formData.email || document.getElementById('email-input')?.value || '';
-    const emailPrefix = email.split('@')[0];
+  showSuccessConfirmation(firstName) {
+    const stepContent = document.getElementById('step-content');
+    stepContent.innerHTML = `
+      <div style="text-align: center; padding: 2rem;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+        <h2 style="color: #10b981; margin-bottom: 1rem;">Thank You, ${firstName}!</h2>
+        <p style="color: #6b7280; font-size: 1.1rem; margin-bottom: 2rem;">
+          Your information has been successfully submitted. Our team will review your property details and contact you within 24 hours with your personalized cash offer.
+        </p>
+        <div style="background: #f0fdf4; border: 1px solid #10b981; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem;">
+          <h3 style="color: #10b981; margin-bottom: 0.5rem;">What happens next?</h3>
+          <ul style="text-align: left; color: #374151; margin: 0; padding-left: 1.5rem;">
+            <li>We'll analyze your property and market data</li>
+            <li>Our team will prepare your personalized cash offer</li>
+            <li>You'll receive a call within 24 hours to discuss details</li>
+            <li>If you accept, we can close in as little as 7 days</li>
+          </ul>
+        </div>
+        <p style="color: #6b7280; font-size: 0.9rem;">
+          Questions? Call us at <strong>(725) 772-9847</strong> or email <strong>info@homemaxx.llc</strong>
+        </p>
+        <button onclick="window.location.href='/'" class="btn btn-primary" style="margin-top: 1rem;">
+          Return to Homepage
+        </button>
+      </div>
+    `;
     
-    // Try to extract first name from email prefix
-    if (emailPrefix.includes('.')) {
-      return emailPrefix.split('.')[0];
-    } else if (emailPrefix.includes('_')) {
-      return emailPrefix.split('_')[0];
-    } else {
-      return emailPrefix || 'Unknown';
-    }
+    // Hide navigation buttons
+    document.getElementById('back-btn').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
   }
 
-  extractLastName() {
-    const email = this.formData.email || document.getElementById('email-input')?.value || '';
-    const emailPrefix = email.split('@')[0];
+  showErrorConfirmation() {
+    const stepContent = document.getElementById('step-content');
+    stepContent.innerHTML = `
+      <div style="text-align: center; padding: 2rem;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">⚠️</div>
+        <h2 style="color: #ef4444; margin-bottom: 1rem;">Submission Issue</h2>
+        <p style="color: #6b7280; font-size: 1.1rem; margin-bottom: 2rem;">
+          We encountered a technical issue while submitting your information. Please try again or contact us directly.
+        </p>
+        <div style="background: #fef2f2; border: 1px solid #ef4444; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem;">
+          <h3 style="color: #ef4444; margin-bottom: 0.5rem;">Contact us directly:</h3>
+          <p style="color: #374151; margin: 0.5rem 0;">
+            <strong>Phone:</strong> (725) 772-9847<br>
+            <strong>Email:</strong> info@homemaxx.llc
+          </p>
+        </div>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <button onclick="window.location.reload()" class="btn btn-primary">
+            Try Again
+          </button>
+          <button onclick="window.location.href='/'" class="btn btn-secondary">
+            Return to Homepage
+          </button>
+        </div>
+      </div>
+    `;
     
-    // Try to extract last name from email prefix
-    if (emailPrefix.includes('.')) {
-      const parts = emailPrefix.split('.');
-      return parts.length > 1 ? parts[1] : 'Unknown';
-    } else if (emailPrefix.includes('_')) {
-      const parts = emailPrefix.split('_');
-      return parts.length > 1 ? parts[1] : 'Unknown';
-    } else {
-      return 'Unknown';
-    }
+    // Hide navigation buttons
+    document.getElementById('back-btn').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
   }
 
   async getUserIP() {
