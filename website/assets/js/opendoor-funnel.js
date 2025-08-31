@@ -14,7 +14,25 @@ class OpendoorFunnel {
     this.steps = [];
     this.preconfirmedAddress = null;
     
+    // Clear any previous data to ensure fresh start
+    this.clearPreviousData();
     this.init();
+  }
+
+  clearPreviousData() {
+    // Clear all HomeMAXX-related localStorage items to prevent data persistence
+    const keysToRemove = [
+      'homemaxx_confirmed_address',
+      'homemaxx_funnel_data',
+      'homemaxx_current_step',
+      'homemaxx_offer_progress'
+    ];
+    
+    keysToRemove.forEach(key => {
+      localStorage.removeItem(key);
+    });
+    
+    console.log('Cleared previous funnel data for fresh start');
   }
 
   init() {
@@ -437,13 +455,48 @@ class OpendoorFunnel {
 
   renderMotivationStep() {
     return `
-      <div class="option-grid">
-        <button class="option-btn" onclick="selectOption('moving-to-new-home')" data-translate="motivation-moving-to-new-home">Moving to a new home</button>
-        <button class="option-btn" onclick="selectOption('job-relocation')" data-translate="motivation-job-relocation">Job relocation</button>
-        <button class="option-btn" onclick="selectOption('retirement')" data-translate="motivation-retirement">Retirement</button>
-        <button class="option-btn" onclick="selectOption('divorce')" data-translate="motivation-divorce">Divorce</button>
-        <button class="option-btn" onclick="selectOption('inheritance')" data-translate="motivation-inheritance">Inheritance</button>
-        <button class="option-btn" onclick="selectOption('other')" data-translate="motivation-other">Other</button>
+      <div class="checkbox-grid">
+        <label class="checkbox-option">
+          <input type="checkbox" value="moving-to-new-home" onchange="handleMotivationChange(this)">
+          <span class="checkbox-label" data-translate="motivation-moving-to-new-home">Moving to a new home</span>
+        </label>
+        <label class="checkbox-option">
+          <input type="checkbox" value="job-relocation" onchange="handleMotivationChange(this)">
+          <span class="checkbox-label" data-translate="motivation-job-relocation">Job relocation</span>
+        </label>
+        <label class="checkbox-option">
+          <input type="checkbox" value="retirement" onchange="handleMotivationChange(this)">
+          <span class="checkbox-label" data-translate="motivation-retirement">Retirement</span>
+        </label>
+        <label class="checkbox-option">
+          <input type="checkbox" value="divorce" onchange="handleMotivationChange(this)">
+          <span class="checkbox-label" data-translate="motivation-divorce">Divorce</span>
+        </label>
+        <label class="checkbox-option">
+          <input type="checkbox" value="financial-hardship" onchange="handleMotivationChange(this)">
+          <span class="checkbox-label" data-translate="motivation-financial-hardship">Financial hardship</span>
+        </label>
+        <label class="checkbox-option">
+          <input type="checkbox" value="downsizing" onchange="handleMotivationChange(this)">
+          <span class="checkbox-label" data-translate="motivation-downsizing">Downsizing</span>
+        </label>
+        <label class="checkbox-option">
+          <input type="checkbox" value="inheritance" onchange="handleMotivationChange(this)">
+          <span class="checkbox-label" data-translate="motivation-inheritance">Inheritance</span>
+        </label>
+        <label class="checkbox-option">
+          <input type="checkbox" value="unique-situation" onchange="handleMotivationChange(this)">
+          <span class="checkbox-label" data-translate="motivation-unique-situation">Unique situation</span>
+        </label>
+      </div>
+      
+      <div id="unique-situation-text" style="display: none; margin-top: 1rem;">
+        <label class="form-label" data-translate="motivation-unique-details">Please describe your unique situation:</label>
+        <textarea class="form-input" 
+                  placeholder="Tell us more about your situation..." 
+                  rows="3"
+                  onchange="handleUniquesituationChange(this)"
+                  data-translate-placeholder="motivation-unique-placeholder"></textarea>
       </div>
     `;
   }
