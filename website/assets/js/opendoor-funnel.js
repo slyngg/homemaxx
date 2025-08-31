@@ -417,36 +417,39 @@ class OpendoorFunnel {
   }
 
   renderPropertyDetailsStep() {
+    // Use dynamic address from formData or preconfirmedAddress
+    const address = this.formData.address || this.preconfirmedAddress || 'Address not provided';
+    
     return `
       <div class="property-details">
         <div class="detail-row">
           <span class="detail-label">Address</span>
-          <span class="detail-value">5329 Jackson Valley Ct, Las Vegas, NV 89131, USA</span>
+          <span class="detail-value">${address}</span>
           <a href="#" class="edit-link">Edit</a>
         </div>
         <div class="detail-row">
           <span class="detail-label">Bedrooms</span>
-          <span class="detail-value">4</span>
+          <span class="detail-value">${this.formData.bedrooms || 'Not specified'}</span>
           <a href="#" class="edit-link">Edit</a>
         </div>
         <div class="detail-row">
           <span class="detail-label">Bathrooms</span>
-          <span class="detail-value">2.5</span>
+          <span class="detail-value">${this.formData.bathrooms || 'Not specified'}</span>
           <a href="#" class="edit-link">Edit</a>
         </div>
         <div class="detail-row">
           <span class="detail-label">Square Feet</span>
-          <span class="detail-value">2,093</span>
+          <span class="detail-value">${this.formData.squareFeet || 'Not specified'}</span>
           <a href="#" class="edit-link">Edit</a>
         </div>
         <div class="detail-row">
           <span class="detail-label">Year Built</span>
-          <span class="detail-value">2005</span>
+          <span class="detail-value">${this.formData.yearBuilt || 'Not specified'}</span>
           <a href="#" class="edit-link">Edit</a>
         </div>
         <div class="detail-row">
           <span class="detail-label">Lot Size</span>
-          <span class="detail-value">0.18 acres</span>
+          <span class="detail-value">${this.formData.lotSize || 'Not specified'}</span>
           <a href="#" class="edit-link">Edit</a>
         </div>
       </div>

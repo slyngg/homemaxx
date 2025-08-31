@@ -345,6 +345,63 @@
   letter-spacing: 0.5px;
 }
 
+/* Checkbox Grid Styles for Motivation Step */
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: flex-start;
+  background: white;
+  border: 2px solid var(--border-light);
+  border-radius: 12px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.checkbox-option:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(26, 86, 255, 0.15);
+}
+
+.checkbox-option input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 1rem;
+  margin-top: 2px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checkbox-option input[type="checkbox"]:checked + .checkbox-label {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.checkbox-option:has(input:checked) {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 2px 8px rgba(26, 86, 255, 0.2);
+}
+
+.checkbox-label {
+  font-size: 1rem;
+  color: var(--text);
+  line-height: 1.4;
+  cursor: pointer;
+  flex: 1;
+  transition: all 0.2s ease;
+}
+
 @media (max-width: 768px) {
   .condition-cards {
     grid-template-columns: 1fr;
@@ -352,5 +409,24 @@
   
   .property-details-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .checkbox-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .checkbox-option {
+    padding: 1rem;
+  }
+  
+  .checkbox-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 0.75rem;
+  }
+  
+  .checkbox-label {
+    font-size: 0.9rem;
   }
 }
