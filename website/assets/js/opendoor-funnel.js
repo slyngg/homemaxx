@@ -573,126 +573,81 @@ class OpendoorFunnel {
 
   renderKitchenQualityStep() {
     return `
-      <div class="image-options">
-        <div class="image-option" onclick="selectImageOption('fixer-upper')" data-translate="kitchen-quality-fixer-upper">
-          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Fixer Upper Kitchen">
-          <div class="image-option-content">
-            <div class="image-option-title">Fixer Upper</div>
-            <div class="image-option-description">Needs major work</div>
-          </div>
-        </div>
-        <div class="image-option" onclick="selectImageOption('dated')" data-translate="kitchen-quality-dated">
-          <img src="https://images.unsplash.com/photo-1556909114-4f5f9e8b8c8c?w=300&h=120&fit=crop" alt="Dated Kitchen">
-          <div class="image-option-content">
-            <div class="image-option-title">Dated</div>
-            <div class="image-option-description">Needs updating</div>
-          </div>
-        </div>
-        <div class="image-option" onclick="selectImageOption('standard')" data-translate="kitchen-quality-standard">
-          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Standard Kitchen">
-          <div class="image-option-content">
-            <div class="image-option-title">Standard</div>
-            <div class="image-option-description">Move-in ready</div>
-          </div>
-        </div>
-        <div class="image-option" onclick="selectImageOption('high-end')" data-translate="kitchen-quality-high-end">
-          <img src="https://images.unsplash.com/photo-1556909114-4f5f9e8b8c8c?w=300&h=120&fit=crop" alt="High End Kitchen">
-          <div class="image-option-content">
-            <div class="image-option-title">High end</div>
-            <div class="image-option-description">Recently renovated</div>
-          </div>
-        </div>
-        <div class="image-option" onclick="selectImageOption('luxury')" data-translate="kitchen-quality-luxury">
-          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Luxury Kitchen">
-          <div class="image-option-content">
-            <div class="image-option-title">Luxury</div>
-            <div class="image-option-description">Premium finishes</div>
-          </div>
-        </div>
+      <div class="option-grid">
+        <button class="option-btn" onclick="selectOption('fixer-upper')" data-translate="kitchen-quality-fixer-upper">
+          <strong>Fixer Upper</strong><br>
+          <small style="color: #6b7280;">Needs major work</small>
+        </button>
+        <button class="option-btn" onclick="selectOption('dated')" data-translate="kitchen-quality-dated">
+          <strong>Dated</strong><br>
+          <small style="color: #6b7280;">Functional but outdated</small>
+        </button>
+        <button class="option-btn" onclick="selectOption('average')" data-translate="kitchen-quality-average">
+          <strong>Average</strong><br>
+          <small style="color: #6b7280;">Standard finishes</small>
+        </button>
+        <button class="option-btn" onclick="selectOption('high-end')" data-translate="kitchen-quality-high-end">
+          <strong>High end</strong><br>
+          <small style="color: #6b7280;">Recently renovated</small>
+        </button>
+        <button class="option-btn" onclick="selectOption('luxury')" data-translate="kitchen-quality-luxury">
+          <strong>Luxury</strong><br>
+          <small style="color: #6b7280;">Premium finishes</small>
+        </button>
       </div>
     `;
   }
 
   renderBathroomQualityStep() {
     return `
-      <div class="image-options">
-        <div class="image-option" onclick="selectImageOption('fixer-upper')" data-translate="bathroom-quality-fixer-upper">
-          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Fixer Upper Bathroom">
-          <div class="image-option-content">
-            <div class="image-option-title">Fixer Upper</div>
-            <div class="image-option-description">Needs major work</div>
-          </div>
-        </div>
-        <div class="image-option" onclick="selectImageOption('dated')" data-translate="bathroom-quality-dated">
-          <img src="https://images.unsplash.com/photo-1556909114-4f5f9e8b8c8c?w=300&h=120&fit=crop" alt="Dated Bathroom">
-          <div class="image-option-content">
-            <div class="image-option-title">Dated</div>
-            <div class="image-option-description">Needs updating</div>
-          </div>
-        </div>
-        <div class="image-option" onclick="selectImageOption('standard')" data-translate="bathroom-quality-standard">
-          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Standard Bathroom">
-          <div class="image-option-content">
-            <div class="image-option-title">Standard</div>
-            <div class="image-option-description">Move-in ready</div>
-          </div>
-        </div>
-        <div class="image-option" onclick="selectImageOption('high-end')" data-translate="bathroom-quality-high-end">
-          <img src="https://images.unsplash.com/photo-1556909114-4f5f9e8b8c8c?w=300&h=120&fit=crop" alt="High End Bathroom">
-          <div class="image-option-content">
-            <div class="image-option-title">High end</div>
-            <div class="image-option-description">Recently renovated</div>
-          </div>
-        </div>
-        <div class="image-option" onclick="selectImageOption('luxury')" data-translate="bathroom-quality-luxury">
-          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Luxury Bathroom">
-          <div class="image-option-content">
-            <div class="image-option-title">Luxury</div>
-            <div class="image-option-description">Premium finishes</div>
-          </div>
-        </div>
+      <div class="option-grid">
+        <button class="option-btn" onclick="selectOption('fixer-upper')" data-translate="bathroom-quality-fixer-upper">
+          <strong>Fixer Upper</strong><br>
+          <small style="color: #6b7280;">Needs major work</small>
+        </button>
+        <button class="option-btn" onclick="selectOption('dated')" data-translate="bathroom-quality-dated">
+          <strong>Dated</strong><br>
+          <small style="color: #6b7280;">Functional but outdated</small>
+        </button>
+        <button class="option-btn" onclick="selectOption('average')" data-translate="bathroom-quality-average">
+          <strong>Average</strong><br>
+          <small style="color: #6b7280;">Standard finishes</small>
+        </button>
+        <button class="option-btn" onclick="selectOption('high-end')" data-translate="bathroom-quality-high-end">
+          <strong>High end</strong><br>
+          <small style="color: #6b7280;">Recently renovated</small>
+        </button>
+        <button class="option-btn" onclick="selectOption('luxury')" data-translate="bathroom-quality-luxury">
+          <strong>Luxury</strong><br>
+          <small style="color: #6b7280;">Premium finishes</small>
+        </button>
       </div>
     `;
   }
 
   renderLivingRoomQualityStep() {
     return `
-      <div class="image-options">
-        <div class="image-option" onclick="selectImageOption('fixer-upper')" data-translate="living-room-quality-fixer-upper">
-          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Fixer Upper Living Room">
-          <div class="image-option-content">
-            <div class="image-option-title">Fixer Upper</div>
-            <div class="image-option-description">Needs major work</div>
-          </div>
-        </div>
-        <div class="image-option" onclick="selectImageOption('dated')" data-translate="living-room-quality-dated">
-          <img src="https://images.unsplash.com/photo-1556909114-4f5f9e8b8c8c?w=300&h=120&fit=crop" alt="Dated Living Room">
-          <div class="image-option-content">
-            <div class="image-option-title">Dated</div>
-            <div class="image-option-description">Needs updating</div>
-          </div>
-        </div>
-        <div class="image-option" onclick="selectImageOption('standard')" data-translate="living-room-quality-standard">
-          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Standard Living Room">
-          <div class="image-option-content">
-            <div class="image-option-title">Standard</div>
-            <div class="image-option-description">Move-in ready</div>
-          </div>
-        </div>
-        <div class="image-option" onclick="selectImageOption('high-end')" data-translate="living-room-quality-high-end">
-          <img src="https://images.unsplash.com/photo-1556909114-4f5f9e8b8c8c?w=300&h=120&fit=crop" alt="High End Living Room">
-          <div class="image-option-content">
-            <div class="image-option-title">High end</div>
-            <div class="image-option-description">Recently renovated</div>
-          </div>
-        </div>
-        <div class="image-option" onclick="selectImageOption('luxury')" data-translate="living-room-quality-luxury">
-          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=120&fit=crop" alt="Luxury Living Room">
-          <div class="image-option-content">
-            <div class="image-option-title">Luxury</div>
-            <div class="image-option-description">Premium finishes</div>
-          </div>
-        </div>
+      <div class="option-grid">
+        <button class="option-btn" onclick="selectOption('fixer-upper')" data-translate="living-room-quality-fixer-upper">
+          <strong>Fixer Upper</strong><br>
+          <small style="color: #6b7280;">Needs major work</small>
+        </button>
+        <button class="option-btn" onclick="selectOption('dated')" data-translate="living-room-quality-dated">
+          <strong>Dated</strong><br>
+          <small style="color: #6b7280;">Functional but outdated</small>
+        </button>
+        <button class="option-btn" onclick="selectOption('average')" data-translate="living-room-quality-average">
+          <strong>Average</strong><br>
+          <small style="color: #6b7280;">Standard finishes</small>
+        </button>
+        <button class="option-btn" onclick="selectOption('high-end')" data-translate="living-room-quality-high-end">
+          <strong>High end</strong><br>
+          <small style="color: #6b7280;">Recently renovated</small>
+        </button>
+        <button class="option-btn" onclick="selectOption('luxury')" data-translate="living-room-quality-luxury">
+          <strong>Luxury</strong><br>
+          <small style="color: #6b7280;">Premium finishes</small>
+        </button>
       </div>
     `;
   }
@@ -1175,12 +1130,24 @@ class OpendoorFunnel {
         const noNumberType = this.formData['price-expectation-type'] === 'no-number';
         
         if (hasNumberType) {
-          canProceed = this.formData['price-expectation'] && this.formData['price-expectation'].trim().length > 0;
+          canProceed = this.formData['price-expectation'] && this.formData['price-expectation'] !== '';
         } else if (noNumberType) {
           canProceed = this.formData['price-expectation'] && this.formData['price-expectation'] !== '';
         } else {
           canProceed = false;
         }
+        break;
+        
+      case 'kitchen-quality':
+        canProceed = this.formData['kitchen-quality'] && this.formData['kitchen-quality'] !== '';
+        break;
+        
+      case 'bathroom-quality':
+        canProceed = this.formData['bathroom-quality'] && this.formData['bathroom-quality'] !== '';
+        break;
+        
+      case 'living-room-quality':
+        canProceed = this.formData['living-room-quality'] && this.formData['living-room-quality'] !== '';
         break;
         
       case 'property-issues':
