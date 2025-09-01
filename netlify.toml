@@ -1,7 +1,7 @@
 # Netlify configuration
 [build]
-  publish = "."
-  command = ""
+  publish = "website"
+  command = "npm install"
   functions = "netlify/functions"
 
 # Simple SPA routing
@@ -13,16 +13,17 @@
 # Build settings
 [build.environment]
   NODE_VERSION = "18"
+  NPM_VERSION = "9"
 
 # Context settings
 [context.production]
-  command = ""
-  publish = "."
+  command = "npm install"
+  publish = "website"
 
 [context.deploy-preview]
-  command = ""
-  publish = "."
+  command = "npm install"
+  publish = "website"
 
 [context.branch-deploy]
-  command = ""
-  publish = "."
+  command = "npm install"
+  publish = "website"

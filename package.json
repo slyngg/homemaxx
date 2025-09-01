@@ -5,11 +5,15 @@
   "description": "HomeMAXX static site with Netlify Functions",
   "license": "MIT",
   "engines": {
-    "node": ">=18"
+    "node": "18"
   },
   "dependencies": {
     "@netlify/blobs": "^6.4.1",
     "form-data": "^4.0.4",
     "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "build": "echo 'No build step required for static site'"
   }
 }
